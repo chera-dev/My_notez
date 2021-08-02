@@ -6,7 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 
-class StringAdapter  (val list:List<Label>): RecyclerView.Adapter<StringAdapter.ViewHolder>() {
+class StringAdapter(val list: MutableSet<Label>): RecyclerView.Adapter<StringAdapter.ViewHolder>() {
+    private val listOfLabel = mutableListOf<Label>()
+    init {
+        listOfLabel.addAll(list)
+    }
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         var itemLabel: MaterialTextView = itemView.findViewById(R.id.item_label_in_note)
@@ -17,7 +21,7 @@ class StringAdapter  (val list:List<Label>): RecyclerView.Adapter<StringAdapter.
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.itemLabel.text = list[position].labelName
+        holder.itemLabel.text = listOfLabel[position].labelName
     }
 
     override fun getItemCount(): Int {

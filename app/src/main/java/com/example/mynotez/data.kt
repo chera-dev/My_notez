@@ -25,6 +25,10 @@ data class Note(var noteTitle:String, var noteDetails:String, var noteType: Int,
         return list
     }
 
+    fun removeLabel(labelId: Int){
+        labelOfThisNote.remove(labelId)
+    }
+
     companion object{
         const val NOTES = 1
         const val ARCHIVED = 2
@@ -38,6 +42,10 @@ data class Label(val labelId:Int, var labelName:String){
 
     fun addNoteToThisLabel(noteId: Int){
         notesIdInThisLabel.add(noteId)
+    }
+
+    fun removeNote(noteId: Int){
+        notesIdInThisLabel.remove(noteId)
     }
 
     fun getNotesIdInThisLabel():List<Int>{

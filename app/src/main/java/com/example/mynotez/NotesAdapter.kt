@@ -27,14 +27,10 @@ class NotesAdapter (var notesList:List<Note>, private val itemListener: ItemList
             labelTag = view.findViewById(R.id.label_tag)
 
             view.setOnLongClickListener {
-                //Snackbar.make(view,"long clicked note ${item_title.text}",Snackbar.LENGTH_SHORT).show()
-                //onItemLongClick(notesList[position],position)
                 itemListener?.onLongClick(position)
                 return@setOnLongClickListener true
             }
             view.setOnClickListener {
-                //Toast.makeText(view.context, "clicked note ${item_title.text}", Toast.LENGTH_SHORT).show()
-                //onItemClick(notesList[position], position)
                 itemListener?.onClick(position)
             }
         }
@@ -67,11 +63,10 @@ class NotesAdapter (var notesList:List<Note>, private val itemListener: ItemList
         holder.itemDate.text = data.dateCreated
         holder.itemTime.text = data.timeCreated
         if (sharedViewModel!=null){
-            val label: List<Label> = sharedViewModel.getLabelsOfThisNote(data.noteId)
-            //no need for get label function in shared view model
+            val label: Set<Label> = sharedViewModel.getSetOfLabelsOfThisNote(data.noteId)
             if (label.isNotEmpty()) {
                 holder.labelTag.visibility = View.VISIBLE
-                val adapter = StringAdapter(label)
+                val adapter = StringAdapter(label as MutableSet<Label>)
                 holder.recyclerView.adapter = adapter
                 holder.recyclerView.layoutManager = LinearLayoutManager(
                     holder.itemView.context,

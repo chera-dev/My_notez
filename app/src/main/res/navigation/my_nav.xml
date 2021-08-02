@@ -17,9 +17,5 @@
         android:id="@+id/detailsFragment"
         android:name="com.example.mynotez.DetailsFragment"
         tools:layout="@layout/fragment_details" >
-        <argument
-            android:name="noteId"
-            app:argType="string"
-            app:nullable="true" />
     </fragment>
 </navigation>

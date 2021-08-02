@@ -11,8 +11,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mynotez.Note.Companion.ARCHIVED
-import com.example.mynotez.Note.Companion.NOTES
 import com.example.mynotez.Note.Companion.UNPINNED
 import com.example.mynotez.SharedViewModel.Companion.LABEL
 import com.example.mynotez.SharedViewModel.Companion.NOTEZ
@@ -41,10 +39,12 @@ class NotesFragment : Fragment(),ItemListener {
             title = requireArguments().getString("title").toString()
             noteType = requireArguments().getInt("type")
             labelId = requireArguments().getInt("labelId")
-            //got successfully
         }
         binding.fab.setOnClickListener { view ->
-            view?.findNavController()?.navigate(NotesFragmentDirections.actionNavNotesFragToDetailsFragment(null))
+            val bundle = Bundle()
+            if (labelId!=null)
+                bundle.putInt("labelId",labelId!!)
+            view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
         }
         binding.textViewTitleInNotesFragment.text = title
 
@@ -80,7 +80,9 @@ class NotesFragment : Fragment(),ItemListener {
     override fun onClick(position: Int) {
         val data:Note = recyclerAdapter.notesList[position]
         //Toast.makeText(requireContext(),"in notes fragment clicked note ${data.noteTitle}", Toast.LENGTH_SHORT).show()
-        view?.findNavController()?.navigate(NotesFragmentDirections.actionNavNotesFragToDetailsFragment(data.noteId.toString()))
+        val bundle = Bundle()
+        bundle.putInt("noteId",data.noteId)
+        view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
     }
 
     override fun onLongClick(position: Int) {
@@ -103,7 +105,7 @@ class NotesFragment : Fragment(),ItemListener {
                 .addTextViewItem(MenuBottomDialog.Operation("labels") {
                     Toast.makeText(requireContext(), "label clicked", Toast.LENGTH_SHORT).show()
                     //make alert dialog to show labels available and those which are selected
-                        val labelList:List<Label> = sharedSharedViewModel.getLabel()
+                        val labelList:List<Label> = sharedSharedViewModel.getLabels()
 
                         val allLabelName = Array(size = labelList.size){""}
                         val selectedLabelList = BooleanArray(labelList.size)

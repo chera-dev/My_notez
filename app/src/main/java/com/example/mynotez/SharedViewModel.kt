@@ -40,6 +40,10 @@ class SharedViewModel  : ViewModel() {
         return noteList
     }
 
+    fun getLabel(labelId: Int):Label{
+        return _labelList[labelId]!!
+    }
+
     fun getArchivedNotes():List<Note>{
         val archivedNoteList = mutableListOf<Note>()
         for (i in _noteList.values)
@@ -48,7 +52,7 @@ class SharedViewModel  : ViewModel() {
         return archivedNoteList
     }
 
-    fun getLabel():List<Label>{
+    fun getLabels():List<Label>{
         val labelList = mutableListOf<Label>()
         for (i in _labelList.values)
             labelList.add(i)
@@ -80,6 +84,11 @@ class SharedViewModel  : ViewModel() {
         _labelList.remove(labelId)
     }
 
+    fun removeLabel(labelId: Int,noteId: Int){
+        _labelList[labelId]?.removeNote(noteId)
+        _noteList[noteId]?.removeLabel(labelId)
+    }
+
     fun addLabelWithNote(noteId: Int,labelId: Int){
         _noteList[noteId]?.addLabelToThisNote(labelId)
         _labelList[labelId]?.addNoteToThisLabel(noteId)
@@ -96,6 +105,13 @@ class SharedViewModel  : ViewModel() {
 
     fun getLabelsOfThisNote(noteId: Int):List<Label>{
         val label = mutableListOf<Label>()
+        for (i in _noteList[noteId]?.getLabelsIdOfThisNote()!!)
+            label.add(_labelList[i]!!)
+        return label
+    }
+
+    fun getSetOfLabelsOfThisNote(noteId: Int):Set<Label>{
+        val label = mutableSetOf<Label>()
         for (i in _noteList[noteId]?.getLabelsIdOfThisNote()!!)
             label.add(_labelList[i]!!)
         return label
@@ -129,9 +145,13 @@ class SharedViewModel  : ViewModel() {
         _noteList[noteId]?.pinned = UNPINNED
     }
 
-    fun addNewNotes(newNote: Note){
+    fun addNewNotes(newNote: Note, listOfLabel:MutableSet<Label>){
         newNote.noteId = nextNoteId
         _noteList[nextNoteId++] = newNote
+        if (listOfLabel.isNotEmpty())
+            for (i in listOfLabel){
+                addLabelWithNote(newNote.noteId,i.labelId)
+            }
     }
 
     fun updateNotes(updatedNote:Note){

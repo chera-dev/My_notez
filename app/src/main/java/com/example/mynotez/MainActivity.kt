@@ -10,7 +10,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sharedSharedViewModel = SharedViewModel()
+        sharedSharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
 
         setSupportActionBar(binding.appBarMain.toolBar)
 
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun addItemtonavDrawer(navView: NavigationView){
         val menu: Menu = navView.menu
-        val labelList = sharedSharedViewModel.getLabel()
+        val labelList = sharedSharedViewModel.getLabels()
         val subMenu: SubMenu = menu.addSubMenu("label")
         var order = 1
         for (i in labelList) {
