@@ -11,21 +11,14 @@ class NotesAdapter (var notesList:List<Note>, private val itemListener: ItemList
     : RecyclerView.Adapter<NotesAdapter.NoteCardViewHolder>() {
 
     inner class NoteCardViewHolder(view: View): RecyclerView.ViewHolder(view){
-        val itemTitle: TextView
-        val itemDetails: TextView
-        val itemDate: TextView
-        val itemTime: TextView
-        val recyclerView: RecyclerView
-        val labelTag: TextView
+        val itemTitle: TextView = view.findViewById(R.id.item_title)
+        val itemDetails: TextView = view.findViewById(R.id.item_details)
+        val itemDate: TextView = view.findViewById(R.id.item_date)
+        val itemTime: TextView = view.findViewById(R.id.item_time)
+        val recyclerView: RecyclerView = view.findViewById(R.id.label_recycler_view)
+        val labelTag: TextView = view.findViewById(R.id.label_tag)
 
         init {
-            itemTitle = view.findViewById(R.id.item_title)
-            itemDetails = view.findViewById(R.id.item_details)
-            itemDate = view.findViewById(R.id.item_date)
-            itemTime = view.findViewById(R.id.item_time)
-            recyclerView = view.findViewById(R.id.label_recycler_view)
-            labelTag = view.findViewById(R.id.label_tag)
-
             view.setOnLongClickListener {
                 itemListener?.onLongClick(position)
                 return@setOnLongClickListener true

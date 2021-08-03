@@ -1,5 +1,6 @@
 package com.example.mynotez
 
+
 import androidx.lifecycle.ViewModel
 import com.example.mynotez.Note.Companion.ARCHIVED
 import com.example.mynotez.Note.Companion.NOTES
@@ -13,7 +14,7 @@ class SharedViewModel  : ViewModel() {
     private val _labelList = mutableMapOf<Int,Label>()
 
     private var nextNoteId:Int = 5
-    private var nextLabelId:Int = 3
+    //private var nextLabelId:Int = 3
 
     init {
         _noteList[1] = (Note("Chera","I'm a good girl", NOTES,1))
@@ -63,16 +64,12 @@ class SharedViewModel  : ViewModel() {
 
     fun isLabelPresentInTheNote(noteId: Int,labelId: Int):Boolean{
         val labelsInThisNote = _noteList[noteId]?.getLabelsIdOfThisNote()
-        if (labelsInThisNote != null) {
-            return labelsInThisNote.contains(labelId)
-        }
-        else return false
+        return labelsInThisNote?.contains(labelId) ?: false
     }
 
-    fun addLabel(labelTitle :String):Label{
-        val label = Label(nextLabelId,labelTitle)
-        _labelList[nextLabelId] = label
-        nextLabelId++
+    fun addLabel(labelId: Int,labelTitle :String):Label{
+        val label = Label(labelId,labelTitle)
+        _labelList[labelId] = label
         return label
     }
 
@@ -82,7 +79,8 @@ class SharedViewModel  : ViewModel() {
 
     fun deleteLabel(labelId: Int){
         //delete label id in notes
-        //for(i in _labelList)
+        for(i in _labelList[labelId]!!.getNotesIdInThisLabel())
+            _noteList[i]?.removeLabel(labelId)
         _labelList.remove(labelId)
     }
 
@@ -95,15 +93,6 @@ class SharedViewModel  : ViewModel() {
         _noteList[noteId]?.addLabelToThisNote(labelId)
         _labelList[labelId]?.addNoteToThisLabel(noteId)
     }
-
-    fun getLabelNamesInTheNote(noteId: Int):List<String>{
-        val labelName = mutableListOf<String>()
-        for (i in _noteList[noteId]?.getLabelsIdOfThisNote()!!)
-            labelName.add(_labelList[i]!!.labelName)
-        return labelName
-    }
-
-    //fun setChecked()
 
     fun getLabelsOfThisNote(noteId: Int):List<Label>{
         val label = mutableListOf<Label>()
@@ -129,9 +118,6 @@ class SharedViewModel  : ViewModel() {
         return notesListOfLabelId
     }
 
-    //add label
-    //rename label
-    //delete label
     //new fragment to display notes of that label
     //onclick on those displayed notes goes to details fragment
 

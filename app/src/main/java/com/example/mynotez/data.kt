@@ -4,14 +4,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-sealed class Data
-
 
 data class Note(var noteTitle:String, var noteDetails:String, var noteType: Int, var noteId: Int, var pinned:Int = UNPINNED){
 
     private val currentDateTime: LocalDateTime = LocalDateTime.now()
-    val timeCreated = currentDateTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
-    val dateCreated = currentDateTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+    val timeCreated: String = currentDateTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+    val dateCreated: String = currentDateTime.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
 
     private val labelOfThisNote = mutableSetOf<Int>()
 

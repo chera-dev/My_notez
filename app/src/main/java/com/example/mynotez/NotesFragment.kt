@@ -2,13 +2,13 @@ package com.example.mynotez
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.*
+import android.widget.EditText
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotez.Note.Companion.UNPINNED
@@ -28,17 +28,25 @@ class NotesFragment : Fragment(),ItemListener {
     private var notesList: List<Note>? = null
     private var noteType:Int = NOTEZ
     private var labelId:Int? = null
+    //private lateinit var renameListener:RenameLabelInDrawerLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentNotesBinding.inflate(inflater,container,false)
         if (arguments!=null) {
             title = requireArguments().getString("title").toString()
-            noteType = requireArguments().getInt("type")
-            labelId = requireArguments().getInt("labelId")
+            val gotNoteId = requireArguments().getInt("type")
+            if(gotNoteId!=0)
+                noteType = gotNoteId
+            val gotLabelId = requireArguments().getInt("labelId")
+            if (gotLabelId!=0)
+                labelId = gotLabelId
+            val listener = requireArguments().getInt("listener")
+            if (listener!=0)
+                Toast.makeText(requireContext(), "listener got successfully", Toast.LENGTH_SHORT).show()
         }
         binding.fab.setOnClickListener { view ->
             val bundle = Bundle()
@@ -73,6 +81,8 @@ class NotesFragment : Fragment(),ItemListener {
             //make a text view and image view of gone type to show no notes available
         }
 
+        if (labelId != null)
+            setHasOptionsMenu(true)
 
         return binding.root
     }
@@ -123,10 +133,10 @@ class NotesFragment : Fragment(),ItemListener {
 
                         val builder = AlertDialog.Builder(requireContext())
                         builder.setTitle("add label")
-                        builder.setMultiChoiceItems(allLabelName, selectedLabelList){ dialog, which, isChecked ->
+                        builder.setMultiChoiceItems(allLabelName, selectedLabelList){ _, which, isChecked ->
                             selectedLabelList[which] = isChecked
                         }
-                        builder.setPositiveButton("Done"){ dialogInterface,i ->
+                        builder.setPositiveButton("Done"){ _, _ ->
                             val list = ArrayList<String>()
                             for (j in selectedLabelList.indices){
                                 if (selectedLabelList[j]){
@@ -163,5 +173,49 @@ class NotesFragment : Fragment(),ItemListener {
                     recyclerAdapter.changeData(notesList!!)
                 }).show()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        if (labelId != null){
+            menu.add("Rename label").setOnMenuItemClickListener {
+                //Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
+                val builder = AlertDialog.Builder(requireContext())
+                val label = sharedSharedViewModel.getLabel(labelId!!)
+                builder.setTitle("Rename label - ${label.labelName}")
+                val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
+                val titleEditText = dialogLayout.findViewById<EditText>(R.id.label_title_edit_text)
+                builder.setView(dialogLayout)
+                builder.setPositiveButton("Rename Label"){ _, _ ->
+                    val title = titleEditText.text.toString()
+                    if (title != "")
+                        sharedSharedViewModel.renameLabel(labelId!!,title)
+                    notesList = sharedSharedViewModel.getNotesOfTheLabel(labelId!!)
+                    recyclerAdapter.changeData(notesList!!)
+                    binding.textViewTitleInNotesFragment.text = title
+                    Toast.makeText(requireContext(),"test $title renamed",Toast.LENGTH_SHORT).show()
+                }
+                builder.setNegativeButton("Cancel"){ _, _ ->
+                }
+                builder.show()
+                true
+            }
+            menu.add("delete label").setOnMenuItemClickListener { itemTitle ->
+                Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
+                val builder = AlertDialog.Builder(requireContext())
+                val label = sharedSharedViewModel.getLabel(labelId!!)
+                builder.setTitle("Delete label - ${label.labelName}")
+                builder.setPositiveButton("Delete"){ _, _ ->
+                    sharedSharedViewModel.deleteLabel(labelId!!)
+                    Toast.makeText(requireContext(),"test $title deleted",Toast.LENGTH_SHORT).show()
+                    findNavController().popBackStack()
+                }
+                builder.setNegativeButton("Cancel"){ _, _ ->
+                }
+                builder.show()
+                true
+            }
+        }
+        inflater.inflate(R.menu.main,menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

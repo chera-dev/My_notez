@@ -31,7 +31,7 @@ class DetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentDetailsBinding.inflate(inflater,container,false)
         val root: View = binding.root
@@ -41,7 +41,7 @@ class DetailsFragment : Fragment() {
             val gotNoteId = requireArguments().getInt("noteId")
             if (gotNoteId != 0)
                 noteId = gotNoteId
-            //unnesesary check
+            //unnecessary check
             if (noteId != null){
                 editedNote = sharedSharedViewModel.getNote(noteId!!)
 
@@ -177,10 +177,10 @@ class DetailsFragment : Fragment() {
                     }
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("add label")
-                builder.setMultiChoiceItems(allLabelName, selectedLabelList){ dialog, which, isChecked ->
+                builder.setMultiChoiceItems(allLabelName, selectedLabelList){ _, which, isChecked ->
                     selectedLabelList[which] = isChecked
                 }
-                builder.setPositiveButton("Done"){ dialogInterface,i ->
+                builder.setPositiveButton("Done"){ _, _ ->
                     val list = ArrayList<String>()
                     for (j in selectedLabelList.indices){
                         if (selectedLabelList[j]){
