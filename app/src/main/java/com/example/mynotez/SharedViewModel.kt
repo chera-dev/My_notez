@@ -49,6 +49,8 @@ class SharedViewModel  : ViewModel() {
         for (i in _noteList.values)
             if (i.noteType == ARCHIVED)
                 archivedNoteList.add(i)
+        archivedNoteList.sortByDescending { it.noteId }
+        archivedNoteList.sortByDescending { it.pinned }
         return archivedNoteList
     }
 

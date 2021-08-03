@@ -60,7 +60,6 @@ class DetailsFragment : Fragment() {
             }
             if (listOfLabels.isNotEmpty())
                 showLabelRecyclerView()
-
         }
         binding.textViewDateCreatedInDetails.visibility = View.VISIBLE
         binding.textViewDateCreatedInDetails.text = editedNote.dateCreated
@@ -98,7 +97,7 @@ class DetailsFragment : Fragment() {
     private fun showLabelRecyclerView(){
         binding.labelTextViewInDetails.visibility = View.VISIBLE
         binding.labelRecyclerViewInDetails.visibility = View.VISIBLE
-        val adapter = StringAdapter(listOfLabels)
+        val adapter = LabelAdapter(listOfLabels)
         binding.labelRecyclerViewInDetails.adapter = adapter
         binding.labelRecyclerViewInDetails.layoutManager = LinearLayoutManager(requireContext(),
             LinearLayoutManager.HORIZONTAL, false)
@@ -106,82 +105,73 @@ class DetailsFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         val createMenu = CreateMenu(menu)
-        if (editedNote.noteType != ARCHIVED){
-            if (editedNote.pinned == PINNED) {
-                createMenu.addMenuItem(
-                    Menu.NONE, 1, 2, "unPin", R.drawable.ic_baseline_push_unpin_24,
-                    MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
-                        Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
-                        createMenu.changeIcon(1, R.drawable.ic_outline_push_pin_24)
-                        editedNote.pinned = UNPINNED
-                        if(noteId != null)
-                            sharedSharedViewModel.unpinNote(noteId as Int)
-                    })
-            } else {
-                createMenu.addMenuItem(
-                    Menu.NONE, 1, 2, "pin", R.drawable.ic_outline_push_pin_24,
-                    MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
-                        Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
-                        createMenu.changeIcon(1, R.drawable.ic_baseline_push_unpin_24)
-                        editedNote.pinned = PINNED
-                        if(noteId != null)
-                            sharedSharedViewModel.pinNotes(noteId as Int)
-                    })
-            }
-            createMenu.addMenuItem(
-                Menu.NONE, 2, 3, "delete", R.drawable.ic_baseline_delete_24,
-                MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
-                    Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
-                    if(noteId != null)
-                        sharedSharedViewModel.deleteNote(noteId as Int)
-                    findNavController().popBackStack()
-                })
-            createMenu.addMenuItem(
-                Menu.NONE, 3, 1, "archive", R.drawable.ic_baseline_archive_24,
-                MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
-                    Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
+        createMenu.addMenuItem(
+            Menu.NONE, 3, 1,
+            if (editedNote.noteType != ARCHIVED)"archive" else "unarchive",
+            if (editedNote.noteType != ARCHIVED) R.drawable.ic_baseline_archive_24 else R.drawable.ic_baseline_unarchive_24 ,
+            MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
+                if (editedNote.noteType != ARCHIVED) {
+                    Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT)
+                        .show()
+                    createMenu.changeIcon(3, R.drawable.ic_baseline_unarchive_24)
                     editedNote.noteType = ARCHIVED
-                    if(noteId != null)
+                    if (noteId != null)
                         sharedSharedViewModel.addToArchive(noteId as Int)
-                })
-        }
-        else{
-            createMenu.addMenuItem(
-                Menu.NONE, 1, 1, "unarchive", R.drawable.ic_baseline_unarchive_24,
-                MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
+                }
+                else{
                     Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
+                    createMenu.changeIcon(3, R.drawable.ic_baseline_archive_24)
                     editedNote.noteType = ARCHIVED
                     if(noteId != null)
                         sharedSharedViewModel.removeFromArchive(noteId as Int)
-                    //findNavController().popBackStack()
-                })
-            createMenu.addMenuItem(
-                Menu.NONE, 2, 2, "delete", R.drawable.ic_baseline_delete_24,
-                MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
+                }
+            })
+        createMenu.addMenuItem(
+            Menu.NONE, 1, 2, if (editedNote.pinned == PINNED) "unPin" else "pin",
+            if (editedNote.pinned == PINNED) R.drawable.ic_baseline_push_unpin_24 else R.drawable.ic_outline_push_pin_24,
+            MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
+                if (editedNote.pinned == PINNED) {
+                    Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT)
+                        .show()
+                    createMenu.changeIcon(1, R.drawable.ic_outline_push_pin_24)
+                    editedNote.pinned = UNPINNED
+                    if (noteId != null)
+                        sharedSharedViewModel.unpinNote(noteId as Int)
+                }
+                else{
                     Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
+                    createMenu.changeIcon(1, R.drawable.ic_baseline_push_unpin_24)
+                    editedNote.pinned = PINNED
                     if(noteId != null)
-                        sharedSharedViewModel.deleteNote(noteId as Int)
-                    findNavController().popBackStack()
-                })
-        }
+                        sharedSharedViewModel.pinNotes(noteId as Int)
+                }
+            })
+        createMenu.addMenuItem(
+            Menu.NONE, 2, 2, "delete", R.drawable.ic_baseline_delete_24,
+            MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
+                Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
+                if(noteId != null)
+                    sharedSharedViewModel.deleteNote(noteId as Int)
+                findNavController().popBackStack()
+            })
         createMenu.addMenuItem(
             Menu.NONE,4,4,"add label",R.drawable.ic_outline_label_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
                 Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
 
-                var labelList:List<Label> = sharedSharedViewModel.getLabels()
+                val listOfAllLabelAvailable:List<Label> = sharedSharedViewModel.getLabels()
 
-                val allLabelName = Array(size = labelList.size){""}
-                val selectedLabelList = BooleanArray(labelList.size)
+                val allLabelName = Array(size = listOfAllLabelAvailable.size){""}
+                val selectedLabelList = BooleanArray(listOfAllLabelAvailable.size)
 
-                if (labelList.isEmpty())
+                if (listOfAllLabelAvailable.isEmpty())
                     Toast.makeText(requireContext(),"nothing", Toast.LENGTH_LONG).show()
                 else {
-                        for (i in 0 until labelList.size) {
-                            allLabelName[i] = labelList[i].labelName
+                        for (i in 0 until listOfAllLabelAvailable.size) {
+                            allLabelName[i] = listOfAllLabelAvailable[i].labelName
                             //error when adding label to new note
                             //when done is clicked already set label is repeated twice
-                            if (labelList[i] in listOfLabels)
+                            if (listOfAllLabelAvailable[i] in listOfLabels)
                                     selectedLabelList[i] = true
                         }
                     }
@@ -196,16 +186,16 @@ class DetailsFragment : Fragment() {
                         if (selectedLabelList[j]){
                             list.add(allLabelName[j])
                             if(noteId != null)
-                                sharedSharedViewModel.addLabelWithNote(noteId!!,labelList[j].labelId)
+                                sharedSharedViewModel.addLabelWithNote(noteId!!,listOfAllLabelAvailable[j].labelId)
                             else
-                                listOfLabels.add(labelList[j])
+                                listOfLabels.add(listOfAllLabelAvailable[j])
                         }
                         else{
                             //create a function to remove label from note in shared view model
                             if(noteId != null)
-                                sharedSharedViewModel.removeLabel(labelList[j].labelId,noteId!!)
+                                sharedSharedViewModel.removeLabel(listOfAllLabelAvailable[j].labelId,noteId!!)
                             else
-                                listOfLabels.remove(labelList[j])
+                                listOfLabels.remove(listOfAllLabelAvailable[j])
                         }
                     }
                     //not showing recycler view

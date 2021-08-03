@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModel
@@ -18,6 +19,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.mynotez.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
+import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.mynotez.SharedViewModel.Companion.LABEL
 import com.example.mynotez.SharedViewModel.Companion.NOTEZ
@@ -38,13 +40,13 @@ class MainActivity : AppCompatActivity() {
 
         sharedSharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
 
-        setSupportActionBar(binding.appBarMain.toolBar)
 
+        setSupportActionBar(binding.appBarMain.toolBar)
         drawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_main)
 
-        appBarConfiguration = AppBarConfiguration(binding.navView.menu, drawerLayout)
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_notes_frag), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -64,17 +66,13 @@ class MainActivity : AppCompatActivity() {
                     navController.popBackStack()
                     drawerLayout.close()
                 }
-                R.id.nav_archive -> {
-                    Toast.makeText(this, "naahh ${it.title}", Toast.LENGTH_SHORT).show()
-                    val bundle = bundleOf("title" to it.title,"type" to NOTEZ)
-                    if (navController.previousBackStackEntry != null)
-                        navController.popBackStack()
-                    navController.navigate(R.id.nav_notes_frag,bundle)
-                    drawerLayout.close()
-                }
             }
             true
         }
+
+        //val drawerToggle = ActionBarDrawerToggle(this,drawerLayout,"open","close")
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun addItemtonavDrawer(navView: NavigationView){
@@ -108,6 +106,15 @@ class MainActivity : AppCompatActivity() {
                 builder.show()
             true
         }
+        menu.add(2,1,0,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
+            Toast.makeText(this, "naahh ${it.title}", Toast.LENGTH_SHORT).show()
+            val bundle = bundleOf("title" to it.title,"type" to NOTEZ)
+            if (navController.previousBackStackEntry != null)
+                navController.popBackStack()
+            navController.navigate(R.id.nav_notes_frag,bundle)
+            drawerLayout.close()
+            false
+        }
     }
 
     fun toNotesFragment(it:MenuItem,type:Int,labelId:Int){
@@ -117,6 +124,11 @@ class MainActivity : AppCompatActivity() {
             navController.popBackStack()
         navController.navigate(R.id.nav_notes_frag,bundle)
         drawerLayout.close()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
 }

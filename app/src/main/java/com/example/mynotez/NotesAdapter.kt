@@ -66,7 +66,7 @@ class NotesAdapter (var notesList:List<Note>, private val itemListener: ItemList
             val label: Set<Label> = sharedViewModel.getSetOfLabelsOfThisNote(data.noteId)
             if (label.isNotEmpty()) {
                 holder.labelTag.visibility = View.VISIBLE
-                val adapter = StringAdapter(label as MutableSet<Label>)
+                val adapter = LabelAdapter(label as MutableSet<Label>)
                 holder.recyclerView.adapter = adapter
                 holder.recyclerView.layoutManager = LinearLayoutManager(
                     holder.itemView.context,

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 
-class StringAdapter(val list: MutableSet<Label>): RecyclerView.Adapter<StringAdapter.ViewHolder>() {
+class LabelAdapter(val list: MutableSet<Label>): RecyclerView.Adapter<LabelAdapter.ViewHolder>() {
     private val listOfLabel = mutableListOf<Label>()
     init {
         listOfLabel.addAll(list)
