@@ -1,4 +1,4 @@
-package com.example.mynotez
+package com.example.mynotez.menu
 
 import android.content.Context
 import android.widget.LinearLayout
@@ -17,12 +17,11 @@ class MenuBottomDialog (context: Context): BottomSheetDialog(context) {
     }
     fun addTextViewItem(operation: Operation) = apply {
         val item = BottomMenuTextViewItemBinding.inflate(layoutInflater).root
-        item.setText(operation.textId)
+        item.text = operation.textId
         item.setOnClickListener {
             dismiss()
             operation.operation.invoke()
         }
-        //item.setCompoundDrawablesRelativeWithIntrinsicBounds(operation.drawableId, 0, 0, 0)
         linearLayout.addView(item)
     }
 

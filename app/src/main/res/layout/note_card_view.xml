@@ -13,21 +13,38 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/item_pinned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="2dp"
+            android:text="@string/pinned"
+            android:outlineAmbientShadowColor="@color/black"
+            android:outlineSpotShadowColor="@color/black"
+            android:textColor="#00B6B6"
+            android:textSize="15sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/item_title"
             android:layout_width="match_parent"
             android:layout_height="28dp"
             android:layout_marginStart="4dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="2dp"
             android:layout_marginEnd="5dp"
-            android:text="Test"
             android:textColor="#A8000000"
             android:textSize="22sp"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toStartOf="@id/item_date"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/item_pinned" />
 
         <TextView
             android:id="@+id/item_details"
@@ -35,8 +52,8 @@
             android:layout_height="38dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
-            android:text="Test"
             android:textSize="16sp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/item_title" />
 
@@ -46,7 +63,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="6dp"
-            android:text="Test"
             android:textAlignment="viewEnd"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -63,7 +79,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="4dp"
-            android:text="Test"
             android:textAlignment="viewEnd"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -93,6 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
+            android:visibility="gone"
             app:layout_constrainedHeight="true"
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="parent"

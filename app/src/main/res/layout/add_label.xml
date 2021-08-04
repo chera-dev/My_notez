@@ -8,6 +8,6 @@
         android:id="@+id/label_title_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter the label title here" />
+        android:hint="@string/enter_the_label_title_here" />
 
 </LinearLayout>

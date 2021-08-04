@@ -1,4 +1,4 @@
-package com.example.mynotez
+package com.example.mynotez.fragment.details
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -9,22 +9,24 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mynotez.*
 import com.example.mynotez.Note.Companion.ARCHIVED
 import com.example.mynotez.Note.Companion.NOTES
 import com.example.mynotez.Note.Companion.PINNED
 import com.example.mynotez.Note.Companion.UNPINNED
 import com.example.mynotez.databinding.FragmentDetailsBinding
+import com.example.mynotez.fragment.note.LabelAdapter
+import com.example.mynotez.menu.CreateMenu
+import com.example.mynotez.viewmodel.SharedViewModel
 import java.util.*
 
 class DetailsFragment : Fragment() {
+
     private val sharedSharedViewModel: SharedViewModel by activityViewModels()
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
 
-    // #cant delete label in a note
-    //while updating note in view model update label in notes too..
-
-    private lateinit var editedNote:Note
+    private lateinit var editedNote: Note
     private var noteId:Int? = null
     private var listOfLabels = mutableSetOf<Label>()
 
@@ -32,18 +34,17 @@ class DetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentDetailsBinding.inflate(inflater,container,false)
         val root: View = binding.root
         val titleEditText: EditText = binding.titleTextViewInDetails
         val detailsEditText: EditText = binding.detailsTextViewInDetails
+
         if(arguments != null) {
             val gotNoteId = requireArguments().getInt("noteId")
             if (gotNoteId != 0)
                 noteId = gotNoteId
-            //unnecessary check
             if (noteId != null){
-                editedNote = sharedSharedViewModel.getNote(noteId!!)
+                editedNote = sharedSharedViewModel.getNoteById(noteId!!)
 
                 titleEditText.setText(editedNote.noteTitle)
                 detailsEditText.setText(editedNote.noteDetails)
@@ -55,7 +56,7 @@ class DetailsFragment : Fragment() {
             }
             val labelId:Int = requireArguments().getInt("labelId")
             if (labelId != 0){
-                listOfLabels.add(sharedSharedViewModel.getLabel(labelId))
+                listOfLabels.add(sharedSharedViewModel.getLabelById(labelId))
                 Toast.makeText(requireContext(), "label $labelId", Toast.LENGTH_SHORT).show()
             }
             if (listOfLabels.isNotEmpty())
@@ -63,19 +64,15 @@ class DetailsFragment : Fragment() {
         }
         binding.textViewDateCreatedInDetails.visibility = View.VISIBLE
         binding.textViewDateCreatedInDetails.text = editedNote.dateCreated
-        if (editedNote.pinned == PINNED){
+        if (editedNote.pinned == PINNED)
             binding.textViewPinnedInDetails.visibility = View.VISIBLE
-            binding.textViewPinnedInDetails.text = "Pinned"
-        }
-        if (editedNote.noteType == ARCHIVED){
+        if (editedNote.noteType == ARCHIVED)
             binding.textViewNoteType.visibility = View.VISIBLE
-            binding.textViewNoteType.text = "Archived"
-        }
 
         binding.fabUpdateNotes.setOnClickListener {
             editedNote.noteTitle = titleEditText.text.toString()
             editedNote.noteDetails = detailsEditText.text.toString()
-            if(editedNote.noteTitle == "" && editedNote.noteTitle == ""){
+            if(editedNote.noteTitle == "" || editedNote.noteTitle == ""){
                 Toast.makeText(requireContext(),"Discarded empty note",Toast.LENGTH_SHORT).show()
             }
             else{
@@ -108,22 +105,24 @@ class DetailsFragment : Fragment() {
         createMenu.addMenuItem(
             Menu.NONE, 3, 1,
             if (editedNote.noteType != ARCHIVED)"archive" else "unarchive",
-            if (editedNote.noteType != ARCHIVED) R.drawable.ic_baseline_archive_24 else R.drawable.ic_baseline_unarchive_24 ,
+            if (editedNote.noteType != ARCHIVED) R.drawable.ic_baseline_archive_24 else R.drawable.ic_baseline_unarchive_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
                 if (editedNote.noteType != ARCHIVED) {
                     Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT)
                         .show()
                     createMenu.changeIcon(3, R.drawable.ic_baseline_unarchive_24)
                     editedNote.noteType = ARCHIVED
+                    binding.textViewNoteType.visibility = View.VISIBLE
                     if (noteId != null)
-                        sharedSharedViewModel.addToArchive(noteId as Int)
+                        sharedSharedViewModel.addNoteToArchive(noteId as Int)
                 }
                 else{
                     Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
                     createMenu.changeIcon(3, R.drawable.ic_baseline_archive_24)
-                    editedNote.noteType = ARCHIVED
+                    editedNote.noteType = NOTES
+                    binding.textViewNoteType.visibility = View.GONE
                     if(noteId != null)
-                        sharedSharedViewModel.removeFromArchive(noteId as Int)
+                        sharedSharedViewModel.removeNoteFromArchive(noteId as Int)
                 }
             })
         createMenu.addMenuItem(
@@ -135,6 +134,7 @@ class DetailsFragment : Fragment() {
                         .show()
                     createMenu.changeIcon(1, R.drawable.ic_outline_push_pin_24)
                     editedNote.pinned = UNPINNED
+                    binding.textViewPinnedInDetails.visibility = View.GONE
                     if (noteId != null)
                         sharedSharedViewModel.unpinNote(noteId as Int)
                 }
@@ -142,6 +142,7 @@ class DetailsFragment : Fragment() {
                     Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
                     createMenu.changeIcon(1, R.drawable.ic_baseline_push_unpin_24)
                     editedNote.pinned = PINNED
+                    binding.textViewPinnedInDetails.visibility = View.VISIBLE
                     if(noteId != null)
                         sharedSharedViewModel.pinNotes(noteId as Int)
                 }
@@ -155,7 +156,7 @@ class DetailsFragment : Fragment() {
                 findNavController().popBackStack()
             })
         createMenu.addMenuItem(
-            Menu.NONE,4,4,"add label",R.drawable.ic_outline_label_24,
+            Menu.NONE,4,4,"add label", R.drawable.ic_outline_label_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
                 Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
 
@@ -167,10 +168,8 @@ class DetailsFragment : Fragment() {
                 if (listOfAllLabelAvailable.isEmpty())
                     Toast.makeText(requireContext(),"nothing", Toast.LENGTH_LONG).show()
                 else {
-                        for (i in 0 until listOfAllLabelAvailable.size) {
+                        for (i in listOfAllLabelAvailable.indices) {
                             allLabelName[i] = listOfAllLabelAvailable[i].labelName
-                            //error when adding label to new note
-                            //when done is clicked already set label is repeated twice
                             if (listOfAllLabelAvailable[i] in listOfLabels)
                                     selectedLabelList[i] = true
                         }
@@ -191,16 +190,14 @@ class DetailsFragment : Fragment() {
                                 listOfLabels.add(listOfAllLabelAvailable[j])
                         }
                         else{
-                            //create a function to remove label from note in shared view model
                             if(noteId != null)
-                                sharedSharedViewModel.removeLabel(listOfAllLabelAvailable[j].labelId,noteId!!)
+                                sharedSharedViewModel.removeLabelFromNote(listOfAllLabelAvailable[j].labelId,noteId!!)
                             else
                                 listOfLabels.remove(listOfAllLabelAvailable[j])
                         }
                     }
-                    //not showing recycler view
                     if(noteId != null)
-                        listOfLabels = sharedSharedViewModel.getSetOfLabelsOfThisNote(noteId!!) as MutableSet<Label>
+                        listOfLabels = sharedSharedViewModel.getSetOfLabelsOfThisNote(noteId!!)
                     showLabelRecyclerView()
                     Toast.makeText(requireContext(),"clicked"+ list.toTypedArray()
                         .contentToString(), Toast.LENGTH_LONG).show()

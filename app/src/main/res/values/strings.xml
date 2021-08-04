@@ -5,5 +5,12 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="add_new_note">add new note</string>
+    <string name="update_note">update note</string>
+    <string name="title">Title</string>
+    <string name="type_your_note">Type Your Note Here..</string>
+    <string name="enter_the_label_title_here">Enter the label title here</string>
+    <string name="pinned">Pinned</string>
+    <string name="archived">Archived</string>
 
 </resources>

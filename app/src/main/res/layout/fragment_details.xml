@@ -8,7 +8,7 @@
     android:layout_marginTop="5dp"
     android:layout_marginEnd="5dp"
     android:orientation="vertical"
-    tools:context=".DetailsFragment">
+    tools:context=".fragment.details.DetailsFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_update_notes"
@@ -19,9 +19,12 @@
         android:focusable="true"
         android:minWidth="48dp"
         android:paddingBottom="20dp"
+        android:contentDescription="@string/update_note"
         android:src="@drawable/ic_baseline_check_24"
         android:tint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/detailsTextViewInDetails"
+        app:layout_constraintVertical_bias=".96"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.94"
         app:layout_constraintStart_toStartOf="parent" />
@@ -31,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"
-        android:hint="Title"
+        android:hint="@string/title"
         android:textSize="27sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -59,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@null"
-        android:hint="note"
+        android:hint="@string/type_your_note"
         android:paddingBottom="250dp"
         android:textSize="20sp"
         app:layout_constrainedHeight="true"
@@ -75,8 +78,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:paddingEnd="15dp"
-        android:text="TextView"
         android:visibility="gone"
+        android:text="@string/pinned"
+        android:outlineAmbientShadowColor="@color/black"
+        android:outlineSpotShadowColor="@color/black"
+        android:textColor="#00B6B6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
@@ -87,7 +93,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="TextView"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -100,8 +105,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:paddingStart="15dp"
-        android:text="TextView"
         android:visibility="gone"
+        android:text="@string/archived"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/textView_date_created_in_details"
@@ -132,17 +137,5 @@
         app:layout_constraintStart_toEndOf="@id/label_text_view_in_details"
         app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />
 
-
-    <!-- <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider">
-
-
-    </ScrollView>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

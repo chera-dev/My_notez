@@ -1,7 +1,9 @@
-package com.example.mynotez
+package com.example.mynotez.viewmodel
 
 
 import androidx.lifecycle.ViewModel
+import com.example.mynotez.Label
+import com.example.mynotez.Note
 import com.example.mynotez.Note.Companion.ARCHIVED
 import com.example.mynotez.Note.Companion.NOTES
 import com.example.mynotez.Note.Companion.PINNED
@@ -9,12 +11,11 @@ import com.example.mynotez.Note.Companion.UNPINNED
 
 class SharedViewModel  : ViewModel() {
 
-    private val _noteList = mutableMapOf<Int,Note>()
+    private val _noteList = mutableMapOf<Int, Note>()
 
-    private val _labelList = mutableMapOf<Int,Label>()
+    private val _labelList = mutableMapOf<Int, Label>()
 
     private var nextNoteId:Int = 5
-    //private var nextLabelId:Int = 3
 
     init {
         _noteList[1] = (Note("Chera","I'm a good girl", NOTES,1))
@@ -35,14 +36,9 @@ class SharedViewModel  : ViewModel() {
         for (i in _noteList.values)
             if (i.noteType == NOTES)
                 noteList.add(i)
-        //noteList.sortBy { it.pinned }
         noteList.sortByDescending { it.noteId }
         noteList.sortByDescending { it.pinned }
         return noteList
-    }
-
-    fun getLabel(labelId: Int):Label{
-        return _labelList[labelId]!!
     }
 
     fun getArchivedNotes():List<Note>{
@@ -62,12 +58,16 @@ class SharedViewModel  : ViewModel() {
         return labelList
     }
 
+    fun getLabelById(labelId: Int): Label {
+        return _labelList[labelId]!!
+    }
+
     fun isLabelPresentInTheNote(noteId: Int,labelId: Int):Boolean{
         val labelsInThisNote = _noteList[noteId]?.getLabelsIdOfThisNote()
         return labelsInThisNote?.contains(labelId) ?: false
     }
 
-    fun addLabel(labelId: Int,labelTitle :String):Label{
+    fun addLabel(labelId: Int,labelTitle :String): Label {
         val label = Label(labelId,labelTitle)
         _labelList[labelId] = label
         return label
@@ -78,13 +78,12 @@ class SharedViewModel  : ViewModel() {
     }
 
     fun deleteLabel(labelId: Int){
-        //delete label id in notes
         for(i in _labelList[labelId]!!.getNotesIdInThisLabel())
             _noteList[i]?.removeLabel(labelId)
         _labelList.remove(labelId)
     }
 
-    fun removeLabel(labelId: Int,noteId: Int){
+    fun removeLabelFromNote(labelId: Int, noteId: Int){
         _labelList[labelId]?.removeNote(noteId)
         _noteList[noteId]?.removeLabel(labelId)
     }
@@ -94,6 +93,7 @@ class SharedViewModel  : ViewModel() {
         _labelList[labelId]?.addNoteToThisLabel(noteId)
     }
 
+
     fun getLabelsOfThisNote(noteId: Int):List<Label>{
         val label = mutableListOf<Label>()
         for (i in _noteList[noteId]?.getLabelsIdOfThisNote()!!)
@@ -101,7 +101,7 @@ class SharedViewModel  : ViewModel() {
         return label
     }
 
-    fun getSetOfLabelsOfThisNote(noteId: Int):Set<Label>{
+    fun getSetOfLabelsOfThisNote(noteId: Int):MutableSet<Label>{
         val label = mutableSetOf<Label>()
         for (i in _noteList[noteId]?.getLabelsIdOfThisNote()!!)
             label.add(_labelList[i]!!)
@@ -110,7 +110,7 @@ class SharedViewModel  : ViewModel() {
 
     fun getNotesOfTheLabel(labelId: Int): List<Note> {
         val notesListOfLabelId = mutableListOf<Note>()
-        val label:Label? = _labelList[labelId]
+        val label: Label? = _labelList[labelId]
         if (label != null) {
             for (i in label.getNotesIdInThisLabel())
                 notesListOfLabelId.add(_noteList[i]!!)
@@ -118,19 +118,8 @@ class SharedViewModel  : ViewModel() {
         return notesListOfLabelId
     }
 
-    //new fragment to display notes of that label
-    //onclick on those displayed notes goes to details fragment
-
-    fun getNote(noteId: Int):Note{
+    fun getNoteById(noteId: Int): Note {
         return _noteList[noteId]!!
-    }
-
-    fun pinNotes(noteId: Int){
-        _noteList[noteId]?.pinned = PINNED
-    }
-
-    fun unpinNote(noteId: Int){
-        _noteList[noteId]?.pinned = UNPINNED
     }
 
     fun addNewNotes(newNote: Note, listOfLabel:MutableSet<Label>){
@@ -142,18 +131,26 @@ class SharedViewModel  : ViewModel() {
             }
     }
 
-    fun updateNotes(updatedNote:Note){
+    fun updateNotes(updatedNote: Note){
         _noteList[updatedNote.noteId]?.noteTitle = updatedNote.noteTitle
         _noteList[updatedNote.noteId]?.noteDetails = updatedNote.noteDetails
         _noteList[updatedNote.noteId]?.noteType = updatedNote.noteType
         _noteList[updatedNote.noteId]?.pinned = updatedNote.pinned
     }
 
-    fun addToArchive(noteId: Int){
+    fun pinNotes(noteId: Int){
+        _noteList[noteId]?.pinned = PINNED
+    }
+
+    fun unpinNote(noteId: Int){
+        _noteList[noteId]?.pinned = UNPINNED
+    }
+
+    fun addNoteToArchive(noteId: Int){
         _noteList[noteId]?.noteType = ARCHIVED
     }
 
-    fun removeFromArchive(noteId: Int){
+    fun removeNoteFromArchive(noteId: Int){
         _noteList[noteId]?.noteType = NOTES
     }
 

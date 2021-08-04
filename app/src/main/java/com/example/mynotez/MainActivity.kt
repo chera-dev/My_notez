@@ -11,9 +11,11 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.mynotez.databinding.ActivityMainBinding
@@ -21,18 +23,19 @@ import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.mynotez.SharedViewModel.Companion.LABEL
-import com.example.mynotez.SharedViewModel.Companion.NOTEZ
+import com.example.mynotez.viewmodel.SharedViewModel
+import com.example.mynotez.viewmodel.SharedViewModel.Companion.LABEL
+import com.example.mynotez.viewmodel.SharedViewModel.Companion.NOTEZ
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var appBarConfiguration: AppBarConfiguration
+
     private lateinit var binding: ActivityMainBinding
+    private lateinit var sharedSharedViewModel: SharedViewModel
+    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController :NavController
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var menu: Menu
     private var labelOrder = 1
-
-    private lateinit var sharedSharedViewModel: SharedViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +55,12 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        /*navController.addOnDestinationChangedListener{ nc: NavController, nd: NavDestination, args:Bundle? ->
+        navController.addOnDestinationChangedListener{ nc: NavController, nd: NavDestination, _:Bundle? ->
             if(nd.id == nc.graph.startDestination)
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             else
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        }*/
+        }
 
         addItemToNavDrawer(navView)
 
@@ -72,9 +75,6 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        //val drawerToggle = ActionBarDrawerToggle(this,drawerLayout,"open","close")
-
-        // Close the soft keyboard when you open or close the Drawer
         val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(
             this,
             drawerLayout,
@@ -86,7 +86,6 @@ class MainActivity : AppCompatActivity() {
                 // Triggered once the drawer closes
                 super.onDrawerClosed(drawerView)
             }
-
             override fun onDrawerOpened(drawerView: View) {
                 // Triggered once the drawer opens
                 super.onDrawerOpened(drawerView)
@@ -157,4 +156,10 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    override fun onBackPressed() {
+        if(drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START)
+        else
+            super.onBackPressed()
+    }
 }

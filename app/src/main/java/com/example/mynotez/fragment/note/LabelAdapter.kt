@@ -1,12 +1,14 @@
-package com.example.mynotez
+package com.example.mynotez.fragment.note
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mynotez.Label
+import com.example.mynotez.R
 import com.google.android.material.textview.MaterialTextView
 
-class LabelAdapter(val list: MutableSet<Label>): RecyclerView.Adapter<LabelAdapter.ViewHolder>() {
+class LabelAdapter(private val list: MutableSet<Label>): RecyclerView.Adapter<LabelAdapter.ViewHolder>() {
     private val listOfLabel = mutableListOf<Label>()
     init {
         listOfLabel.addAll(list)
