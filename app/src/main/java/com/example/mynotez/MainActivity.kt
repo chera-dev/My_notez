@@ -26,6 +26,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.mynotez.viewmodel.SharedViewModel
 import com.example.mynotez.viewmodel.SharedViewModel.Companion.LABEL
 import com.example.mynotez.viewmodel.SharedViewModel.Companion.NOTEZ
+import com.google.android.material.textfield.TextInputEditText
 
 class MainActivity : AppCompatActivity() {
 
@@ -93,6 +94,7 @@ class MainActivity : AppCompatActivity() {
         val subMenu: SubMenu = menu.addSubMenu("Label")
         addLabelToDrawer(subMenu)
         menu.add(2,1,0,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
+            it.isEnabled = true
             val bundle = bundleOf("title" to it.title,"type" to NOTEZ)
             if (navController.previousBackStackEntry != null)
                 navController.popBackStack()
@@ -106,7 +108,8 @@ class MainActivity : AppCompatActivity() {
         val labelList = sharedSharedViewModel.getLabels()
         for (i in labelList) {
             subMenu.add(1,labelOrder,labelOrder,i.labelName).setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
-                toNotesFragment(it,i.labelId,labelOrder)
+                toNotesFragment(it,i.labelId)
+                it.isChecked = true
                 true
             }
             labelOrder++
@@ -115,12 +118,12 @@ class MainActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Add new label")
             val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
-            val titleEditText = dialogLayout.findViewById<EditText>(R.id.label_title_edit_text)
+            val titleEditText = dialogLayout.findViewById<TextInputEditText>(R.id.label_title_edit_text)
             builder.setView(dialogLayout)
             builder.setPositiveButton("Add Label"){ _, _ ->
                 val label = sharedSharedViewModel.addLabel(labelOrder,titleEditText.text.toString())
                 subMenu.add(1,labelOrder,labelOrder,label.labelName).setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
-                    toNotesFragment(it,label.labelId,labelOrder)
+                    toNotesFragment(it,label.labelId)
                     true
                 }
                 labelOrder++
@@ -130,8 +133,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun toNotesFragment(it:MenuItem, labelId:Int, orderId: Int){
-        val bundle = bundleOf("title" to it.title,"type" to  LABEL,"labelId" to labelId,"orderId" to orderId)
+    private fun toNotesFragment(it:MenuItem, labelId:Int){
+        val bundle = bundleOf("title" to it.title,"type" to  LABEL,"labelId" to labelId)
         if (navController.previousBackStackEntry != null)
             navController.popBackStack()
         navController.navigate(R.id.nav_notes_frag,bundle)

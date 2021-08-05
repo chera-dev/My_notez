@@ -1,9 +1,13 @@
 package com.example.mynotez.fragment.note
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
@@ -58,10 +62,9 @@ class NotesFragment : Fragment(), ItemListener {
         getNotes()
 
         if (notesList?.isNotEmpty() == true) {
-            recyclerView = binding.notesRecyclerView
-            recyclerAdapter = NotesAdapter(notesList!!, this, sharedSharedViewModel)
-            recyclerView.adapter = recyclerAdapter
-            recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            setRecyclerView()
+            binding.searchBar.visibility = View.VISIBLE
+            performSearch()
         }
         else {
             Toast.makeText(requireContext(), "no no no notes", Toast.LENGTH_LONG).show()
@@ -70,6 +73,47 @@ class NotesFragment : Fragment(), ItemListener {
         if (labelId != null)
             setHasOptionsMenu(true)
         return binding.root
+    }
+
+    private fun setRecyclerView(){
+        recyclerView = binding.notesRecyclerView
+        recyclerAdapter = NotesAdapter(notesList!!, this, sharedSharedViewModel)
+        recyclerView.adapter = recyclerAdapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+    }
+
+    private fun performSearch(){
+        val searchBar = binding.searchBar
+        searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                search(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                search(newText)
+                return true
+            }
+        })
+        val closeBtnId = searchBar.context.resources.getIdentifier("android:id/search_close_btn",null,null)
+        val closeBtn:ImageView = searchBar.findViewById(closeBtnId)
+        closeBtn.setOnClickListener {
+            searchBar.setQuery("",true)
+            searchBar.clearFocus()
+        }
+    }
+
+    private fun search(text:String?){
+        val matchedNotes = mutableListOf<Note>()
+        text?.let {
+            notesList?.forEach { note->
+                if (note.noteTitle.contains(text,true)||note.noteDetails.contains(text,true)){
+                    matchedNotes.add(note)
+                }
+            }
+            if (matchedNotes.isEmpty())
+                Toast.makeText(requireContext(),"No Notes Matching",Toast.LENGTH_LONG).show()
+            recyclerAdapter.changeData(matchedNotes)
+        }
     }
 
     private fun getNotes(){
@@ -212,6 +256,7 @@ class NotesFragment : Fragment(), ItemListener {
                 true
             }
         }
+
         inflater.inflate(R.menu.main,menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
