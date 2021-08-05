@@ -69,7 +69,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/label_recycler_view_in_details"
+        app:layout_constraintTop_toBottomOf="@id/chip_group_in_details"
         app:layout_constraintVertical_bias="0" />
 
     <TextView
@@ -77,12 +77,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:paddingEnd="15dp"
-        android:visibility="gone"
-        android:text="@string/pinned"
         android:outlineAmbientShadowColor="@color/black"
         android:outlineSpotShadowColor="@color/black"
+        android:paddingEnd="15dp"
+        android:text="@string/pinned"
         android:textColor="#00B6B6"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
@@ -105,8 +105,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:paddingStart="15dp"
-        android:visibility="gone"
         android:text="@string/archived"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/textView_date_created_in_details"
@@ -116,26 +116,37 @@
         android:id="@+id/label_text_view_in_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingEnd="5dp"
-        android:text="Label: "
+        android:text="Labels:  "
         android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/detailsTextViewInDetails"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/label_recycler_view_in_details"
-        android:layout_width="match_parent"
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_in_details"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="3dp"
+        android:layout_marginTop="3dp"
         android:visibility="gone"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/label_text_view_in_details"
         app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />
+
+   <!-- <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/label_recycler_view_in_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:visibility="visible"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/label_text_view_in_details"
+        app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

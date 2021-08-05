@@ -39,12 +39,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         sharedSharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
-
 
         setSupportActionBar(binding.appBarMain.toolBar)
         drawerLayout = binding.drawerLayout
@@ -67,7 +64,6 @@ class MainActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.nav_notes_frag -> {
-                    Toast.makeText(this, "yaaahh ${it.title}", Toast.LENGTH_SHORT).show()
                     navController.popBackStack()
                     drawerLayout.close()
                 }
@@ -82,12 +78,7 @@ class MainActivity : AppCompatActivity() {
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         ) {
-            override fun onDrawerClosed(drawerView: View) {
-                // Triggered once the drawer closes
-                super.onDrawerClosed(drawerView)
-            }
             override fun onDrawerOpened(drawerView: View) {
-                // Triggered once the drawer opens
                 super.onDrawerOpened(drawerView)
                 menu.getItem(1).subMenu.clear()
                 addLabelToDrawer(menu.getItem(1).subMenu)
@@ -102,7 +93,6 @@ class MainActivity : AppCompatActivity() {
         val subMenu: SubMenu = menu.addSubMenu("Label")
         addLabelToDrawer(subMenu)
         menu.add(2,1,0,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
-            Toast.makeText(this, "naahh ${it.title}", Toast.LENGTH_SHORT).show()
             val bundle = bundleOf("title" to it.title,"type" to NOTEZ)
             if (navController.previousBackStackEntry != null)
                 navController.popBackStack()
@@ -122,14 +112,12 @@ class MainActivity : AppCompatActivity() {
             labelOrder++
         }
         subMenu.add("add label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener { menuItem ->
-            Toast.makeText(this, "${menuItem.title} clicked", Toast.LENGTH_SHORT).show()
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Add new label")
             val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
             val titleEditText = dialogLayout.findViewById<EditText>(R.id.label_title_edit_text)
             builder.setView(dialogLayout)
             builder.setPositiveButton("Add Label"){ _, _ ->
-                Toast.makeText(this,"test ${titleEditText.text} added",Toast.LENGTH_SHORT).show()
                 val label = sharedSharedViewModel.addLabel(labelOrder,titleEditText.text.toString())
                 subMenu.add(1,labelOrder,labelOrder,label.labelName).setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
                     toNotesFragment(it,label.labelId,labelOrder)
@@ -143,7 +131,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun toNotesFragment(it:MenuItem, labelId:Int, orderId: Int){
-        Toast.makeText(this, "naahh ${it.title}", Toast.LENGTH_SHORT).show()
         val bundle = bundleOf("title" to it.title,"type" to  LABEL,"labelId" to labelId,"orderId" to orderId)
         if (navController.previousBackStackEntry != null)
             navController.popBackStack()

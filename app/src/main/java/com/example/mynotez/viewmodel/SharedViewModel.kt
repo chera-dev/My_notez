@@ -18,8 +18,8 @@ class SharedViewModel  : ViewModel() {
     private var nextNoteId:Int = 5
 
     init {
-        _noteList[1] = (Note("Chera","I'm a good girl", NOTES,1))
-        _noteList[2] = (Note("Dev","I'm a bad girl", NOTES,2, 1))
+        _noteList[1] = (Note("Note 1 Title","Note 1 description or details", NOTES,1))
+        _noteList[2] = (Note("Note 2 Title","Note 2 description or details", NOTES,2, 1))
 
         _labelList[1] = (Label(1, "important"))
         _labelList[2] = (Label(2,"not important"))
@@ -94,14 +94,7 @@ class SharedViewModel  : ViewModel() {
     }
 
 
-    fun getLabelsOfThisNote(noteId: Int):List<Label>{
-        val label = mutableListOf<Label>()
-        for (i in _noteList[noteId]?.getLabelsIdOfThisNote()!!)
-            label.add(_labelList[i]!!)
-        return label
-    }
-
-    fun getSetOfLabelsOfThisNote(noteId: Int):MutableSet<Label>{
+    fun getLabelsOfThisNote(noteId: Int):MutableSet<Label>{
         val label = mutableSetOf<Label>()
         for (i in _noteList[noteId]?.getLabelsIdOfThisNote()!!)
             label.add(_labelList[i]!!)

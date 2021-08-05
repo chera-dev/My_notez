@@ -13,6 +13,6 @@ class CreateMenu (private val menu: Menu) {
             }
     }
     fun changeIcon(itemId: Int,iconId: Int){
-        menu.getItem(itemId).setIcon(iconId)
+        menu.getItem(itemId-1).setIcon(iconId)
     }
 }

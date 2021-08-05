@@ -18,9 +18,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="2dp"
-            android:text="@string/pinned"
             android:outlineAmbientShadowColor="@color/black"
             android:outlineSpotShadowColor="@color/black"
+            android:text="@string/pinned"
             android:textColor="#00B6B6"
             android:textSize="15sp"
             android:visibility="gone"
@@ -36,6 +36,8 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="2dp"
             android:layout_marginEnd="5dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="#A8000000"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -49,9 +51,12 @@
         <TextView
             android:id="@+id/item_details"
             android:layout_width="wrap_content"
-            android:layout_height="38dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:paddingBottom="4dp"
             android:textSize="16sp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
@@ -103,11 +108,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/item_details" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/label_recycler_view"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
             android:visibility="gone"
             app:layout_constrainedHeight="true"
             app:layout_constrainedWidth="true"
@@ -116,5 +120,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/label_tag"
             app:layout_constraintTop_toBottomOf="@id/item_details" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

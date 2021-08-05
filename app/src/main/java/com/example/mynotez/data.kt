@@ -17,10 +17,8 @@ data class Note(var noteTitle:String, var noteDetails:String, var noteType: Int,
         labelOfThisNote.add(labelId)
     }
 
-    fun getLabelsIdOfThisNote():List<Int>{
-        val list = mutableListOf<Int>()
-        list.addAll(labelOfThisNote)
-        return list
+    fun getLabelsIdOfThisNote():MutableSet<Int>{
+        return labelOfThisNote
     }
 
     fun removeLabel(labelId: Int){
@@ -46,9 +44,7 @@ data class Label(val labelId:Int, var labelName:String){
         notesIdInThisLabel.remove(noteId)
     }
 
-    fun getNotesIdInThisLabel():List<Int>{
-        val list = mutableListOf<Int>()
-        list.addAll(notesIdInThisLabel)
-        return list
+    fun getNotesIdInThisLabel():MutableSet<Int>{
+        return notesIdInThisLabel
     }
 }
