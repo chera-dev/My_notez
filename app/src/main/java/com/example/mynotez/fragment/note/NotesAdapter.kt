@@ -5,11 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.mynotez.*
-import com.example.mynotez.Note.Companion.PINNED
 import com.example.mynotez.viewmodel.SharedViewModel
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -67,7 +64,7 @@ class NotesAdapter (var notesList:List<Note>, private val itemListener: ItemList
             holder.itemDetails.visibility = View.GONE
         holder.itemDate.text = data.dateCreated
         holder.itemTime.text = data.timeCreated
-        if(data.pinned == PINNED){
+        if(data.isPinned){
             holder.itemPinned.visibility = View.VISIBLE
         }
         else{

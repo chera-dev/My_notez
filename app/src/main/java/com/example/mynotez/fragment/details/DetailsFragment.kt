@@ -10,10 +10,8 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.mynotez.*
-import com.example.mynotez.Note.Companion.ARCHIVED
-import com.example.mynotez.Note.Companion.NOTES
-import com.example.mynotez.Note.Companion.PINNED
-import com.example.mynotez.Note.Companion.UNPINNED
+import com.example.mynotez.enumclass.NoteType.NOTES
+import com.example.mynotez.enumclass.NoteType.ARCHIVED
 import com.example.mynotez.databinding.FragmentDetailsBinding
 import com.example.mynotez.menu.CreateMenu
 import com.example.mynotez.viewmodel.SharedViewModel
@@ -62,7 +60,7 @@ class DetailsFragment : Fragment() {
         }
         binding.textViewDateCreatedInDetails.visibility = View.VISIBLE
         binding.textViewDateCreatedInDetails.text = editedNote.dateCreated
-        if (editedNote.pinned == PINNED)
+        if (editedNote.isPinned == true)
             binding.textViewPinnedInDetails.visibility = View.VISIBLE
         if (editedNote.noteType == ARCHIVED)
             binding.textViewNoteType.visibility = View.VISIBLE
@@ -103,19 +101,19 @@ class DetailsFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         val createMenu = CreateMenu(menu)
         createMenu.addMenuItem(
-            Menu.NONE, 1, 1, if (editedNote.pinned == PINNED) "unPin" else "pin",
-            if (editedNote.pinned == PINNED) R.drawable.ic_baseline_push_unpin_24 else R.drawable.ic_outline_push_pin_24,
+            Menu.NONE, 1, 1, if (editedNote.isPinned == true) "unPin" else "pin",
+            if (editedNote.isPinned == true) R.drawable.ic_baseline_push_unpin_24 else R.drawable.ic_outline_push_pin_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
-                if (editedNote.pinned == PINNED) {
+                if (editedNote.isPinned == true) {
                     createMenu.changeIcon(1, R.drawable.ic_outline_push_pin_24)
-                    editedNote.pinned = UNPINNED
+                    editedNote.isPinned = false
                     binding.textViewPinnedInDetails.visibility = View.GONE
                     if (noteId != null)
                         sharedSharedViewModel.unpinNote(noteId as Int)
                 }
                 else{
                     createMenu.changeIcon(1, R.drawable.ic_baseline_push_unpin_24)
-                    editedNote.pinned = PINNED
+                    editedNote.isPinned = true
                     binding.textViewPinnedInDetails.visibility = View.VISIBLE
                     if(noteId != null)
                         sharedSharedViewModel.pinNotes(noteId as Int)

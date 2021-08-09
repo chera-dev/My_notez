@@ -4,10 +4,8 @@ package com.example.mynotez.viewmodel
 import androidx.lifecycle.ViewModel
 import com.example.mynotez.Label
 import com.example.mynotez.Note
-import com.example.mynotez.Note.Companion.ARCHIVED
-import com.example.mynotez.Note.Companion.NOTES
-import com.example.mynotez.Note.Companion.PINNED
-import com.example.mynotez.Note.Companion.UNPINNED
+import com.example.mynotez.enumclass.NoteType.NOTES
+import com.example.mynotez.enumclass.NoteType.ARCHIVED
 
 class SharedViewModel  : ViewModel() {
 
@@ -19,7 +17,7 @@ class SharedViewModel  : ViewModel() {
 
     init {
         _noteList[1] = (Note("Note 1 Title","Note 1 description or details", NOTES,1))
-        _noteList[2] = (Note("Note 2 Title","Note 2 description or details", NOTES,2, 1))
+        _noteList[2] = (Note("Note 2 Title","Note 2 description or details", NOTES,2, true))
 
         _labelList[1] = (Label(1, "important"))
         _labelList[2] = (Label(2,"not important"))
@@ -37,7 +35,7 @@ class SharedViewModel  : ViewModel() {
             if (i.noteType == NOTES)
                 noteList.add(i)
         noteList.sortByDescending { it.noteId }
-        noteList.sortByDescending { it.pinned }
+        noteList.sortByDescending { it.isPinned }
         return noteList
     }
 
@@ -47,7 +45,7 @@ class SharedViewModel  : ViewModel() {
             if (i.noteType == ARCHIVED)
                 archivedNoteList.add(i)
         archivedNoteList.sortByDescending { it.noteId }
-        archivedNoteList.sortByDescending { it.pinned }
+        archivedNoteList.sortByDescending { it.isPinned }
         return archivedNoteList
     }
 
@@ -128,15 +126,15 @@ class SharedViewModel  : ViewModel() {
         _noteList[updatedNote.noteId]?.noteTitle = updatedNote.noteTitle
         _noteList[updatedNote.noteId]?.noteDetails = updatedNote.noteDetails
         _noteList[updatedNote.noteId]?.noteType = updatedNote.noteType
-        _noteList[updatedNote.noteId]?.pinned = updatedNote.pinned
+        _noteList[updatedNote.noteId]?.isPinned = updatedNote.isPinned
     }
 
     fun pinNotes(noteId: Int){
-        _noteList[noteId]?.pinned = PINNED
+        _noteList[noteId]?.isPinned = true
     }
 
     fun unpinNote(noteId: Int){
-        _noteList[noteId]?.pinned = UNPINNED
+        _noteList[noteId]?.isPinned = false
     }
 
     fun addNoteToArchive(noteId: Int){

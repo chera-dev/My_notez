@@ -1,10 +1,8 @@
 package com.example.mynotez.fragment.note
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.SearchView
@@ -16,13 +14,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotez.*
-import com.example.mynotez.Note.Companion.UNPINNED
 import com.example.mynotez.viewmodel.SharedViewModel.Companion.LABEL
 import com.example.mynotez.viewmodel.SharedViewModel.Companion.NOTEZ
 import com.example.mynotez.databinding.FragmentNotesBinding
 import com.example.mynotez.menu.MenuBottomDialog
 import com.example.mynotez.viewmodel.SharedViewModel
-import java.util.ArrayList
 
 class NotesFragment : Fragment(), ItemListener {
 
@@ -142,8 +138,8 @@ class NotesFragment : Fragment(), ItemListener {
     override fun onLongClick(position: Int) {
         val data: Note = recyclerAdapter.notesList[position]
         val menuBottomDialog = MenuBottomDialog(requireContext())
-        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation(if (data.pinned == UNPINNED) "pin note" else "unPin note") {
-            if (data.pinned == UNPINNED)
+        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation(if (data.isPinned == false) "pin note" else "unPin note") {
+            if (!data.isPinned)
                 sharedSharedViewModel.pinNotes(data.noteId)
             else
                 sharedSharedViewModel.unpinNote(data.noteId)

@@ -1,11 +1,12 @@
 package com.example.mynotez
 
+import com.example.mynotez.enumclass.NoteType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 
-data class Note(var noteTitle:String, var noteDetails:String, var noteType: Int, var noteId: Int, var pinned:Int = UNPINNED){
+data class Note(var noteTitle:String, var noteDetails:String, var noteType: NoteType, var noteId: Int, var isPinned:Boolean = false){
 
     private val currentDateTime: LocalDateTime = LocalDateTime.now()
     val timeCreated: String = currentDateTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
@@ -25,26 +26,4 @@ data class Note(var noteTitle:String, var noteDetails:String, var noteType: Int,
         labelOfThisNote.remove(labelId)
     }
 
-    companion object{
-        const val NOTES = 1
-        const val ARCHIVED = 2
-        const val PINNED = 1
-        const val UNPINNED = 0
-    }
-}
-
-data class Label(val labelId:Int, var labelName:String){
-    private val notesIdInThisLabel = mutableSetOf<Int>()
-
-    fun addNoteToThisLabel(noteId: Int){
-        notesIdInThisLabel.add(noteId)
-    }
-
-    fun removeNote(noteId: Int){
-        notesIdInThisLabel.remove(noteId)
-    }
-
-    fun getNotesIdInThisLabel():MutableSet<Int>{
-        return notesIdInThisLabel
-    }
 }
