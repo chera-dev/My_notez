@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotez.*
-import com.example.mynotez.viewmodel.SharedViewModel
+import com.example.mynotez.data.Label
+import com.example.mynotez.data.Notes
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
-class NotesAdapter (var notesList:List<Note>, private val itemListener: ItemListener?, private val sharedViewModel: SharedViewModel?)
+class NotesAdapter ( private val itemListener: ItemListener?)
     : RecyclerView.Adapter<NotesAdapter.NoteCardViewHolder>() {
+
+    var notesList:List<Notes> = listOf()
 
     inner class NoteCardViewHolder(view: View): RecyclerView.ViewHolder(view){
         val itemTitle: TextView = view.findViewById(R.id.item_title)
@@ -34,7 +37,7 @@ class NotesAdapter (var notesList:List<Note>, private val itemListener: ItemList
         }
     }
 
-    fun changeData(newList: List<Note>){
+    fun changeData(newList: List<Notes>){
         notesList = newList
         notifyDataSetChanged()
     }
@@ -49,7 +52,7 @@ class NotesAdapter (var notesList:List<Note>, private val itemListener: ItemList
 
     override fun onBindViewHolder(holder: NoteCardViewHolder, position: Int) {
 
-        val data: Note = notesList[position]
+        val data: Notes = notesList[position]
         if (data.noteTitle.isNotEmpty()) {
             holder.itemTitle.visibility = View.VISIBLE
             holder.itemTitle.text = data.noteTitle
@@ -70,20 +73,21 @@ class NotesAdapter (var notesList:List<Note>, private val itemListener: ItemList
         else{
             holder.itemPinned.visibility = View.GONE
         }
-        if (sharedViewModel!=null){
-            val label: MutableSet<Label> = sharedViewModel.getLabelsOfThisNote(data.noteId)
+        //*  if (sharedViewModel!=null){
+            //*val label: MutableSet<Label> = sharedViewModel.getLabelsOfThisNote(data.noteId)
+            val label: Set<String> = data.getLabels()
             if (label.isNotEmpty()) {
                 holder.labelTag.visibility = View.VISIBLE
                 holder.chipGroup.visibility = View.VISIBLE
                 holder.chipGroup.removeAllViews()
                 for (i in label)
-                    holder.chipGroup.addChip(holder.itemView.context,i.labelName)
+                    holder.chipGroup.addChip(holder.itemView.context,i)
+                //holder.chipGroup.addChip(holder.itemView.context,i.labelname)
             }
             else{
                 holder.labelTag.visibility = View.GONE
                 holder.chipGroup.visibility = View.GONE
             }
-        }
     }
 
     private fun ChipGroup.addChip(context: Context, label:String){

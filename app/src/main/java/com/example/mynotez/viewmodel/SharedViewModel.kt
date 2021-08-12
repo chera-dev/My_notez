@@ -2,11 +2,11 @@ package com.example.mynotez.viewmodel
 
 
 import androidx.lifecycle.ViewModel
-import com.example.mynotez.Label
 import com.example.mynotez.Note
-import com.example.mynotez.enumclass.NoteType.NOTES
-import com.example.mynotez.enumclass.NoteType.ARCHIVED
-
+import com.example.mynotez.data.Label
+import com.example.mynotez.enumclass.NoteType.TYPENOTES
+import com.example.mynotez.enumclass.NoteType.TYPEARCHIVED
+/*
 class SharedViewModel  : ViewModel() {
 
     private val _noteList = mutableMapOf<Int, Note>()
@@ -16,8 +16,8 @@ class SharedViewModel  : ViewModel() {
     private var nextNoteId:Int = 5
 
     init {
-        _noteList[1] = (Note("Note 1 Title","Note 1 description or details", NOTES,1))
-        _noteList[2] = (Note("Note 2 Title","Note 2 description or details", NOTES,2, true))
+        _noteList[1] = (Note("Note 1 Title","Note 1 description or details", TYPENOTES,1))
+        _noteList[2] = (Note("Note 2 Title","Note 2 description or details", TYPENOTES,2, true))
 
         _labelList[1] = (Label(1, "important"))
         _labelList[2] = (Label(2,"not important"))
@@ -25,14 +25,14 @@ class SharedViewModel  : ViewModel() {
         _noteList[2]?.addLabelToThisNote(1)
         _labelList[1]?.addNoteToThisLabel(2)
 
-        _noteList[3] = (Note( "archived note one","details of archived note one", ARCHIVED,3))
-        _noteList[4] = (Note( "archived note two","details of archived note two", ARCHIVED,4))
+        _noteList[3] = (Note( "archived note one","details of archived note one", TYPEARCHIVED,3))
+        _noteList[4] = (Note( "archived note two","details of archived note two", TYPEARCHIVED,4))
     }
 
     fun getNotes():List<Note>{
         val noteList = mutableListOf<Note>()
         for (i in _noteList.values)
-            if (i.noteType == NOTES)
+            if (i.noteType == TYPENOTES)
                 noteList.add(i)
         noteList.sortByDescending { it.noteId }
         noteList.sortByDescending { it.isPinned }
@@ -42,7 +42,7 @@ class SharedViewModel  : ViewModel() {
     fun getArchivedNotes():List<Note>{
         val archivedNoteList = mutableListOf<Note>()
         for (i in _noteList.values)
-            if (i.noteType == ARCHIVED)
+            if (i.noteType == TYPEARCHIVED)
                 archivedNoteList.add(i)
         archivedNoteList.sortByDescending { it.noteId }
         archivedNoteList.sortByDescending { it.isPinned }
@@ -138,11 +138,11 @@ class SharedViewModel  : ViewModel() {
     }
 
     fun addNoteToArchive(noteId: Int){
-        _noteList[noteId]?.noteType = ARCHIVED
+        _noteList[noteId]?.noteType = TYPEARCHIVED
     }
 
     fun removeNoteFromArchive(noteId: Int){
-        _noteList[noteId]?.noteType = NOTES
+        _noteList[noteId]?.noteType = TYPENOTES
     }
 
     fun deleteNote(noteId: Int){
@@ -155,3 +155,4 @@ class SharedViewModel  : ViewModel() {
     }
 
 }
+ */

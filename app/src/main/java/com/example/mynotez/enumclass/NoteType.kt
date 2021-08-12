@@ -1,3 +1,3 @@
 package com.example.mynotez.enumclass
 
-enum class NoteType {NOTES , ARCHIVED }
+enum class NoteType {TYPENOTES , TYPEARCHIVED }
