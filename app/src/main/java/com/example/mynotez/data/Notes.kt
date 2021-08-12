@@ -26,6 +26,10 @@ data class Notes(@ColumnInfo(name = "note_title") var noteTitle:String,
         labels.add(labelName)
     }
 
+    fun addAllLabels(labelNames:Set<String>){
+        labels.addAll(labelNames)
+    }
+
     fun getLabels():Set<String>{
         return labels
     }

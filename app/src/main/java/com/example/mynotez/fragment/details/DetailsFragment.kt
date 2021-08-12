@@ -37,6 +37,10 @@ class DetailsFragment : Fragment() {
     //private var listOfLabels = mutableSetOf<Label>()
     private var listOfLabels = mutableSetOf<String>()
 
+    //@
+    private lateinit var titleEditText: EditText
+    private lateinit var detailsEditText: EditText
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,8 +51,9 @@ class DetailsFragment : Fragment() {
 
 
         val root: View = binding.root
-        val titleEditText: EditText = binding.titleTextViewInDetails
-        val detailsEditText: EditText = binding.detailsTextViewInDetails
+        //@
+        titleEditText = binding.titleTextViewInDetails
+        detailsEditText = binding.detailsTextViewInDetails
 
         if(arguments != null) {
             //*
@@ -100,29 +105,32 @@ class DetailsFragment : Fragment() {
             binding.textViewNoteType.visibility = View.VISIBLE
 
         binding.fabUpdateNotes.setOnClickListener {
-            editedNote.noteTitle = titleEditText.text.toString()
-            editedNote.noteDetails = detailsEditText.text.toString()
-            if(editedNote.noteTitle != "" || editedNote.noteDetails != ""){
-                //*
-                /*if (noteId != null)
-                    sharedSharedViewModel.updateNotes(editedNote)
-                else
-                    sharedSharedViewModel.addNewNotes(editedNote,listOfLabels)*/
-
-                if (noteId != null)
-                    mUserViewModel.updateNote(editedNote)
-                else
-                    mUserViewModel.addNote(editedNote)
-                //& also send list of label that needs to be added
-                findNavController().popBackStack()
-            }
-            else{
-                Toast.makeText(requireContext(),"Empty Note Can't Be Saved",Toast.LENGTH_SHORT).show()
-            }
-            //* findNavController().popBackStack()
+            saveNote()
+            findNavController().popBackStack()
         }
         setHasOptionsMenu(true)
         return root
+    }
+
+    private fun saveNote(){
+        editedNote.noteTitle = titleEditText.text.toString()
+        editedNote.noteDetails = detailsEditText.text.toString()
+        if(editedNote.noteTitle != "" || editedNote.noteDetails != ""){
+            //*
+            /*if (noteId != null)
+                sharedSharedViewModel.updateNotes(editedNote)
+            else
+                sharedSharedViewModel.addNewNotes(editedNote,listOfLabels)*/
+
+            if (noteId != null)
+                mUserViewModel.updateNote(editedNote)
+            else
+                mUserViewModel.addNote(editedNote)
+            //& also send list of label that needs to be added
+        }
+        else{
+            Toast.makeText(requireContext(),"Empty Note Discarded",Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showLabels(){
@@ -242,14 +250,31 @@ class DetailsFragment : Fragment() {
         createMenu.addMenuItem(
             Menu.NONE, 4, 4, "delete", R.drawable.ic_baseline_delete_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
-                Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
                 //*if(noteId != null)
                 //*    sharedSharedViewModel.deleteNote(noteId as Int)
-                if(noteId != null)
-                    mUserViewModel.deleteNote(editedNote)
-                findNavController().popBackStack()
+                //*if(noteId != null)
+                //*    mUserViewModel.deleteNote(editedNote)
+                //*findNavController().popBackStack()
+                //#
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setTitle("Delete Note - ${editedNote.noteTitle}?")
+                builder.setPositiveButton("Delete"){ _, _ ->
+                    Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
+                    if(noteId != null)
+                        mUserViewModel.deleteNote(editedNote)
+                    findNavController().popBackStack()
+                }
+                builder.setNegativeButton("Cancel"){ _, _ ->
+                }
+                builder.show()
+
             })
         inflater.inflate(R.menu.main,menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
+
+    /*override fun onDestroyView() {
+        saveNote()
+        super.onDestroyView()
+    }*/
 }

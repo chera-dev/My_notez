@@ -27,6 +27,7 @@ class NoteRepository(private val noteDao: NoteDao) {
         return noteDao.getBaseNotesByLabel(labelName)
     }*/
 
+    // & change it to content of xxx and call it from view model
     suspend fun getNotesByIds(noteIds:Set<Long>) = noteDao.getNotesOfNoteIds(noteIds)
 
 

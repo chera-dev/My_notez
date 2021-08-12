@@ -25,19 +25,17 @@ interface NoteDao {
     @Query("SELECT * FROM note_table ORDER BY note_id DESC")
     fun readAllNotes(): LiveData<List<Notes>>
 
-    @Query("SELECT * FROM note_table WHERE note_id = :noteId LIMIT 1")
-    suspend fun getNoteById(noteId:Long): Notes?
-
     //okay
     @Query("SELECT * FROM note_table WHERE note_type=:noteType")
     fun getNotesOfType(noteType:NoteType):LiveData<List<Notes>>
 
-
-    //
+    // okay
     @Query("SELECT * FROM note_table WHERE note_id IN (:noteIds)")
     fun getNotesOfNoteIds(noteIds: Set<Long>):LiveData<List<Notes>>
 
-
+    //#
+    @Query("SELECT * FROM note_table WHERE note_id = :noteId LIMIT 1")
+    fun getNoteById(noteId:Long): LiveData<Notes>
 
     //not
     //@Query("SELECT * FROM note_table WHERE :label IN (labels)")

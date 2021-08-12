@@ -148,7 +148,14 @@ class MainActivity : AppCompatActivity() {
                 builder.setView(dialogLayout)
                 builder.setPositiveButton("Add Label"){ _, _ ->
                     // * val label = sharedSharedViewModel.addLabel(labelOrder,titleEditText.text.toString())
-                    mUserViewModel.addLabel(titleEditText.text.toString())
+                    val labelName = titleEditText.text.toString()
+                    for (i in it) {
+                        if (labelName == i.labelName)
+                            Toast.makeText(this, "Label Already exists", Toast.LENGTH_SHORT).show()
+                        else
+                            mUserViewModel.addLabel(titleEditText.text.toString())
+                    }
+
                     //*
                     /*subMenu.add(1,labelOrder,labelOrder,label.labelName).setIcon(R.drawable.ic_outline_label_24)
                         .setOnMenuItemClickListener { it ->

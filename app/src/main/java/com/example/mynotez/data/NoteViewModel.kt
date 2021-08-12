@@ -59,31 +59,30 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         }
     }
 
-    /////////
-    /*fun getNotesOfNoteIds(noteIds: Set<Long>): List<Notes> {
-        //return allNotes.value?.filter { note: Notes -> noteIds.contains(note.noteId) }
-        //return noteDao.getNotesOfNoteIds(noteIds)
-        return viewModelScope.launch(Dispatchers.IO) {
-            noteDao.getNotesOfNoteIds(noteIds)
-        }
-    }*/
-
+    //okay
     fun getNotesOfNoteIds(noteIds: Set<Long>): Content<Notes> {
         return Content(noteDao.getNotesOfNoteIds(noteIds))
     }
+
     //#
+    fun getNoteById(noteId:Long): summa<Notes>{
+        return summa(noteDao.getNoteById(noteId))
+    }
+
+
+    //okay
     fun addLabelWithNote(note: Notes,label: Label){
-        //note.addLabel(label.labelName)
+        note.addLabel(label.labelName)
         updateNote(note)
-        //label.addNote(note.noteId)
+        label.addNote(note.noteId)
         updateLabel(label)
     }
 
-    //#
+    //okay
     fun removeLabelFromNote(note: Notes,label: Label){
-        //note.removeLabel(label.labelName)
+        note.removeLabel(label.labelName)
         updateNote(note)
-        //label.removeNotes(note.noteId)
+        label.removeNotes(note.noteId)
         updateLabel(label)
     }
 
@@ -94,28 +93,20 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         updateNote(note)
     }
 
-    //#
-    // & change to update method in dao
-    fun renameLabel(label: Label,newLabelName:String){
-        label.labelName = newLabelName
-        updateLabel(label)
-        //& change label names in notes which contains the label
-    }
-
     //# not
     fun getLabelByName(labelName: String):Label?{
         return labelDao.getLabelByName(labelName)
     }
 
     //not
-    fun getNoteById(noteId:Long):Notes?{
+    /*fun getNoteById(noteId:Long):Notes?{
         var note:Notes? = null
         viewModelScope.launch(Dispatchers.IO) {
             note = noteDao.getNoteById(noteId)
             note = Notes("sfs","sgfw", TYPENOTES)
         }
         return note
-    }
+    }*/
 
 
     fun addLabel(labelName:String){
@@ -133,11 +124,28 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
     }
 
     fun deleteLabel(label: Label){
+        val noteIds = label.getNotes()
+        if (label.getNotes().isNotEmpty()){
+            val notes = getNotesOfNoteIds(noteIds).value
+            if (notes != null) {
+                for (i in notes){
+                    removeLabelFromNote(i,label)
+                }
+            }
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
             labelRepository.deleteLabel(label)
         }
     }
 
+    //#
+    // & change to update method in dao
+    fun renameLabel(label: Label,newLabelName:String){
+        label.labelName = newLabelName
+        updateLabel(label)
+        //& change label names in notes which contains the label
+    }
 
     // & change to update in dao method
     fun changePinStatus(status:Boolean,note: Notes){
@@ -151,6 +159,15 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
 class Content<T>(liveData: LiveData<List<T>>) : LiveData<List<T>>() {
 
     private val observer = Observer<List<T>> { list -> value = list }
+
+    init {
+        liveData.observeForever(observer)
+    }
+}
+
+
+class summa<T>(liveData: LiveData<T>): LiveData<T>(){
+    private val observer = Observer<T> { data -> value = data  }
 
     init {
         liveData.observeForever(observer)

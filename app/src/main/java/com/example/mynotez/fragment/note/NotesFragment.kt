@@ -98,16 +98,15 @@ class NotesFragment : Fragment(), ItemListener {
             recyclerAdapter.changeData(it)
             myNotes = it
 
-
             if (myNotes?.isNotEmpty() == true) {
                 setRecyclerView()
                 binding.searchBar.visibility = View.VISIBLE
+                binding.noNotesCardView.visibility = View.GONE
                 performSearch()
             }
             else {
-                Toast.makeText(requireContext(), "no no no notes", Toast.LENGTH_LONG).show()
                 binding.searchBar.visibility = View.GONE
-                ////////////make a text view and image view of gone type to show no notes available
+                binding.noNotesCardView.visibility = View.VISIBLE
             }
         })
 
@@ -321,7 +320,7 @@ class NotesFragment : Fragment(), ItemListener {
                 Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
                 val builder = AlertDialog.Builder(requireContext())
                 //*val label = sharedSharedViewModel.getLabelById(label!!)
-                builder.setTitle("Delete label - ${label!!.labelName}")
+                builder.setTitle("Delete label - ${label!!.labelName}?")
                 builder.setPositiveButton("Delete"){ _, _ ->
                     mUserViewModel.deleteLabel(label!!)
                     //*sharedSharedViewModel.deleteLabel(this.label!!)
