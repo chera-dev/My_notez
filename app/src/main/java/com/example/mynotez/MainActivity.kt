@@ -1,12 +1,14 @@
 package com.example.mynotez
 
 import android.app.AlertDialog
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -23,6 +25,7 @@ import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.mynotez.data.Content
 import com.example.mynotez.data.Label
 import com.example.mynotez.data.NoteViewModel
 import com.example.mynotez.enumclass.From
@@ -145,6 +148,9 @@ class MainActivity : AppCompatActivity() {
                 builder.setTitle("Add new label")
                 val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
                 val titleEditText = dialogLayout.findViewById<TextInputEditText>(R.id.label_title_edit_text)
+                titleEditText.requestFocus()
+                val imm:InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY)
                 builder.setView(dialogLayout)
                 builder.setPositiveButton("Add Label"){ _, _ ->
                     // * val label = sharedSharedViewModel.addLabel(labelOrder,titleEditText.text.toString())
@@ -163,6 +169,9 @@ class MainActivity : AppCompatActivity() {
                         true
                     }
                     labelOrder++*/
+                }
+                builder.setNegativeButton("Cancel"){ _, _ ->
+                    imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
                 }
                 builder.show()
                 true

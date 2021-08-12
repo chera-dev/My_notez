@@ -4,11 +4,13 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -26,6 +28,7 @@ import com.example.mynotez.enumclass.From
 import com.example.mynotez.enumclass.From.*
 import com.example.mynotez.enumclass.NoteType
 import com.example.mynotez.menu.MenuBottomDialog
+import com.google.android.material.textfield.TextInputEditText
 
 class NotesFragment : Fragment(), ItemListener {
 
@@ -295,13 +298,18 @@ class NotesFragment : Fragment(), ItemListener {
             menu.add("Rename label").setOnMenuItemClickListener {
                 val builder = AlertDialog.Builder(requireContext())
                 //*val label = sharedSharedViewModel.getLabelById(label!!)
-                builder.setTitle("Rename label - ${label!!.labelName}")
+                builder.setTitle("Rename label")
                 val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
                 val titleEditText = dialogLayout.findViewById<EditText>(R.id.label_title_edit_text)
+                titleEditText.setText(label!!.labelName)
+                titleEditText.setSelectAllOnFocus(true)
+                titleEditText.requestFocus()
+                val imm: InputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
                 builder.setView(dialogLayout)
                 builder.setPositiveButton("Rename Label"){ _, _ ->
                     val title = titleEditText.text.toString()
-                    if (title != "")
+                    if (title != "" && label!!.labelName!=title)
                         mUserViewModel.renameLabel(label!!,title)
                         //*sharedSharedViewModel.renameLabel(this.label!!,title)
                     //*notesList = sharedSharedViewModel.getNotesOfTheLabel(this.label!!)
@@ -312,6 +320,7 @@ class NotesFragment : Fragment(), ItemListener {
                     binding.textViewTitleInNotesFragment.text = title
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->
+                    imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
                 }
                 builder.show()
                 true
