@@ -1,21 +1,23 @@
-package com.example.mynotez.data
+package com.example.mynotez.data.repository
 
 import androidx.lifecycle.LiveData
+import com.example.mynotez.data.Notes
+import com.example.mynotez.data.dao.NoteDao
 
 class NoteRepository(private val noteDao: NoteDao) {
 
     val readAllNotes: LiveData<List<Notes>> = noteDao.readAllNotes()
     //val getNotes: List<Notes> = noteDao.getNotes()
 
-    suspend fun addNote(note:Notes){
+    suspend fun addNote(note: Notes){
         noteDao.addNote(note)
     }
 
-    suspend fun updateNote(note:Notes){
+    suspend fun updateNote(note: Notes){
         noteDao.updateNote(note)
     }
 
-    suspend fun deleteNote(note:Notes){
+    suspend fun deleteNote(note: Notes){
         noteDao.deleteNote(note)
     }
 

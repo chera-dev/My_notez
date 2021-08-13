@@ -7,11 +7,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
-import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -25,43 +22,27 @@ import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.mynotez.data.Content
 import com.example.mynotez.data.Label
 import com.example.mynotez.data.NoteViewModel
-import com.example.mynotez.enumclass.From
-import com.example.mynotez.enumclass.From.NOTES
 import com.example.mynotez.enumclass.From.LABEL
 import com.example.mynotez.enumclass.From.ARCHIVED
 import com.google.android.material.textfield.TextInputEditText
 
 class MainActivity : AppCompatActivity() {
 
-    //#
     private lateinit var mUserViewModel:NoteViewModel
-
-
-
     private lateinit var binding: ActivityMainBinding
-    //*private lateinit var sharedSharedViewModel: SharedViewModel
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController :NavController
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var menu: Menu
-    //* - removed private var labelOrder = 1
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //# - added
         mUserViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
-
-
-
-
-        //*sharedSharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
 
         setSupportActionBar(binding.appBarMain.toolBar)
         drawerLayout = binding.drawerLayout
@@ -90,22 +71,6 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
-
-        val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(
-            this,
-            drawerLayout,
-            binding.appBarMain.toolBar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        ) {
-            override fun onDrawerOpened(drawerView: View) {
-                super.onDrawerOpened(drawerView)
-                //*
-                /*menu.getItem(1).subMenu.clear()
-                addLabelToDrawer(menu.getItem(1).subMenu)*/
-            }
-        }
-        drawerLayout.addDrawerListener(toggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -124,14 +89,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun addLabelToDrawer(subMenu: SubMenu){
-        //*val labelList = mUserViewModel.allLabels
-        //*val labelList = sharedSharedViewModel.getLabels()
-        //#
+    private fun addLabelToDrawer(subMenu: SubMenu){
         mUserViewModel.allLabels.observe(this, { it ->
-            //#
             subMenu.clear()
-            //#
             var labelOrder = 1
             for (i in it) {
                 subMenu.add(1, labelOrder, labelOrder, i.labelName)
@@ -153,7 +113,6 @@ class MainActivity : AppCompatActivity() {
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY)
                 builder.setView(dialogLayout)
                 builder.setPositiveButton("Add Label"){ _, _ ->
-                    // * val label = sharedSharedViewModel.addLabel(labelOrder,titleEditText.text.toString())
                     val labelName = titleEditText.text.toString()
                     for (i in it) {
                         if (labelName == i.labelName)
@@ -161,14 +120,7 @@ class MainActivity : AppCompatActivity() {
                         else
                             mUserViewModel.addLabel(titleEditText.text.toString())
                     }
-
-                    //*
-                    /*subMenu.add(1,labelOrder,labelOrder,label.labelName).setIcon(R.drawable.ic_outline_label_24)
-                        .setOnMenuItemClickListener { it ->
-                        toNotesFragment(it,label.labelName)
-                        true
-                    }
-                    labelOrder++*/
+                    imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->
                     imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
@@ -179,9 +131,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    //@ - changed
     private fun toNotesFragment(it:MenuItem, label: Label){
-        //val bundle = bundleOf("title" to it.title,"type" to  LABEL,"labelId" to labelId)
         val bundle = bundleOf("title" to it.title,"type" to  LABEL.name,"label" to label)
         if (navController.previousBackStackEntry != null)
             navController.popBackStack()

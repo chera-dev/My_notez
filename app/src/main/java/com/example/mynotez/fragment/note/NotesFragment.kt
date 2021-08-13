@@ -10,9 +10,6 @@ import android.widget.ImageView
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -28,28 +25,19 @@ import com.example.mynotez.enumclass.From
 import com.example.mynotez.enumclass.From.*
 import com.example.mynotez.enumclass.NoteType
 import com.example.mynotez.menu.MenuBottomDialog
-import com.google.android.material.textfield.TextInputEditText
 
 class NotesFragment : Fragment(), ItemListener {
 
     private lateinit var mUserViewModel: NoteViewModel
-
-
     private lateinit var binding:FragmentNotesBinding
-    private var title = "note"
 
-    //*private val sharedSharedViewModel: SharedViewModel by activityViewModels()
+    private var title = "note"
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: NotesAdapter
-    //private var notesList: List<Note>? = null
-    //private var notesList: LiveData<List<Notes>>? = null
 
-    ////////////start with list change to live data later
     private var notesList: Content<Notes>? = null
     private var myNotes:List<Notes>? = null
-    //#
     private var noteType: From = NOTES
-    //private var labelId: Int? = null
     private var label: Label? = null
 
 
@@ -57,23 +45,10 @@ class NotesFragment : Fragment(), ItemListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = FragmentNotesBinding.inflate(inflater,container,false)
-
         mUserViewModel = ViewModelProvider(requireActivity()).get(NoteViewModel::class.java)
 
-
-
         if (arguments!=null) {
-            //*
-            /*title = requireArguments().getString("title").toString()
-            val gotNoteId = requireArguments().getInt("type")
-            if(gotNoteId!=0)
-                noteType = gotNoteId
-            val gotLabelId = requireArguments().getInt("labelId")
-            if (gotLabelId!=0)
-                label = gotLabelId
-             */
             title = requireArguments().getString("title").toString()
             val gotNoteType = requireArguments().getString("type")
             if(gotNoteType != null)
@@ -81,23 +56,19 @@ class NotesFragment : Fragment(), ItemListener {
             val gotLabel = requireArguments().getSerializable("label")
             if (gotLabel != null) {
                 label = gotLabel as Label
-                //Toast.makeText(requireContext(),"$label",Toast.LENGTH_LONG).show()
             }
         }
-
         binding.fab.setOnClickListener { view ->
             val bundle = Bundle()
             if (label != null)
                 bundle.putString("label",label?.labelName)
-            //bundle.putInt("labelId",label!!)
             view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
         }
         binding.textViewTitleInNotesFragment.text = title
-
         getNotes()
 
         recyclerAdapter = NotesAdapter(this)
-        notesList?.observe(viewLifecycleOwner, Observer {
+        notesList?.observe(viewLifecycleOwner, {
             recyclerAdapter.changeData(it)
             myNotes = it
 
@@ -120,8 +91,6 @@ class NotesFragment : Fragment(), ItemListener {
 
     private fun setRecyclerView(){
         recyclerView = binding.notesRecyclerView
-        //*recyclerAdapter = NotesAdapter(notesList!!, this, sharedSharedViewModel)
-
         recyclerView.adapter = recyclerAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
@@ -162,21 +131,6 @@ class NotesFragment : Fragment(), ItemListener {
     }
 
     private fun getNotes(){
-        // *
-        /*if (noteType == NOTEZ){
-            if (title == "note") {
-                notesList = sharedSharedViewModel.getNotes()
-            } else if (title == "Archive") {
-                notesList = sharedSharedViewModel.getArchivedNotes()
-                binding.fab.visibility = View.GONE
-            }
-        }
-        else if(noteType == LABEL){
-            val list = label?.let { sharedSharedViewModel.getNotesOfTheLabel(it) }
-            if (list != null)
-                notesList = list
-        }*/
-
         if(noteType == NOTES){
             notesList = mUserViewModel.baseNotes
         }
@@ -184,39 +138,30 @@ class NotesFragment : Fragment(), ItemListener {
             notesList = mUserViewModel.archivedNotes
         }
         else if(noteType == LABEL){
-            val noteIds = label?.getNotes()
+            val noteIds = label?.getNoteIds()
             Toast.makeText(requireContext(),"$noteIds",Toast.LENGTH_LONG).show()
             if (noteIds!=null){
                 notesList = mUserViewModel.getNotesOfNoteIds(noteIds)
             }
-            //notesList = label?.getNotes()?.let { mUserViewModel.getNotesOfNoteIds(it) }
         }
     }
 
     override fun onClick(position: Int) {
-        //*val data: Note = recyclerAdapter.notesList[position]
         val data: Notes = recyclerAdapter.notesList[position]
         val bundle = Bundle()
-        //bundle.putInt("noteId",data.noteId)
         bundle.putSerializable("noteToDetails",data)
         view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
     }
 
     override fun onLongClick(position: Int) {
-        //*val data: Note = recyclerAdapter.notesList[position]
         val data: Notes = recyclerAdapter.notesList[position]
         val menuBottomDialog = MenuBottomDialog(requireContext())
         menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation(if (!data.isPinned) "pin note" else "unPin note") {
             if (!data.isPinned)
                 mUserViewModel.changePinStatus(true,data)
-                //*sharedSharedViewModel.pinNotes(data.noteId)
             else
                 mUserViewModel.changePinStatus(false,data)
-                //*sharedSharedViewModel.unpinNote(data.noteId)
-            //^getNotes()
-            //^recyclerAdapter.changeData(notesList!!)
         }).addTextViewItem(MenuBottomDialog.Operation("labels") {
-            //*val labelList: List<Label> = sharedSharedViewModel.getLabels()
             val labelList: List<Label> = mUserViewModel.allLabels.value!!
             val allLabelName = Array(size = labelList.size) { "" }
             val selectedLabelList = BooleanArray(labelList.size)
@@ -226,7 +171,6 @@ class NotesFragment : Fragment(), ItemListener {
             else {
                 for (i in labelList.indices) {
                     allLabelName[i] = labelList[i].labelName
-                    //*if (sharedSharedViewModel.isLabelPresentInTheNote(data.noteId, labelList[i].labelId))
                     if (labelInNotes.contains( labelList[i].labelName))
                         selectedLabelList[i] = true
                 }
@@ -247,48 +191,34 @@ class NotesFragment : Fragment(), ItemListener {
                             if (labelList[j].labelName == label?.labelName)
                                 label = labelList[j]
                             mUserViewModel.addLabelWithNote(data,labelList[j])
-                            //*sharedSharedViewModel.addLabelWithNote(data.noteId, labelList[j].labelId)
                         } else {
                             data.removeLabel(labelList[j].labelName)
-                            labelList[j].removeNotes(data.noteId)
+                            labelList[j].removeNote(data.noteId)
                             if (labelList[j].labelName == label?.labelName)
                                 label = labelList[j]
                             mUserViewModel.removeLabelFromNote(data,labelList[j])
-                            //*sharedSharedViewModel.removeLabelFromNote(labelList[j].labelId, data.noteId)
                         }
                     }
-                    //^getNotes()
-                    //^recyclerAdapter.changeData(notesList!!)
                 }
                 builder.setNegativeButton("Cancel"){ _,_ ->
                 }
                 builder.show()
             }
         })
-        //*if (title == "Archive"){
         if (noteType == ARCHIVED){
             menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("unarchive") {
                 Toast.makeText(requireContext(), "Note Unarchived", Toast.LENGTH_SHORT).show()
-                //*sharedSharedViewModel.removeNoteFromArchive(data.noteId)
                 mUserViewModel.changeNoteType(data,NoteType.TYPENOTES)
-                //^getNotes()
-                //^recyclerAdapter.changeData(notesList!!)
             })}
         else {
             menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("archive") {
                 Toast.makeText(requireContext(), "Note Archived", Toast.LENGTH_SHORT).show()
-                //*sharedSharedViewModel.addNoteToArchive(data.noteId)
                 mUserViewModel.changeNoteType(data,NoteType.TYPEARCHIVED)
-                //^getNotes()
-                //^recyclerAdapter.changeData(notesList!!)
             })
         }
         menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("delete") {
             Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
-            //sharedSharedViewModel.deleteNote(data.noteId)
             mUserViewModel.deleteNote(data)
-            //^getNotes()
-            //^recyclerAdapter.changeData(notesList!!)
         }).show()
     }
 

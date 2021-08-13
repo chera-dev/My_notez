@@ -5,13 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.mynotez.data.Label
-import com.example.mynotez.data.LabelTypeConverter
-import com.example.mynotez.data.NoteTypeConverter
-import com.example.mynotez.data.Notes
+import com.example.mynotez.data.dao.LabelDao
+import com.example.mynotez.data.dao.NoteDao
+import com.example.mynotez.data.typeconverters.SetOfLongTypeConverter
+import com.example.mynotez.data.typeconverters.SetOfStringTypeConverter
 
 @Database(entities = [Notes::class, Label::class], version = 1,exportSchema = false)
-@TypeConverters(LabelTypeConverter::class, NoteTypeConverter::class)
+@TypeConverters(SetOfStringTypeConverter::class, SetOfLongTypeConverter::class)
 
 abstract class NoteDatabase : RoomDatabase() {
 

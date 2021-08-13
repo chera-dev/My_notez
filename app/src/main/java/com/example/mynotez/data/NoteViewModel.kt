@@ -2,6 +2,8 @@ package com.example.mynotez.data
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.example.mynotez.data.repository.LabelRepository
+import com.example.mynotez.data.repository.NoteRepository
 import com.example.mynotez.enumclass.NoteType
 import com.example.mynotez.enumclass.NoteType.TYPEARCHIVED
 import kotlinx.coroutines.Dispatchers
@@ -65,8 +67,8 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
     }
 
     //#
-    fun getNoteById(noteId:Long): summa<Notes>{
-        return summa(noteDao.getNoteById(noteId))
+    fun getNoteById(noteId:Long): Summa<Notes>{
+        return Summa(noteDao.getNoteById(noteId))
     }
 
 
@@ -82,7 +84,7 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
     fun removeLabelFromNote(note: Notes,label: Label){
         note.removeLabel(label.labelName)
         updateNote(note)
-        label.removeNotes(note.noteId)
+        label.removeNote(note.noteId)
         updateLabel(label)
     }
 
@@ -97,17 +99,6 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
     fun getLabelByName(labelName: String):Label?{
         return labelDao.getLabelByName(labelName)
     }
-
-    //not
-    /*fun getNoteById(noteId:Long):Notes?{
-        var note:Notes? = null
-        viewModelScope.launch(Dispatchers.IO) {
-            note = noteDao.getNoteById(noteId)
-            note = Notes("sfs","sgfw", TYPENOTES)
-        }
-        return note
-    }*/
-
 
     fun addLabel(labelName:String){
         val label = Label(labelName)
@@ -124,8 +115,8 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
     }
 
     fun deleteLabel(label: Label){
-        val noteIds = label.getNotes()
-        if (label.getNotes().isNotEmpty()){
+        val noteIds = label.getNoteIds()
+        if (label.getNoteIds().isNotEmpty()){
             val notes = getNotesOfNoteIds(noteIds).value
             if (notes != null) {
                 for (i in notes){
@@ -133,7 +124,6 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
                 }
             }
         }
-
         viewModelScope.launch(Dispatchers.IO) {
             labelRepository.deleteLabel(label)
         }
@@ -166,7 +156,7 @@ class Content<T>(liveData: LiveData<List<T>>) : LiveData<List<T>>() {
 }
 
 
-class summa<T>(liveData: LiveData<T>): LiveData<T>(){
+class Summa<T>(liveData: LiveData<T>): LiveData<T>(){
     private val observer = Observer<T> { data -> value = data  }
 
     init {

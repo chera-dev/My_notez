@@ -49,13 +49,3 @@ data class Notes(@ColumnInfo(name = "note_title") var noteTitle:String,
 
 
 }
-
-
-class LabelTypeConverter {
-
-    @TypeConverter
-    fun listToJson(value: MutableSet<String>?): String = Gson().toJson(value)
-
-    @TypeConverter
-    fun jsonToList(value: String) = Gson().fromJson(value, Array<String>::class.java).toMutableSet()
-}

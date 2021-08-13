@@ -1,11 +1,9 @@
-package com.example.mynotez.data
+package com.example.mynotez.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import androidx.room.*
+import com.example.mynotez.data.Notes
 import com.example.mynotez.enumclass.NoteType
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 @Dao
 interface NoteDao {
@@ -14,10 +12,10 @@ interface NoteDao {
     suspend fun addNote(note: Notes)
 
     @Update
-    suspend fun updateNote(note:Notes)
+    suspend fun updateNote(note: Notes)
 
     @Delete
-    suspend fun deleteNote(note:Notes)
+    suspend fun deleteNote(note: Notes)
 
     @Query("DELETE FROM note_table")
     suspend fun deleteAllNotes()

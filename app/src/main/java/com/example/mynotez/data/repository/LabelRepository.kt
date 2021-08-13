@@ -1,6 +1,8 @@
-package com.example.mynotez.data
+package com.example.mynotez.data.repository
 
 import androidx.lifecycle.LiveData
+import com.example.mynotez.data.Label
+import com.example.mynotez.data.dao.LabelDao
 
 class LabelRepository(private val labelDao: LabelDao) {
 
@@ -19,7 +21,7 @@ class LabelRepository(private val labelDao: LabelDao) {
     }
 
     //not
-    suspend fun getLabelByName(labelName:String):Label?{
+    suspend fun getLabelByName(labelName:String): Label?{
         return labelDao.getLabelByName(labelName)
     }
 
