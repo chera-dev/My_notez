@@ -32,8 +32,8 @@ interface NoteDao {
     fun getNotesOfNoteIds(noteIds: Set<Long>):LiveData<List<Notes>>
 
     //#
-    @Query("SELECT * FROM note_table WHERE note_id = :noteId LIMIT 1")
-    fun getNoteById(noteId:Long): LiveData<Notes>
+    @Query("SELECT * FROM note_table WHERE note_details=:noteDetails")
+    fun getNoteByDetails(noteDetails:String): LiveData<List<Notes>>
 
     //not
     //@Query("SELECT * FROM note_table WHERE :label IN (labels)")

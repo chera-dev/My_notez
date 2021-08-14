@@ -20,6 +20,10 @@ class LabelRepository(private val labelDao: LabelDao) {
         labelDao.deleteLabel(label)
     }
 
+    suspend fun renameLabel(oldLabelName:String ,newLabelName:String){
+        labelDao.renameLabel(oldLabelName,newLabelName)
+    }
+
     //not
     suspend fun getLabelByName(labelName:String): Label?{
         return labelDao.getLabelByName(labelName)

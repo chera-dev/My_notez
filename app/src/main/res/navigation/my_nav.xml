@@ -11,7 +11,11 @@
         tools:layout="@layout/fragment_notes" >
         <action
             android:id="@+id/action_nav_notes_frag_to_detailsFragment"
-            app:destination="@id/detailsFragment" />
+            app:destination="@id/detailsFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"

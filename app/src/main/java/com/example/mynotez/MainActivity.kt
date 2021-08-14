@@ -114,12 +114,17 @@ class MainActivity : AppCompatActivity() {
                 builder.setView(dialogLayout)
                 builder.setPositiveButton("Add Label"){ _, _ ->
                     val labelName = titleEditText.text.toString()
-                    for (i in it) {
-                        if (labelName == i.labelName)
-                            Toast.makeText(this, "Label Already exists", Toast.LENGTH_SHORT).show()
-                        else
-                            mUserViewModel.addLabel(titleEditText.text.toString())
+                    if (it.isNotEmpty()){
+                        for (i in it) {
+                            if (labelName == i.labelName)
+                                Toast.makeText(this, "Label Already exists", Toast.LENGTH_SHORT)
+                                    .show()
+                            else
+                                mUserViewModel.addLabel(labelName)
+                        }
                     }
+                    else
+                        mUserViewModel.addLabel(labelName)
                     imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->

@@ -61,7 +61,8 @@ class NotesFragment : Fragment(), ItemListener {
         binding.fab.setOnClickListener { view ->
             val bundle = Bundle()
             if (label != null)
-                bundle.putString("label",label?.labelName)
+                bundle.putSerializable("label",label)
+                //-bundle.putString("label",label?.labelName)
             view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
         }
         binding.textViewTitleInNotesFragment.text = title
@@ -139,7 +140,6 @@ class NotesFragment : Fragment(), ItemListener {
         }
         else if(noteType == LABEL){
             val noteIds = label?.getNoteIds()
-            Toast.makeText(requireContext(),"$noteIds",Toast.LENGTH_LONG).show()
             if (noteIds!=null){
                 notesList = mUserViewModel.getNotesOfNoteIds(noteIds)
             }
@@ -238,16 +238,19 @@ class NotesFragment : Fragment(), ItemListener {
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
                 builder.setView(dialogLayout)
                 builder.setPositiveButton("Rename Label"){ _, _ ->
-                    val title = titleEditText.text.toString()
-                    if (title != "" && label!!.labelName!=title)
-                        mUserViewModel.renameLabel(label!!,title)
-                        //*sharedSharedViewModel.renameLabel(this.label!!,title)
-                    //*notesList = sharedSharedViewModel.getNotesOfTheLabel(this.label!!)
-
-
-                    //notesList = label?.getNotes()?.let { mUserViewModel.getNotesOfNoteIds(it) }
-                    //^recyclerAdapter.changeData(notesList!!)
-                    binding.textViewTitleInNotesFragment.text = title
+                    val newLabelName = titleEditText.text.toString()
+                    if (newLabelName != "" && label!!.labelName!=newLabelName) {
+                        val noteIds = label!!.getNoteIds()
+                        if (noteIds.isNotEmpty()){
+                            mUserViewModel.getNotesOfNoteIds(noteIds).observe(viewLifecycleOwner,{
+                                for (i in it){
+                                    mUserViewModel.changeLabelInNote(i,newLabelName,label!!.labelName)
+                                }
+                            })
+                        }
+                        mUserViewModel.renameLabel(label!!.labelName, newLabelName)
+                    }
+                    binding.textViewTitleInNotesFragment.text = newLabelName
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->
                     imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
@@ -256,11 +259,19 @@ class NotesFragment : Fragment(), ItemListener {
                 true
             }
             menu.add("delete label").setOnMenuItemClickListener { itemTitle ->
-                Toast.makeText(requireContext(), "$itemTitle clicked", Toast.LENGTH_SHORT).show()
                 val builder = AlertDialog.Builder(requireContext())
                 //*val label = sharedSharedViewModel.getLabelById(label!!)
                 builder.setTitle("Delete label - ${label!!.labelName}?")
                 builder.setPositiveButton("Delete"){ _, _ ->
+                    Toast.makeText(requireContext(), "Label Deleted", Toast.LENGTH_SHORT).show()
+                    val noteIds = label!!.getNoteIds()
+                    if (noteIds.isNotEmpty()){
+                        mUserViewModel.getNotesOfNoteIds(noteIds).observe(viewLifecycleOwner,{
+                            for (i in it){
+                                mUserViewModel.removeLabelFromNote(i, label!!)
+                            }
+                        })
+                    }
                     mUserViewModel.deleteLabel(label!!)
                     //*sharedSharedViewModel.deleteLabel(this.label!!)
                     findNavController().popBackStack()

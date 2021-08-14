@@ -28,6 +28,7 @@ class DetailsFragment : Fragment() {
 
     private var noteId:Long? = null
     private lateinit var editedNote: Notes
+    private var label:Label? = null
     private var listOfLabels = mutableSetOf<String>()
 
     private lateinit var titleEditText: EditText
@@ -55,15 +56,18 @@ class DetailsFragment : Fragment() {
 
                 listOfLabels.addAll(editedNote.getLabels())
             }
-            else{
-                editedNote = Notes("","",TYPENOTES)
+            else
+                createEmptyNote()
+            val gotLabel = requireArguments().getSerializable("label")
+            if (gotLabel != null) {
+                label = gotLabel as Label
+                label?.labelName?.let { listOfLabels.add(it) }
             }
-            val label:String? = requireArguments().getString("label")
-            if (label != null)
-                listOfLabels.add(label)
             if (listOfLabels.isNotEmpty())
                 showLabels()
         }
+        else
+            createEmptyNote()
         binding.textViewDateCreatedInDetails.visibility = View.VISIBLE
         binding.textViewDateCreatedInDetails.text = editedNote.dateCreated
         if (editedNote.isPinned)
@@ -71,27 +75,43 @@ class DetailsFragment : Fragment() {
         if (editedNote.noteType == TYPEARCHIVED)
             binding.textViewNoteType.visibility = View.VISIBLE
 
-        binding.fabUpdateNotes.setOnClickListener {
+        //-
+        /* binding.fabUpdateNotes.setOnClickListener {
             saveNote()
-            findNavController().popBackStack()
-        }
+            //findNavController().popBackStack()
+        }*/
         setHasOptionsMenu(true)
         return root
     }
 
+    private fun createEmptyNote(){
+        editedNote = Notes("","",TYPENOTES)
+        mUserViewModel.addNote(Notes("","",TYPENOTES))
+        mUserViewModel.allNotes.observe(viewLifecycleOwner,{
+            if (it.isNotEmpty()){
+                val recentNote = it.first()
+                if (recentNote.noteDetails == "") {
+                    editedNote = recentNote
+                    noteId = recentNote.noteId
+                    if (label != null)
+                        mUserViewModel.addLabelWithNote(editedNote, label!!)
+                }
+            }
+        })}
+
     private fun saveNote(){
         editedNote.noteTitle = titleEditText.text.toString()
         editedNote.noteDetails = detailsEditText.text.toString()
+        editedNote.addAllLabels(listOfLabels)
         if(editedNote.noteTitle != "" || editedNote.noteDetails != ""){
-            if (noteId != null)
-                mUserViewModel.updateNote(editedNote)
-            else
-                mUserViewModel.addNote(editedNote)
+            mUserViewModel.updateNote(editedNote)
         }
         else{
             Toast.makeText(requireContext(),"Empty Note Discarded",Toast.LENGTH_SHORT).show()
+            mUserViewModel.deleteNote(editedNote)
         }
     }
+    ///////////
 
     private fun showLabels(){
         binding.labelTextViewInDetails.visibility = View.VISIBLE
@@ -133,7 +153,7 @@ class DetailsFragment : Fragment() {
                 val selectedLabelList = BooleanArray(listOfAllLabelAvailable.size)
 
                 if (listOfAllLabelAvailable.isEmpty())
-                    Toast.makeText(requireContext(),"nothing", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(),"No Labels", Toast.LENGTH_LONG).show()
                 else {
                     for (i in listOfAllLabelAvailable.indices) {
                         allLabelName[i] = listOfAllLabelAvailable[i].labelName
@@ -149,20 +169,16 @@ class DetailsFragment : Fragment() {
                     builder.setPositiveButton("Done"){ _, _ ->
                         for (j in selectedLabelList.indices){
                             if (selectedLabelList[j]){
-                                if(noteId != null)
-                                    mUserViewModel.addLabelWithNote(editedNote,listOfAllLabelAvailable[j])
-                                else
-                                    listOfLabels.add(listOfAllLabelAvailable[j].labelName)
+                                //-if(noteId != null)
+                                mUserViewModel.addLabelWithNote(editedNote,listOfAllLabelAvailable[j])
+                                listOfLabels.add(listOfAllLabelAvailable[j].labelName)
                             }
                             else{
-                                if(noteId != null)
-                                    mUserViewModel.removeLabelFromNote(editedNote,listOfAllLabelAvailable[j])
-                                else
-                                    listOfLabels.remove(listOfAllLabelAvailable[j].labelName)
+                                //-if(noteId != null)
+                                mUserViewModel.removeLabelFromNote(editedNote,listOfAllLabelAvailable[j])
+                                listOfLabels.remove(listOfAllLabelAvailable[j].labelName)
                             }
                         }
-                        if(noteId != null)
-                            listOfLabels = editedNote.getLabels() as MutableSet<String>
                         if (listOfLabels.isNotEmpty()) {
                             showLabels()
                         }
@@ -197,8 +213,8 @@ class DetailsFragment : Fragment() {
                 builder.setTitle("Delete Note - ${editedNote.noteTitle}?")
                 builder.setPositiveButton("Delete"){ _, _ ->
                     Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
-                    if(noteId != null)
-                        mUserViewModel.deleteNote(editedNote)
+                    //-if(noteId != null)
+                    mUserViewModel.deleteNote(editedNote)
                     findNavController().popBackStack()
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->
@@ -208,5 +224,10 @@ class DetailsFragment : Fragment() {
             })
         inflater.inflate(R.menu.main,menu)
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onDestroyView() {
+        saveNote()
+        super.onDestroyView()
     }
 }
