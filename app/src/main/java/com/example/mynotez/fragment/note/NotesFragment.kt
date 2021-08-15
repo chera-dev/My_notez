@@ -146,26 +146,24 @@ class NotesFragment : Fragment(), ItemListener {
         }
     }
 
-    override fun onClick(position: Int) {
-        val data: Notes = recyclerAdapter.notesList[position]
+    override fun onClick(note:Notes) {
         val bundle = Bundle()
-        bundle.putSerializable("noteToDetails",data)
+        bundle.putSerializable("noteToDetails",note)
         view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
     }
 
-    override fun onLongClick(position: Int) {
-        val data: Notes = recyclerAdapter.notesList[position]
+    override fun onLongClick(note:Notes) {
         val menuBottomDialog = MenuBottomDialog(requireContext())
-        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation(if (!data.isPinned) "pin note" else "unPin note") {
-            if (!data.isPinned)
-                mUserViewModel.changePinStatus(true,data)
+        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation(if (!note.isPinned) "pin note" else "unPin note") {
+            if (!note.isPinned)
+                mUserViewModel.changePinStatus(true,note)
             else
-                mUserViewModel.changePinStatus(false,data)
+                mUserViewModel.changePinStatus(false,note)
         }).addTextViewItem(MenuBottomDialog.Operation("labels") {
             val labelList: List<Label> = mUserViewModel.allLabels.value!!
             val allLabelName = Array(size = labelList.size) { "" }
             val selectedLabelList = BooleanArray(labelList.size)
-            val labelInNotes = data.getLabels()
+            val labelInNotes = note.getLabels()
             if (labelList.isEmpty())
                 Toast.makeText(requireContext(), "No Labels Available", Toast.LENGTH_LONG).show()
             else {
@@ -186,17 +184,17 @@ class NotesFragment : Fragment(), ItemListener {
                 builder.setPositiveButton("Done") { _, _ ->
                     for (j in selectedLabelList.indices) {
                         if (selectedLabelList[j]) {
-                            data.addLabel(labelList[j].labelName)
-                            labelList[j].addNote(data.noteId)
+                            note.addLabel(labelList[j].labelName)
+                            labelList[j].addNote(note.noteId)
                             if (labelList[j].labelName == label?.labelName)
                                 label = labelList[j]
-                            mUserViewModel.addLabelWithNote(data,labelList[j])
+                            mUserViewModel.addLabelWithNote(note,labelList[j])
                         } else {
-                            data.removeLabel(labelList[j].labelName)
-                            labelList[j].removeNote(data.noteId)
+                            note.removeLabel(labelList[j].labelName)
+                            labelList[j].removeNote(note.noteId)
                             if (labelList[j].labelName == label?.labelName)
                                 label = labelList[j]
-                            mUserViewModel.removeLabelFromNote(data,labelList[j])
+                            mUserViewModel.removeLabelFromNote(note,labelList[j])
                         }
                     }
                 }
@@ -208,17 +206,17 @@ class NotesFragment : Fragment(), ItemListener {
         if (noteType == ARCHIVED){
             menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("unarchive") {
                 Toast.makeText(requireContext(), "Note Unarchived", Toast.LENGTH_SHORT).show()
-                mUserViewModel.changeNoteType(data,NoteType.TYPENOTES)
+                mUserViewModel.changeNoteType(note,NoteType.TYPENOTES)
             })}
         else {
             menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("archive") {
                 Toast.makeText(requireContext(), "Note Archived", Toast.LENGTH_SHORT).show()
-                mUserViewModel.changeNoteType(data,NoteType.TYPEARCHIVED)
+                mUserViewModel.changeNoteType(note,NoteType.TYPEARCHIVED)
             })
         }
         menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("delete") {
             Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
-            mUserViewModel.deleteNote(data)
+            mUserViewModel.deleteNote(note)
         }).show()
     }
 
