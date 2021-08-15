@@ -1,8 +1,10 @@
 package com.example.mynotez
 
+import com.example.mynotez.data.Notes
+
 interface ItemListener {
 
-    fun onClick(position: Int)
+    fun onClick(note: Notes)
 
-    fun onLongClick(position: Int)
+    fun onLongClick(note:Notes)
 }

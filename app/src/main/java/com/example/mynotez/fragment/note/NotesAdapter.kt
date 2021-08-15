@@ -28,11 +28,11 @@ class NotesAdapter ( private val itemListener: ItemListener?)
 
         init {
             view.setOnLongClickListener {
-                itemListener?.onLongClick(position)
+                itemListener?.onLongClick(notesList[position])
                 return@setOnLongClickListener true
             }
             view.setOnClickListener {
-                itemListener?.onClick(position)
+                itemListener?.onClick(notesList[position])
             }
         }
     }

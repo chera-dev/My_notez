@@ -2,12 +2,17 @@ package com.example.mynotez
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -15,6 +20,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.NavOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.mynotez.databinding.ActivityMainBinding
@@ -110,27 +116,37 @@ class MainActivity : AppCompatActivity() {
                 val titleEditText = dialogLayout.findViewById<TextInputEditText>(R.id.label_title_edit_text)
                 titleEditText.requestFocus()
                 val imm:InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY)
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.SHOW_IMPLICIT)
                 builder.setView(dialogLayout)
                 builder.setPositiveButton("Add Label"){ _, _ ->
                     val labelName = titleEditText.text.toString()
-                    if (it.isNotEmpty()){
-                        for (i in it) {
-                            if (labelName == i.labelName)
-                                Toast.makeText(this, "Label Already exists", Toast.LENGTH_SHORT)
-                                    .show()
-                            else
-                                mUserViewModel.addLabel(labelName)
-                        }
+                    if (labelName!= ""){
+                        if (it.isNotEmpty()) {
+                            for (i in it) {
+                                if (labelName == i.labelName)
+                                    Toast.makeText(this, "Label Already exists", Toast.LENGTH_SHORT)
+                                        .show()
+                                else
+                                    mUserViewModel.addLabel(labelName)
+                            }
+                        } else
+                            mUserViewModel.addLabel(labelName)
                     }
-                    else
-                        mUserViewModel.addLabel(labelName)
                     imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->
                     imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
                 }
-                builder.show()
+                val alertDialog:AlertDialog = builder.show()
+                titleEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener{
+                    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                        if (actionId == EditorInfo.IME_NULL && actionId == KeyEvent.ACTION_DOWN ){
+                            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
+                            return true
+                        }
+                        return false
+                    }
+                })
                 true
             }
         })
@@ -140,7 +156,12 @@ class MainActivity : AppCompatActivity() {
         val bundle = bundleOf("title" to it.title,"type" to  LABEL.name,"label" to label)
         if (navController.previousBackStackEntry != null)
             navController.popBackStack()
-        navController.navigate(R.id.nav_notes_frag,bundle)
+        val navBuilder = NavOptions.Builder()
+        navBuilder.setEnterAnim(R.anim.slide_in_from_left)
+        navBuilder.setExitAnim(R.anim.slide_out_to_right)
+        navBuilder.setPopEnterAnim(R.anim.slide_in_from_right)
+        navBuilder.setPopExitAnim(R.anim.slide_out_to_left)
+        navController.navigate(R.id.nav_notes_frag,bundle,navBuilder.build())
         drawerLayout.close()
     }
 

@@ -12,5 +12,7 @@
     <string name="enter_the_label_title_here">Enter the label title here</string>
     <string name="pinned">Pinned</string>
     <string name="archived">Archived</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
