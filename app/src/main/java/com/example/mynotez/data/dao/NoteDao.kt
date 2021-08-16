@@ -17,27 +17,19 @@ interface NoteDao {
     @Delete
     suspend fun deleteNote(note: Notes)
 
-    @Query("DELETE FROM note_table")
-    suspend fun deleteAllNotes()
-
     @Query("SELECT * FROM note_table ORDER BY note_id DESC")
     fun readAllNotes(): LiveData<List<Notes>>
 
-    //okay
-    @Query("SELECT * FROM note_table WHERE note_type=:noteType")
+    @Query("SELECT * FROM note_table WHERE note_type=:noteType ORDER BY note_is_pinned DESC, note_id DESC")
     fun getNotesOfType(noteType:NoteType):LiveData<List<Notes>>
 
-    // okay
     @Query("SELECT * FROM note_table WHERE note_id IN (:noteIds)")
     fun getNotesOfNoteIds(noteIds: Set<Long>):LiveData<List<Notes>>
 
-    //#
-    @Query("SELECT * FROM note_table WHERE note_details=:noteDetails")
-    fun getNoteByDetails(noteDetails:String): LiveData<List<Notes>>
+    @Query("UPDATE note_table SET note_is_pinned =:status WHERE note_id =:noteId")
+    suspend fun changePinStatus(noteId:Long, status:Boolean)
 
-    //not
-    //@Query("SELECT * FROM note_table WHERE :label IN (labels)")
-    //suspend fun getBaseNotesByLabel(label: String): LiveData<List<Notes>>
-
+    @Query("UPDATE note_table SET note_type =:noteType WHERE note_id =:noteId")
+    suspend fun updateNoteStatus(noteId: Long,noteType: NoteType)
 
 }

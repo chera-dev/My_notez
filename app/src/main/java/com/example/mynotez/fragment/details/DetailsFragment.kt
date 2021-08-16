@@ -8,7 +8,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import android.widget.EditText
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.mynotez.*
@@ -21,8 +20,6 @@ import com.example.mynotez.databinding.FragmentDetailsBinding
 import com.example.mynotez.menu.CreateMenu
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.google.android.material.textfield.TextInputEditText
-import kotlin.reflect.KVariance
 
 class DetailsFragment : Fragment() {
 
@@ -48,9 +45,6 @@ class DetailsFragment : Fragment() {
         val root: View = binding.root
         titleEditText = binding.titleTextViewInDetails
         detailsEditText = binding.detailsTextViewInDetails
-        titleEditText.requestFocus()
-        //val imm: InputMethodManager = getSystemService(KVariance.IN) as InputMethodManager
-        //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT)
 
         if(arguments != null) {
             val gotNote: Notes? = requireArguments().getSerializable("noteToDetails") as Notes?
@@ -104,7 +98,12 @@ class DetailsFragment : Fragment() {
                         mUserViewModel.addLabelWithNote(editedNote, label!!)
                 }
             }
-        })}
+        })
+
+        titleEditText.requestFocus()
+        val imm:InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT)
+    }
 
     private fun saveNote(){
         editedNote.noteTitle = titleEditText.text.toString()
@@ -140,7 +139,7 @@ class DetailsFragment : Fragment() {
         createMenu.addMenuItem(
             Menu.NONE, 1, 1, if (editedNote.isPinned) "unPin" else "pin",
             if (editedNote.isPinned) R.drawable.ic_baseline_push_unpin_24 else R.drawable.ic_outline_push_pin_24,
-            MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = { itemTitle ->
+            MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
                 if (editedNote.isPinned) {
                     createMenu.changeIcon(1, R.drawable.ic_outline_push_pin_24)
                     editedNote.isPinned = false
@@ -167,7 +166,6 @@ class DetailsFragment : Fragment() {
                         if (listOfAllLabelAvailable[i].labelName in listOfLabels)
                             selectedLabelList[i] = true
                     }
-
                     val builder = AlertDialog.Builder(requireContext())
                     builder.setTitle("add label")
                     builder.setMultiChoiceItems(allLabelName, selectedLabelList){ _, which, isChecked ->

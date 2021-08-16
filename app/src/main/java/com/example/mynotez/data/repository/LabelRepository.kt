@@ -24,10 +24,4 @@ class LabelRepository(private val labelDao: LabelDao) {
         labelDao.renameLabel(oldLabelName,newLabelName)
     }
 
-    //not
-    suspend fun getLabelByName(labelName:String): Label?{
-        return labelDao.getLabelByName(labelName)
-    }
-
-
 }

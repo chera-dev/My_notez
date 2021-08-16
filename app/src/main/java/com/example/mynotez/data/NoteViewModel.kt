@@ -11,9 +11,9 @@ import kotlinx.coroutines.launch
 import com.example.mynotez.enumclass.NoteType.TYPENOTES
 
 class NoteViewModel (application: Application) : AndroidViewModel(application) {
-    val allNotes: LiveData<List<Notes>>
     private val noteRepository: NoteRepository
     private val labelRepository: LabelRepository
+    val allNotes: LiveData<List<Notes>>
     val allLabels: LiveData<List<Label>>
 
     private var nextLabelOrder = 1
@@ -21,21 +21,16 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
     private val noteDao = NoteDatabase.getDatabase(application).noteDao()
     private val labelDao = NoteDatabase.getDatabase(application).labelDao()
 
-    // & change it to function and combine both below
     val baseNotes = Content(noteDao.getNotesOfType(TYPENOTES))
-
     val archivedNotes = Content(noteDao.getNotesOfType(TYPEARCHIVED))
 
     init {
         noteRepository = NoteRepository(noteDao)
         allNotes = noteRepository.readAllNotes
-        //notes = noteRepository.getNotes
 
         labelRepository = LabelRepository(labelDao)
         allLabels = labelRepository.readAllLabel
-
     }
-
 
     fun addNote(note:Notes){
         viewModelScope.launch(Dispatchers.IO) {
@@ -55,24 +50,10 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun deleteAllNotes(){
-        viewModelScope.launch(Dispatchers.IO) {
-            noteRepository.deleteAllNotes()
-        }
-    }
-
-    //okay
     fun getNotesOfNoteIds(noteIds: Set<Long>): Content<Notes> {
         return Content(noteDao.getNotesOfNoteIds(noteIds))
     }
 
-    //#
-    fun getNoteByDetails(noteDetails:String): Content<Notes> {
-        return Content(noteDao.getNoteByDetails(noteDetails))
-    }
-
-
-    //okay
     fun addLabelWithNote(note: Notes,label: Label){
         note.addLabel(label.labelName)
         updateNote(note)
@@ -80,7 +61,6 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         updateLabel(label)
     }
 
-    //okay
     fun removeLabelFromNote(note: Notes,label: Label){
         note.removeLabel(label.labelName)
         updateNote(note)
@@ -94,16 +74,16 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         updateNote(note)
     }
 
-    //#
-    // & change to update method in dao method
     fun changeNoteType( note:Notes, newNoteType:NoteType){
-        note.noteType = newNoteType
-        updateNote(note)
+        viewModelScope.launch(Dispatchers.IO) {
+            noteRepository.updateNoteType(note.noteId,newNoteType)
+        }
     }
 
-    //# not
-    fun getLabelByName(labelName: String):Label?{
-        return labelDao.getLabelByName(labelName)
+    fun changePinStatus(status:Boolean,noteId:Long){
+        viewModelScope.launch(Dispatchers.IO) {
+            noteRepository.updatePin(noteId,status)
+        }
     }
 
     fun addLabel(labelName:String){
@@ -114,7 +94,7 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateLabel(label: Label){
+    private fun updateLabel(label: Label){
         viewModelScope.launch(Dispatchers.IO) {
             labelRepository.updateLabel(label)
         }
@@ -126,24 +106,10 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         }
     }
 
-    //#
-    fun getLabelByNames(labels:Set<String>): Content<Label> {
-        return Content(labelDao.getLabelByNames(labels))
-    }
-
-    //#
-    // & change to update method in dao
     fun renameLabel(oldLabelName:String ,newLabelName:String){
         viewModelScope.launch(Dispatchers.IO) {
             labelRepository.renameLabel(oldLabelName, newLabelName)
         }
-    }
-
-    // & change to update in dao method
-    fun changePinStatus(status:Boolean,note: Notes){
-        note.isPinned = status
-        updateNote(note)
-
     }
 
 }
@@ -151,15 +117,6 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
 class Content<T>(liveData: LiveData<List<T>>) : LiveData<List<T>>() {
 
     private val observer = Observer<List<T>> { list -> value = list }
-
-    init {
-        liveData.observeForever(observer)
-    }
-}
-
-
-class Summa<T>(liveData: LiveData<T>): LiveData<T>(){
-    private val observer = Observer<T> { data -> value = data  }
 
     init {
         liveData.observeForever(observer)

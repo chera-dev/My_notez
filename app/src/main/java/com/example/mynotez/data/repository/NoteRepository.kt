@@ -3,11 +3,11 @@ package com.example.mynotez.data.repository
 import androidx.lifecycle.LiveData
 import com.example.mynotez.data.Notes
 import com.example.mynotez.data.dao.NoteDao
+import com.example.mynotez.enumclass.NoteType
 
 class NoteRepository(private val noteDao: NoteDao) {
 
     val readAllNotes: LiveData<List<Notes>> = noteDao.readAllNotes()
-    //val getNotes: List<Notes> = noteDao.getNotes()
 
     suspend fun addNote(note: Notes){
         noteDao.addNote(note)
@@ -21,20 +21,12 @@ class NoteRepository(private val noteDao: NoteDao) {
         noteDao.deleteNote(note)
     }
 
-    suspend fun deleteAllNotes(){
-        noteDao.deleteAllNotes()
+    suspend fun updatePin(noteId:Long, status:Boolean){
+        noteDao.changePinStatus(noteId,status)
     }
 
-    /*fun getBaseNotesByLabel(labelName:String):LiveData<List<Notes>>{
-        return noteDao.getBaseNotesByLabel(labelName)
-    }*/
-
-    // & change it to content of xxx and call it from view model
-    suspend fun getNotesByIds(noteIds:Set<Long>) = noteDao.getNotesOfNoteIds(noteIds)
-
-
-    /*fun getNotes(): LiveData<List<Notes>> {
-        return noteDao.getAllNotes()
-    }*/
+    suspend fun updateNoteType(noteId: Long,noteType:NoteType){
+        noteDao.updateNoteStatus(noteId, noteType)
+    }
 
 }
