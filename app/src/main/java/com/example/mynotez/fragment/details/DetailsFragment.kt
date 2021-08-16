@@ -4,9 +4,11 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.mynotez.*
@@ -19,6 +21,8 @@ import com.example.mynotez.databinding.FragmentDetailsBinding
 import com.example.mynotez.menu.CreateMenu
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.textfield.TextInputEditText
+import kotlin.reflect.KVariance
 
 class DetailsFragment : Fragment() {
 
@@ -44,6 +48,9 @@ class DetailsFragment : Fragment() {
         val root: View = binding.root
         titleEditText = binding.titleTextViewInDetails
         detailsEditText = binding.detailsTextViewInDetails
+        titleEditText.requestFocus()
+        //val imm: InputMethodManager = getSystemService(KVariance.IN) as InputMethodManager
+        //imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT)
 
         if(arguments != null) {
             val gotNote: Notes? = requireArguments().getSerializable("noteToDetails") as Notes?

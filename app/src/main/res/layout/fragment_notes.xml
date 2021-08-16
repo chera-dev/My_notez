@@ -35,30 +35,19 @@
         app:srcCompat="@drawable/ic_baseline_note_add_white"
         tools:ignore="VectorDrawableCompat" />
 
-    <SearchView
-        android:id="@+id/search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:iconifiedByDefault="false"
-        android:queryHint="Search Notes"
-        android:theme="@style/ThemeOverlay.search"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_title_in_notes_fragment" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notes_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
+
         android:paddingBottom="90dp"
         android:layout_marginBottom="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_bar"/>
+        app:layout_constraintTop_toBottomOf="@id/textView_title_in_notes_fragment"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/no_notes_card_view"

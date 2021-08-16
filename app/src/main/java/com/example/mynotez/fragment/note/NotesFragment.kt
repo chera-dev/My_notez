@@ -3,6 +3,7 @@ package com.example.mynotez.fragment.note
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -62,7 +63,6 @@ class NotesFragment : Fragment(), ItemListener {
             val bundle = Bundle()
             if (label != null)
                 bundle.putSerializable("label",label)
-                //-bundle.putString("label",label?.labelName)
             view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
         }
         binding.textViewTitleInNotesFragment.text = title
@@ -72,21 +72,16 @@ class NotesFragment : Fragment(), ItemListener {
         notesList?.observe(viewLifecycleOwner, {
             recyclerAdapter.changeData(it)
             myNotes = it
-
             if (myNotes?.isNotEmpty() == true) {
                 setRecyclerView()
-                binding.searchBar.visibility = View.VISIBLE
                 binding.noNotesCardView.visibility = View.GONE
-                performSearch()
             }
             else {
-                binding.searchBar.visibility = View.GONE
                 binding.noNotesCardView.visibility = View.VISIBLE
             }
         })
 
-        if (label != null)
-            setHasOptionsMenu(true)
+        setHasOptionsMenu(true)
         return binding.root
     }
 
@@ -94,41 +89,6 @@ class NotesFragment : Fragment(), ItemListener {
         recyclerView = binding.notesRecyclerView
         recyclerView.adapter = recyclerAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-    }
-
-    private fun performSearch(){
-        val searchBar = binding.searchBar
-        searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                search(query)
-                return true
-            }
-            override fun onQueryTextChange(newText: String?): Boolean {
-                search(newText)
-                return true
-            }
-        })
-        val closeBtnId = searchBar.context.resources.getIdentifier("android:id/search_close_btn",null,null)
-        val closeBtn:ImageView = searchBar.findViewById(closeBtnId)
-        closeBtn.setOnClickListener {
-            searchBar.setQuery("",true)
-            searchBar.clearFocus()
-        }
-    }
-
-    // & change it to access query in dao through view model
-    private fun search(text:String?){
-        val matchedNotes = mutableListOf<Notes>()
-        text?.let {
-            myNotes?.forEach { note->
-                if (note.noteTitle.contains(text,true)||note.noteDetails.contains(text,true)){
-                    matchedNotes.add(note)
-                }
-            }
-            if (matchedNotes.isEmpty())
-                Toast.makeText(requireContext(),"No Notes Matching",Toast.LENGTH_LONG).show()
-            recyclerAdapter.changeData(matchedNotes)
-        }
     }
 
     private fun getNotes(){
@@ -220,12 +180,12 @@ class NotesFragment : Fragment(), ItemListener {
         }).show()
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        Log.e("tag","on create options menu")
+        inflater.inflate(R.menu.search_menu,menu)
         if (label != null){
             menu.add("Rename label").setOnMenuItemClickListener {
                 val builder = AlertDialog.Builder(requireContext())
-                //*val label = sharedSharedViewModel.getLabelById(label!!)
                 builder.setTitle("Rename label")
                 val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
                 val titleEditText = dialogLayout.findViewById<EditText>(R.id.label_title_edit_text)
@@ -256,9 +216,8 @@ class NotesFragment : Fragment(), ItemListener {
                 builder.show()
                 true
             }
-            menu.add("delete label").setOnMenuItemClickListener { itemTitle ->
+            menu.add("delete label").setOnMenuItemClickListener {
                 val builder = AlertDialog.Builder(requireContext())
-                //*val label = sharedSharedViewModel.getLabelById(label!!)
                 builder.setTitle("Delete label - ${label!!.labelName}?")
                 builder.setPositiveButton("Delete"){ _, _ ->
                     Toast.makeText(requireContext(), "Label Deleted", Toast.LENGTH_SHORT).show()
@@ -271,7 +230,6 @@ class NotesFragment : Fragment(), ItemListener {
                         })
                     }
                     mUserViewModel.deleteLabel(label!!)
-                    //*sharedSharedViewModel.deleteLabel(this.label!!)
                     findNavController().popBackStack()
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->
@@ -280,8 +238,53 @@ class NotesFragment : Fragment(), ItemListener {
                 true
             }
         }
-
-        inflater.inflate(R.menu.main,menu)
+        val searchItem = menu.findItem(R.id.search_item)
+        val searchView = searchItem.actionView as SearchView
+        searchView.queryHint = "Search Notes"
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                search(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                search(newText)
+                return true
+            }
+        })
+        searchView.setOnSearchClickListener {
+            recyclerAdapter.changeData(emptyList())
+            binding.noNotesCardView.visibility = View.GONE
+            binding.fab.visibility = View.GONE
+        }
+        searchView.setOnCloseListener {
+            myNotes?.let { recyclerAdapter.changeData(it) }
+            binding.noNotesCardView.visibility = View.GONE
+            binding.fab.visibility = View.VISIBLE
+            false
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
+
+    // & change it to access query in dao through view model
+    private fun search(text:String?){
+        val matchedNotes = mutableListOf<Notes>()
+        if (text != null && text != ""){
+                myNotes?.forEach { note ->
+                    if (note.noteTitle.contains(text, true) || note.noteDetails.contains(text, true)) {
+                        matchedNotes.add(note)
+                    }
+                }
+                if (matchedNotes.isEmpty())
+                    binding.noNotesCardView.visibility = View.VISIBLE
+                else
+                    binding.noNotesCardView.visibility = View.GONE
+                    //Toast.makeText(requireContext(), "No Notes Matching", Toast.LENGTH_LONG).show()
+                recyclerAdapter.changeData(matchedNotes)
+        }
+        else {
+            recyclerAdapter.changeData(emptyList())
+            binding.noNotesCardView.visibility = View.GONE
+        }
+    }
+
 }

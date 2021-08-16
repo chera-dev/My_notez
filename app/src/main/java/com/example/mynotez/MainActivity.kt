@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
             val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
             if (navController.previousBackStackEntry != null)
                 navController.popBackStack()
-            navController.navigate(R.id.nav_notes_frag,bundle)
+            navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
             drawerLayout.close()
             false
         }
@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
                 val alertDialog:AlertDialog = builder.show()
                 titleEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener{
                     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                        if (actionId == EditorInfo.IME_NULL && actionId == KeyEvent.ACTION_DOWN ){
+                        if (actionId == EditorInfo.IME_NULL && (actionId == KeyEvent.ACTION_DOWN || actionId == KeyEvent.KEYCODE_ENTER) ){
                             alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
                             return true
                         }
@@ -156,13 +156,17 @@ class MainActivity : AppCompatActivity() {
         val bundle = bundleOf("title" to it.title,"type" to  LABEL.name,"label" to label)
         if (navController.previousBackStackEntry != null)
             navController.popBackStack()
+        navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
+        drawerLayout.close()
+    }
+
+    private fun getNavBuilderAnimation():NavOptions.Builder{
         val navBuilder = NavOptions.Builder()
         navBuilder.setEnterAnim(R.anim.slide_in_from_left)
         navBuilder.setExitAnim(R.anim.slide_out_to_right)
         navBuilder.setPopEnterAnim(R.anim.slide_in_from_right)
         navBuilder.setPopExitAnim(R.anim.slide_out_to_left)
-        navController.navigate(R.id.nav_notes_frag,bundle,navBuilder.build())
-        drawerLayout.close()
+        return navBuilder
     }
 
     override fun onSupportNavigateUp(): Boolean {
