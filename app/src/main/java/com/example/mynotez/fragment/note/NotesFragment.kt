@@ -3,6 +3,7 @@ package com.example.mynotez.fragment.note
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -13,6 +14,7 @@ import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
+import androidx.core.app.ShareCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -87,6 +89,8 @@ class NotesFragment : Fragment(), ItemListener {
         setHasOptionsMenu(true)
         return binding.root
     }
+
+
 
     private fun setRecyclerView(){
         recyclerView = binding.notesRecyclerView
@@ -180,9 +184,26 @@ class NotesFragment : Fragment(), ItemListener {
             })
         }
         menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("delete") {
-            Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
-            mUserViewModel.deleteNote(note)
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Delete Note - ${note.noteTitle}?")
+            builder.setPositiveButton("Delete"){ _, _ ->
+                Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
+                mUserViewModel.deleteNote(note)
+            }
+            builder.setNegativeButton("Cancel"){ _, _ ->
+            }
+            builder.show()
+        })
+        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("share note"){
+            shareText(note)
         }).show()
+    }
+
+    private fun shareText(note: Notes) = with(binding) {
+        val shareMsg = getString(R.string.share_message, note.noteTitle, note.noteDetails)
+        val intent = ShareCompat.IntentBuilder(requireActivity())
+            .setType("text/plain").setText(shareMsg).intent
+        startActivity(Intent.createChooser(intent, null))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -5,10 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.SubMenu
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -32,8 +29,41 @@ import com.example.mynotez.data.NoteViewModel
 import com.example.mynotez.enumclass.From.LABEL
 import com.example.mynotez.enumclass.From.ARCHIVED
 import com.google.android.material.textfield.TextInputEditText
+import android.view.GestureDetector
+import androidx.constraintlayout.motion.widget.OnSwipe
 
 class MainActivity : AppCompatActivity() {
+
+    /*class OnSwipeTouchListener(val context: Context,view: View):View.OnTouchListener{
+        val gestureDetector = GestureDetector(context,GestureListener())
+
+        class GestureListener: GestureDetector.SimpleOnGestureListener() {
+            override fun onFling(
+                e1: MotionEvent?,
+                e2: MotionEvent?,
+                velocityX: Float,
+                velocityY: Float
+            ): Boolean {
+                return super.onFling(e1, e2, velocityX, velocityY)
+            }
+        }
+
+        fun onSwipeRight(){
+            Toast.makeText(context,"swiped right",Toast.LENGTH_LONG).show()
+            this.o
+        }
+
+        interface OnSwipeListener{
+            fun swipeRight()
+            fun swipeLeft()
+        }
+
+        val onSwipe: OnSwipeListener
+
+        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+            return gestureDetector.onTouchEvent(event)
+        }
+    }*/
 
     private lateinit var mUserViewModel:NoteViewModel
     private lateinit var binding: ActivityMainBinding
@@ -77,6 +107,8 @@ class MainActivity : AppCompatActivity() {
             true
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val onSwipeTouchListener = OnSwipeTouchListener(this,binding.root)
     }
 
     private fun addItemToNavDrawer(navView: NavigationView){
@@ -180,8 +212,3 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
     }
 }
-
-//
-//E/tag: 0  KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_ENTER, scanCode=28, metaState=0, flags=0x8, repeatCount=0, eventTime=50988924, downTime=50988924, deviceId=0, source=0x301, displayId=-1 }
-//
-//E/tag: 6  null

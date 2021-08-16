@@ -2,12 +2,14 @@ package com.example.mynotez.fragment.details
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.app.ShareCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.mynotez.*
@@ -75,12 +77,6 @@ class DetailsFragment : Fragment() {
             binding.textViewPinnedInDetails.visibility = View.VISIBLE
         if (editedNote.noteType == TYPEARCHIVED)
             binding.textViewNoteType.visibility = View.VISIBLE
-
-        //-
-        /* binding.fabUpdateNotes.setOnClickListener {
-            saveNote()
-            //findNavController().popBackStack()
-        }*/
         setHasOptionsMenu(true)
         return root
     }
@@ -117,7 +113,6 @@ class DetailsFragment : Fragment() {
             mUserViewModel.deleteNote(editedNote)
         }
     }
-    ///////////
 
     private fun showLabels(){
         binding.labelTextViewInDetails.visibility = View.VISIBLE
@@ -137,7 +132,7 @@ class DetailsFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         val createMenu = CreateMenu(menu)
         createMenu.addMenuItem(
-            Menu.NONE, 1, 1, if (editedNote.isPinned) "unPin" else "pin",
+            Menu.NONE, 1, 1, if (editedNote.isPinned) "UnPin" else "Pin",
             if (editedNote.isPinned) R.drawable.ic_baseline_push_unpin_24 else R.drawable.ic_outline_push_pin_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
                 if (editedNote.isPinned) {
@@ -152,7 +147,7 @@ class DetailsFragment : Fragment() {
                 }
             })
         createMenu.addMenuItem(
-            Menu.NONE,2,2,"add label", R.drawable.ic_outline_label_24,
+            Menu.NONE,2,2,"Add Label", R.drawable.ic_outline_label_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
                 val listOfAllLabelAvailable:List<Label> = mUserViewModel.allLabels.value!!
                 val allLabelName = Array(size = listOfAllLabelAvailable.size){""}
@@ -197,7 +192,7 @@ class DetailsFragment : Fragment() {
             })
         createMenu.addMenuItem(
             Menu.NONE, 3, 3,
-            if (editedNote.noteType != TYPEARCHIVED)"archive" else "unarchive",
+            if (editedNote.noteType != TYPEARCHIVED)"Archive" else "UnArchive",
             if (editedNote.noteType != TYPEARCHIVED) R.drawable.ic_baseline_archive_24 else R.drawable.ic_baseline_unarchive_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
                 if (editedNote.noteType != TYPEARCHIVED) {
@@ -212,13 +207,12 @@ class DetailsFragment : Fragment() {
                 }
             })
         createMenu.addMenuItem(
-            Menu.NONE, 4, 4, "delete", R.drawable.ic_baseline_delete_24,
-            MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
+            Menu.NONE, 4, 4, "Delete", R.drawable.ic_baseline_delete_24,
+            MenuItem.SHOW_AS_ACTION_NEVER, onclick = {
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Delete Note - ${editedNote.noteTitle}?")
                 builder.setPositiveButton("Delete"){ _, _ ->
                     Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
-                    //-if(noteId != null)
                     mUserViewModel.deleteNote(editedNote)
                     findNavController().popBackStack()
                 }
@@ -227,8 +221,20 @@ class DetailsFragment : Fragment() {
                 builder.show()
 
             })
+        createMenu.addMenuItem(Menu.NONE,5,5,"Share",R.drawable.ic_outline_share_24,
+        MenuItem.SHOW_AS_ACTION_NEVER,onclick = {
+            shareText()
+            })
         inflater.inflate(R.menu.main,menu)
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun shareText() = with(binding) {
+        saveNote()
+        val shareMsg = getString(R.string.share_message, editedNote.noteTitle, editedNote.noteDetails)
+        val intent = ShareCompat.IntentBuilder(requireActivity())
+            .setType("text/plain").setText(shareMsg).intent
+        startActivity(Intent.createChooser(intent, null))
     }
 
     override fun onDestroyView() {
