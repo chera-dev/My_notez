@@ -3,6 +3,7 @@ package com.example.mynotez
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
@@ -26,44 +27,13 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.mynotez.data.Label
 import com.example.mynotez.data.NoteViewModel
+import com.example.mynotez.data.Notes
 import com.example.mynotez.enumclass.From.LABEL
 import com.example.mynotez.enumclass.From.ARCHIVED
+import com.example.mynotez.enumclass.NoteType
 import com.google.android.material.textfield.TextInputEditText
-import android.view.GestureDetector
-import androidx.constraintlayout.motion.widget.OnSwipe
 
 class MainActivity : AppCompatActivity() {
-
-    /*class OnSwipeTouchListener(val context: Context,view: View):View.OnTouchListener{
-        val gestureDetector = GestureDetector(context,GestureListener())
-
-        class GestureListener: GestureDetector.SimpleOnGestureListener() {
-            override fun onFling(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
-                velocityX: Float,
-                velocityY: Float
-            ): Boolean {
-                return super.onFling(e1, e2, velocityX, velocityY)
-            }
-        }
-
-        fun onSwipeRight(){
-            Toast.makeText(context,"swiped right",Toast.LENGTH_LONG).show()
-            this.o
-        }
-
-        interface OnSwipeListener{
-            fun swipeRight()
-            fun swipeLeft()
-        }
-
-        val onSwipe: OnSwipeListener
-
-        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-            return gestureDetector.onTouchEvent(event)
-        }
-    }*/
 
     private lateinit var mUserViewModel:NoteViewModel
     private lateinit var binding: ActivityMainBinding
@@ -108,7 +78,6 @@ class MainActivity : AppCompatActivity() {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val onSwipeTouchListener = OnSwipeTouchListener(this,binding.root)
     }
 
     private fun addItemToNavDrawer(navView: NavigationView){
@@ -116,7 +85,6 @@ class MainActivity : AppCompatActivity() {
         val subMenu: SubMenu = menu.addSubMenu("Label")
         addLabelToDrawer(subMenu)
         menu.add(2,1,0,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
-            //it.isEnabled = true
             val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
             if (navController.previousBackStackEntry != null)
                 navController.popBackStack()

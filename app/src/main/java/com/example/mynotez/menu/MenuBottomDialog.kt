@@ -16,14 +16,15 @@ class MenuBottomDialog (context: Context): BottomSheetDialog(context) {
         setContentView(linearLayout)
     }
     fun addTextViewItem(operation: Operation) = apply {
-        val item = BottomMenuTextViewItemBinding.inflate(layoutInflater).root
-        item.text = operation.textId
-        item.setOnClickListener {
+        val item = BottomMenuTextViewItemBinding.inflate(layoutInflater)
+        item.imageViewInBottomSheet.setImageResource(operation.imageResource)
+        item.textViewInBottomSheet.text = operation.titleText
+        item.textViewInBottomSheet.setOnClickListener {
             dismiss()
             operation.operation.invoke()
         }
-        linearLayout.addView(item)
+        linearLayout.addView(item.root)
     }
 
-    data class Operation(val textId: String, val operation: () -> Unit)
+    data class Operation(val titleText: String, val imageResource:Int, val operation: () -> Unit)
 }

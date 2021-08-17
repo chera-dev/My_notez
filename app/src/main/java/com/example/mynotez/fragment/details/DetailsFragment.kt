@@ -194,7 +194,7 @@ class DetailsFragment : Fragment() {
             Menu.NONE, 3, 3,
             if (editedNote.noteType != TYPEARCHIVED)"Archive" else "UnArchive",
             if (editedNote.noteType != TYPEARCHIVED) R.drawable.ic_baseline_archive_24 else R.drawable.ic_baseline_unarchive_24,
-            MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
+            MenuItem.SHOW_AS_ACTION_NEVER, onclick = {
                 if (editedNote.noteType != TYPEARCHIVED) {
                     createMenu.changeIcon(3, R.drawable.ic_baseline_unarchive_24)
                     editedNote.noteType = TYPEARCHIVED
@@ -222,7 +222,7 @@ class DetailsFragment : Fragment() {
 
             })
         createMenu.addMenuItem(Menu.NONE,5,5,"Share",R.drawable.ic_outline_share_24,
-        MenuItem.SHOW_AS_ACTION_NEVER,onclick = {
+        MenuItem.SHOW_AS_ACTION_ALWAYS,onclick = {
             shareText()
             })
         inflater.inflate(R.menu.main,menu)

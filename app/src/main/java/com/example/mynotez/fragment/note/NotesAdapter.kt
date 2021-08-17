@@ -73,21 +73,21 @@ class NotesAdapter ( private val itemListener: ItemListener?)
         else{
             holder.itemPinned.visibility = View.GONE
         }
-        //*  if (sharedViewModel!=null){
-            //*val label: MutableSet<Label> = sharedViewModel.getLabelsOfThisNote(data.noteId)
-            val label: Set<String> = data.getLabels()
-            if (label.isNotEmpty()) {
-                holder.labelTag.visibility = View.VISIBLE
-                holder.chipGroup.visibility = View.VISIBLE
-                holder.chipGroup.removeAllViews()
-                for (i in label)
-                    holder.chipGroup.addChip(holder.itemView.context,i)
-                //holder.chipGroup.addChip(holder.itemView.context,i.labelname)
+        val label: Set<String> = data.getLabels()
+        if (label.isNotEmpty()) {
+            holder.labelTag.visibility = View.VISIBLE
+            holder.chipGroup.visibility = View.VISIBLE
+            holder.chipGroup.removeAllViews()
+            holder.chipGroup.setOnClickListener {
+                itemListener?.onClick(notesList[position])
             }
-            else{
-                holder.labelTag.visibility = View.GONE
-                holder.chipGroup.visibility = View.GONE
-            }
+            for (i in label)
+                holder.chipGroup.addChip(holder.itemView.context,i)
+        }
+        else{
+            holder.labelTag.visibility = View.GONE
+            holder.chipGroup.visibility = View.GONE
+        }
     }
 
     private fun ChipGroup.addChip(context: Context, label:String){

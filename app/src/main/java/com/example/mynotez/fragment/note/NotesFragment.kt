@@ -123,12 +123,13 @@ class NotesFragment : Fragment(), ItemListener {
 
     override fun onLongClick(note:Notes) {
         val menuBottomDialog = MenuBottomDialog(requireContext())
-        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation(if (!note.isPinned) "pin note" else "unPin note") {
+        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation((if (!note.isPinned) "pin note" else "unPin note"),
+            (if (!note.isPinned) R.drawable.ic_outline_push_pin_24 else R.drawable.ic_baseline_push_unpin_24)) {
             if (!note.isPinned)
                 mUserViewModel.changePinStatus(true,note.noteId)
             else
                 mUserViewModel.changePinStatus(false,note.noteId)
-        }).addTextViewItem(MenuBottomDialog.Operation("labels") {
+        }).addTextViewItem(MenuBottomDialog.Operation("labels",R.drawable.ic_outline_label_24) {
             val labelList: List<Label> = mUserViewModel.allLabels.value!!
             val allLabelName = Array(size = labelList.size) { "" }
             val selectedLabelList = BooleanArray(labelList.size)
@@ -173,17 +174,17 @@ class NotesFragment : Fragment(), ItemListener {
             }
         })
         if (noteFrom == ARCHIVED){
-            menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("unarchive") {
+            menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("unarchive",R.drawable.ic_baseline_unarchive_24) {
                 Toast.makeText(requireContext(), "Note Unarchived", Toast.LENGTH_SHORT).show()
                 mUserViewModel.changeNoteType(note,NoteType.TYPENOTES)
             })}
         else {
-            menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("archive") {
+            menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("archive",R.drawable.ic_baseline_archive_24) {
                 Toast.makeText(requireContext(), "Note Archived", Toast.LENGTH_SHORT).show()
                 mUserViewModel.changeNoteType(note,NoteType.TYPEARCHIVED)
             })
         }
-        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("delete") {
+        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("delete",R.drawable.ic_baseline_delete_24) {
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("Delete Note - ${note.noteTitle}?")
             builder.setPositiveButton("Delete"){ _, _ ->
@@ -194,7 +195,7 @@ class NotesFragment : Fragment(), ItemListener {
             }
             builder.show()
         })
-        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("share note"){
+        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("share note",R.drawable.ic_outline_share_24){
             shareText(note)
         }).show()
     }
