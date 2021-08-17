@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotez.*
-import com.example.mynotez.data.Label
 import com.example.mynotez.data.Notes
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
