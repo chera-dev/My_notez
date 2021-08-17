@@ -77,9 +77,6 @@ class NotesAdapter ( private val itemListener: ItemListener?)
             holder.labelTag.visibility = View.VISIBLE
             holder.chipGroup.visibility = View.VISIBLE
             holder.chipGroup.removeAllViews()
-            holder.chipGroup.setOnClickListener {
-                itemListener?.onClick(notesList[position])
-            }
             for (i in label)
                 holder.chipGroup.addChip(holder.itemView.context,i)
         }
