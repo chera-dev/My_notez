@@ -1,9 +1,11 @@
 package com.example.mynotez.fragment.details
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
@@ -22,6 +24,8 @@ import com.example.mynotez.databinding.FragmentDetailsBinding
 import com.example.mynotez.menu.CreateMenu
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import java.lang.Exception
+import java.util.*
 
 class DetailsFragment : Fragment() {
 
@@ -36,6 +40,7 @@ class DetailsFragment : Fragment() {
 
     private lateinit var titleEditText: EditText
     private lateinit var detailsEditText: EditText
+    private val REQUEST_CODE_SPEECH_INPUT = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,8 +82,33 @@ class DetailsFragment : Fragment() {
             binding.textViewPinnedInDetails.visibility = View.VISIBLE
         if (editedNote.noteType == TYPEARCHIVED)
             binding.textViewNoteType.visibility = View.VISIBLE
+        binding.floatingActionButtonInDetails.setOnClickListener {
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
+            try {
+                startActivityForResult(intent,REQUEST_CODE_SPEECH_INPUT)
+            }
+            catch (e: Exception){
+                Toast.makeText(requireContext(),e.message,Toast.LENGTH_LONG).show()
+            }
+        }
         setHasOptionsMenu(true)
         return root
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_SPEECH_INPUT){
+            if (resultCode == Activity.RESULT_OK && data != null){
+                val result:ArrayList<String> = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS) as ArrayList<String>
+                editedNote.noteDetails = binding.detailsTextViewInDetails.text.toString()
+                editedNote.noteDetails += ("\n" + result[0])
+                binding.detailsTextViewInDetails.setText(editedNote.noteDetails)
+                binding.detailsTextViewInDetails.setSelection(editedNote.noteDetails.length)
+            }
+        }
     }
 
     private fun createEmptyNote(){

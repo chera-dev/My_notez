@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginStart="5dp"
@@ -14,126 +12,142 @@
     android:orientation="vertical"
     tools:context=".fragment.details.DetailsFragment">
 
-    <EditText
-        android:id="@+id/titleTextViewInDetails"
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@null"
-        android:hint="@string/title"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:singleLine="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/titleTextViewInDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/title"
+            android:singleLine="true"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="4dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleTextViewInDetails"
+            app:layout_constraintVertical_bias="0" />
+
+        <EditText
+            android:id="@+id/detailsTextViewInDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:hint="@string/type_your_note"
+            android:paddingBottom="250dp"
+            android:textSize="20sp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chip_group_in_details"
+            app:layout_constraintVertical_bias="0" />
+
+        <TextView
+            android:id="@+id/textView_pinned_in_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:outlineAmbientShadowColor="@color/black"
+            android:outlineSpotShadowColor="@color/black"
+            android:paddingEnd="15dp"
+            android:text="@string/pinned"
+            android:textColor="#00B6B6"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleTextViewInDetails" />
+
+        <TextView
+            android:id="@+id/textView_date_created_in_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/textView_pinned_in_details"
+            app:layout_constraintTop_toBottomOf="@id/titleTextViewInDetails" />
+
+        <TextView
+            android:id="@+id/text_view_note_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingStart="15dp"
+            android:text="@string/archived"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/textView_date_created_in_details"
+            app:layout_constraintTop_toBottomOf="@id/titleTextViewInDetails" />
+
+        <TextView
+            android:id="@+id/label_text_view_in_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Labels:  "
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/detailsTextViewInDetails"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_in_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:visibility="gone"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/label_text_view_in_details"
+            app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonInDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintVertical_bias=".92"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0" />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="4dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextViewInDetails"
-        app:layout_constraintVertical_bias="0" />
-
-    <EditText
-        android:id="@+id/detailsTextViewInDetails"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@null"
-        android:hint="@string/type_your_note"
-        android:paddingBottom="250dp"
-        android:textSize="20sp"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chip_group_in_details"
-        app:layout_constraintVertical_bias="0" />
-
-    <TextView
-        android:id="@+id/textView_pinned_in_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:outlineAmbientShadowColor="@color/black"
-        android:outlineSpotShadowColor="@color/black"
-        android:paddingEnd="15dp"
-        android:text="@string/pinned"
-        android:textColor="#00B6B6"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleTextViewInDetails" />
-
-    <TextView
-        android:id="@+id/textView_date_created_in_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/textView_pinned_in_details"
-        app:layout_constraintTop_toBottomOf="@id/titleTextViewInDetails" />
-
-    <TextView
-        android:id="@+id/text_view_note_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:paddingStart="15dp"
-        android:text="@string/archived"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/textView_date_created_in_details"
-        app:layout_constraintTop_toBottomOf="@id/titleTextViewInDetails" />
-
-    <TextView
-        android:id="@+id/label_text_view_in_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Labels:  "
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/detailsTextViewInDetails"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group_in_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:visibility="gone"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/label_text_view_in_details"
-        app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />
-
-   <!-- <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/label_recycler_view_in_details"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:visibility="visible"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/label_text_view_in_details"
-        app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />-->
-
+        app:srcCompat="@drawable/ic_baseline_keyboard_voice_24"
+        android:contentDescription="@string/to_convert_speech_to_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
