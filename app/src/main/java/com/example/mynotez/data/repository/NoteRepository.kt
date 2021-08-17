@@ -1,7 +1,7 @@
 package com.example.mynotez.data.repository
 
 import androidx.lifecycle.LiveData
-import com.example.mynotez.data.Notes
+import com.example.mynotez.data.entities.Notes
 import com.example.mynotez.data.dao.NoteDao
 import com.example.mynotez.enumclass.NoteType
 

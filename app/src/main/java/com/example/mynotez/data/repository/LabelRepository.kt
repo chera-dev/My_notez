@@ -1,7 +1,7 @@
 package com.example.mynotez.data.repository
 
 import androidx.lifecycle.LiveData
-import com.example.mynotez.data.Label
+import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.dao.LabelDao
 
 class LabelRepository(private val labelDao: LabelDao) {

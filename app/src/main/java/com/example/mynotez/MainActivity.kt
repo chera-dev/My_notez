@@ -3,7 +3,6 @@ package com.example.mynotez
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
@@ -25,12 +24,10 @@ import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.mynotez.data.Label
+import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.NoteViewModel
-import com.example.mynotez.data.Notes
 import com.example.mynotez.enumclass.From.LABEL
 import com.example.mynotez.enumclass.From.ARCHIVED
-import com.example.mynotez.enumclass.NoteType
 import com.google.android.material.textfield.TextInputEditText
 
 class MainActivity : AppCompatActivity() {

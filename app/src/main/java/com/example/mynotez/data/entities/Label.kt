@@ -1,4 +1,4 @@
-package com.example.mynotez.data
+package com.example.mynotez.data.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

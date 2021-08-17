@@ -2,8 +2,7 @@ package com.example.mynotez.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.mynotez.data.Label
-import com.example.mynotez.data.Notes
+import com.example.mynotez.data.entities.Label
 
 @Dao
 interface LabelDao {

@@ -2,6 +2,8 @@ package com.example.mynotez.data
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.example.mynotez.data.entities.Label
+import com.example.mynotez.data.entities.Notes
 import com.example.mynotez.data.repository.LabelRepository
 import com.example.mynotez.data.repository.NoteRepository
 import com.example.mynotez.enumclass.NoteType
@@ -32,19 +34,19 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         allLabels = labelRepository.readAllLabel
     }
 
-    fun addNote(note:Notes){
+    fun addNote(note: Notes){
         viewModelScope.launch(Dispatchers.IO) {
             noteRepository.addNote(note)
         }
     }
 
-    fun updateNote(note:Notes){
+    fun updateNote(note: Notes){
         viewModelScope.launch(Dispatchers.IO) {
             noteRepository.updateNote(note)
         }
     }
 
-    fun deleteNote(note:Notes){
+    fun deleteNote(note: Notes){
         viewModelScope.launch(Dispatchers.IO) {
             noteRepository.deleteNote(note)
         }
@@ -54,14 +56,14 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         return Content(noteDao.getNotesOfNoteIds(noteIds))
     }
 
-    fun addLabelWithNote(note: Notes,label: Label){
+    fun addLabelWithNote(note: Notes, label: Label){
         note.addLabel(label.labelName)
         updateNote(note)
         label.addNote(note.noteId)
         updateLabel(label)
     }
 
-    fun removeLabelFromNote(note: Notes,label: Label){
+    fun removeLabelFromNote(note: Notes, label: Label){
         note.removeLabel(label.labelName)
         updateNote(note)
         label.removeNote(note.noteId)
@@ -74,7 +76,7 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         updateNote(note)
     }
 
-    fun changeNoteType( note:Notes, newNoteType:NoteType){
+    fun changeNoteType(note: Notes, newNoteType:NoteType){
         viewModelScope.launch(Dispatchers.IO) {
             noteRepository.updateNoteType(note.noteId,newNoteType)
         }

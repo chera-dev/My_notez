@@ -15,9 +15,9 @@ import androidx.core.app.ShareCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.mynotez.*
-import com.example.mynotez.data.Label
+import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.NoteViewModel
-import com.example.mynotez.data.Notes
+import com.example.mynotez.data.entities.Notes
 import com.example.mynotez.enumclass.NoteType.TYPENOTES
 import com.example.mynotez.enumclass.NoteType.TYPEARCHIVED
 import com.example.mynotez.databinding.FragmentDetailsBinding
@@ -35,7 +35,7 @@ class DetailsFragment : Fragment() {
 
     private var noteId:Long? = null
     private lateinit var editedNote: Notes
-    private var label:Label? = null
+    private var label: Label? = null
     private var listOfLabels = mutableSetOf<String>()
 
     private lateinit var titleEditText: EditText

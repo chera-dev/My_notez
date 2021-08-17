@@ -7,6 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.mynotez.data.dao.LabelDao
 import com.example.mynotez.data.dao.NoteDao
+import com.example.mynotez.data.entities.Label
+import com.example.mynotez.data.entities.Notes
 import com.example.mynotez.data.typeconverters.SetOfLongTypeConverter
 import com.example.mynotez.data.typeconverters.SetOfStringTypeConverter
 

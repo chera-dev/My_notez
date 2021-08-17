@@ -2,7 +2,7 @@ package com.example.mynotez.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.mynotez.data.Notes
+import com.example.mynotez.data.entities.Notes
 import com.example.mynotez.enumclass.NoteType
 
 @Dao

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -22,15 +21,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotez.*
 import com.example.mynotez.data.Content
-import com.example.mynotez.data.Label
+import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.NoteViewModel
-import com.example.mynotez.data.Notes
+import com.example.mynotez.data.entities.Notes
 import com.example.mynotez.databinding.FragmentNotesBinding
 import com.example.mynotez.enumclass.From
 import com.example.mynotez.enumclass.From.*
 import com.example.mynotez.enumclass.NoteType
 import com.example.mynotez.menu.MenuBottomDialog
-import kotlinx.android.synthetic.main.fragment_details.*
 
 class NotesFragment : Fragment(), ItemListener {
 
@@ -113,7 +111,7 @@ class NotesFragment : Fragment(), ItemListener {
         }
     }
 
-    override fun onClick(note:Notes) {
+    override fun onClick(note: Notes) {
         val bundle = Bundle()
         bundle.putSerializable("noteToDetails",note)
         view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
@@ -121,7 +119,7 @@ class NotesFragment : Fragment(), ItemListener {
         imm.hideSoftInputFromWindow(binding.textViewTitleInNotesFragment.windowToken,0)
     }
 
-    override fun onLongClick(note:Notes) {
+    override fun onLongClick(note: Notes) {
         val menuBottomDialog = MenuBottomDialog(requireContext())
         menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation((if (!note.isPinned) "pin note" else "unPin note"),
             (if (!note.isPinned) R.drawable.ic_outline_push_pin_24 else R.drawable.ic_baseline_push_unpin_24)) {
