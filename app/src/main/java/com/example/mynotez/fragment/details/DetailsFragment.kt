@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.get
 import com.example.mynotez.*
 import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.NoteViewModel
