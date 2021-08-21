@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginStart="5dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginEnd="5dp"
-    android:orientation="vertical"
-    tools:context=".fragment.details.DetailsFragment">
-
-<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="7dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:context=".fragment.details.DetailsFragment">
 
         <EditText
             android:id="@+id/titleTextViewInDetails"
@@ -33,6 +25,8 @@
             android:singleLine="true"
             android:textSize="28sp"
             android:textStyle="bold"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -66,7 +60,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chip_group_in_details"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintVertical_bias="0"/>
 
         <TextView
             android:id="@+id/textView_pinned_in_details"
@@ -102,6 +96,7 @@
             android:layout_marginTop="10dp"
             android:paddingStart="15dp"
             android:text="@string/archived"
+            android:textColor="#FF5252"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -135,19 +130,3 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButtonInDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
-        app:layout_constraintVertical_bias=".92"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_keyboard_voice_24"
-        android:contentDescription="@string/to_convert_speech_to_text" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
