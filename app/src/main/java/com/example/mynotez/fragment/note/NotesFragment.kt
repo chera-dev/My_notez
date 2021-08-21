@@ -13,6 +13,7 @@ import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -38,6 +39,7 @@ class NotesFragment : Fragment(), ItemListener {
     private var title = "note"
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: NotesAdapter
+    private var menuSearchView:SearchView? = null
 
     private var notesList: Content<Notes>? = null
     private var myNotes:List<Notes>? = null
@@ -83,12 +85,21 @@ class NotesFragment : Fragment(), ItemListener {
                 binding.noNotesCardView.visibility = View.VISIBLE
             }
         })
-
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner,object :OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                if (menuSearchView?.isIconified == false){
+                    menuSearchView?.onActionViewCollapsed()
+                    onSearchClose()
+                }
+                else{
+                    isEnabled = false
+                    activity?.onBackPressed()
+                }
+            }
+        })
         setHasOptionsMenu(true)
         return binding.root
     }
-
-
 
     private fun setRecyclerView(){
         recyclerView = binding.notesRecyclerView
@@ -274,6 +285,7 @@ class NotesFragment : Fragment(), ItemListener {
         }
         val searchItem = menu.findItem(R.id.search_item)
         val searchView = searchItem.actionView as SearchView
+        menuSearchView = searchView
         searchView.queryHint = "Search Notes"
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -291,12 +303,16 @@ class NotesFragment : Fragment(), ItemListener {
             binding.fab.visibility = View.GONE
         }
         searchView.setOnCloseListener {
-            myNotes?.let { recyclerAdapter.changeData(it) }
-            binding.noNotesCardView.visibility = View.GONE
-            binding.fab.visibility = View.VISIBLE
+            onSearchClose()
             false
         }
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun onSearchClose(){
+        myNotes?.let { recyclerAdapter.changeData(it) }
+        binding.noNotesCardView.visibility = View.GONE
+        binding.fab.visibility = View.VISIBLE
     }
 
     // & change it to access query in dao through view model
