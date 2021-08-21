@@ -14,4 +14,10 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="Theme.MyNotez.ImageInBottomDialog">
+        <item name="android:fillColor">@color/white</item>
+        <item name="android:tint">@color/white</item>
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
 </resources>

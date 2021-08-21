@@ -23,6 +23,10 @@ class MenuBottomDialog (context: Context): BottomSheetDialog(context) {
             dismiss()
             operation.operation.invoke()
         }
+        item.imageViewInBottomSheet.setOnClickListener {
+            dismiss()
+            operation.operation.invoke()
+        }
         linearLayout.addView(item.root)
     }
 
