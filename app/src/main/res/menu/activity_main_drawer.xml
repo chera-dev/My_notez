@@ -10,7 +10,11 @@
             android:id="@+id/nav_notes_frag"
             android:title="Notes"
             android:icon="@drawable/ic_outline_note_24"/>
+    </group>
 
+    <group
+        android:id="@+id/labels"
+        android:checkableBehavior="single">
     </group>
 
 </menu>

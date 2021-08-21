@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -81,12 +82,14 @@ class MainActivity : AppCompatActivity() {
         menu = navView.menu
         val subMenu: SubMenu = menu.addSubMenu("Label")
         addLabelToDrawer(subMenu)
-        menu.add(2,1,0,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
+        menu.add("Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
             val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
             if (navController.previousBackStackEntry != null)
                 navController.popBackStack()
             navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
             drawerLayout.close()
+            it.isCheckable = true
+            it.isChecked = true
             true
         }
     }
@@ -94,18 +97,20 @@ class MainActivity : AppCompatActivity() {
     private fun addLabelToDrawer(subMenu: SubMenu){
         mUserViewModel.allLabels.observe(this, { allLabels ->
             subMenu.clear()
-            var labelOrder = 1
+            var labelOrder = 2
             for (i in allLabels) {
-                subMenu.add(1, labelOrder, labelOrder, i.labelName)
+                subMenu.add(R.id.labels, labelOrder, labelOrder, i.labelName)
                     .setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
-                    toNotesFragment(it, i)
-                    it.isChecked = true
-                    true
-                }
+                        toNotesFragment(it, i)
+                        it.isCheckable = true
+                        menu.setGroupCheckable(R.id.labels,true,true)
+                        //it.isChecked = true
+                        true
+                    }
                 labelOrder++
             }
 
-            subMenu.add("add label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener {
+            subMenu.add(R.id.labels,0,0,"Add Label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener {
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle("Add new label")
                 val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
