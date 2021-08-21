@@ -7,6 +7,7 @@
 
     <fragment
         android:id="@+id/nav_notes_frag"
+        android:label="My Notez"
         android:name="com.example.mynotez.fragment.note.NotesFragment"
         tools:layout="@layout/fragment_notes" >
         <action
@@ -17,9 +18,11 @@
             app:popEnterAnim="@anim/slide_in_from_left"
             app:popExitAnim="@anim/slide_out_to_right" />
     </fragment>
+
     <fragment
         android:id="@+id/detailsFragment"
         android:name="com.example.mynotez.fragment.details.DetailsFragment"
-        tools:layout="@layout/fragment_details" >
-    </fragment>
+        android:label=""
+        tools:layout="@layout/fragment_details" />
+
 </navigation>

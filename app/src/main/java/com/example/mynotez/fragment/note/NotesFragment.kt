@@ -18,6 +18,7 @@ import androidx.core.app.ShareCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotez.*
@@ -132,13 +133,13 @@ class NotesFragment : Fragment(), ItemListener {
 
     override fun onLongClick(note: Notes) {
         val menuBottomDialog = MenuBottomDialog(requireContext())
-        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation((if (!note.isPinned) "pin note" else "unPin note"),
+        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation((if (!note.isPinned) "Pin Note" else "UnPin Note"),
             (if (!note.isPinned) R.drawable.ic_outline_push_pin_24 else R.drawable.ic_baseline_push_unpin_24)) {
             if (!note.isPinned)
                 mUserViewModel.changePinStatus(true,note.noteId)
             else
                 mUserViewModel.changePinStatus(false,note.noteId)
-        }).addTextViewItem(MenuBottomDialog.Operation("labels",R.drawable.ic_outline_label_24) {
+        }).addTextViewItem(MenuBottomDialog.Operation("Add Labels",R.drawable.ic_outline_label_24) {
             val labelList: List<Label> = mUserViewModel.allLabels.value!!
             val allLabelName = Array(size = labelList.size) { "" }
             val selectedLabelList = BooleanArray(labelList.size)
@@ -183,17 +184,21 @@ class NotesFragment : Fragment(), ItemListener {
             }
         })
         if (noteFrom == ARCHIVED){
-            menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("unarchive",R.drawable.ic_baseline_unarchive_24) {
+            menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("UnArchive",R.drawable.ic_baseline_unarchive_24) {
                 Toast.makeText(requireContext(), "Note Unarchived", Toast.LENGTH_SHORT).show()
                 mUserViewModel.changeNoteType(note,NoteType.TYPENOTES)
             })}
         else {
-            menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("archive",R.drawable.ic_baseline_archive_24) {
+            menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("Archive",R.drawable.ic_baseline_archive_24) {
                 Toast.makeText(requireContext(), "Note Archived", Toast.LENGTH_SHORT).show()
                 mUserViewModel.changeNoteType(note,NoteType.TYPEARCHIVED)
             })
         }
-        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("delete",R.drawable.ic_baseline_delete_24) {
+        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("Make a Copy",R.drawable.ic_baseline_content_copy_24) {
+            note.noteId = 0
+            mUserViewModel.addNote(note)
+        })
+        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("Delete",R.drawable.ic_baseline_delete_24) {
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("Delete Note - ${note.noteTitle}?")
             builder.setPositiveButton("Delete"){ _, _ ->

@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.get
 import com.example.mynotez.*
 import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.NoteViewModel
@@ -35,7 +36,7 @@ class DetailsFragment : Fragment() {
 
     private var noteId:Long? = null
     private lateinit var editedNote: Notes
-    private var label: Label? = null
+    private var labelFromNotesFragment: Label? = null
     private var listOfLabels = mutableSetOf<String>()
 
     private lateinit var titleEditText: EditText
@@ -68,8 +69,8 @@ class DetailsFragment : Fragment() {
                 createEmptyNote()
             val gotLabel = requireArguments().getSerializable("label")
             if (gotLabel != null) {
-                label = gotLabel as Label
-                label?.labelName?.let { listOfLabels.add(it) }
+                labelFromNotesFragment = gotLabel as Label
+                labelFromNotesFragment?.labelName?.let { listOfLabels.add(it) }
             }
             if (listOfLabels.isNotEmpty())
                 showLabels()
@@ -110,8 +111,8 @@ class DetailsFragment : Fragment() {
                 if (recentNote.noteDetails == "") {
                     editedNote = recentNote
                     noteId = recentNote.noteId
-                    if (label != null)
-                        mUserViewModel.addLabelWithNote(editedNote, label!!)
+                    if (labelFromNotesFragment != null)
+                        mUserViewModel.addLabelWithNote(editedNote, labelFromNotesFragment!!)
                 }
             }
         })
@@ -206,21 +207,34 @@ class DetailsFragment : Fragment() {
                     builder.show()
                 }
             })
-        createMenu.addMenuItem(Menu.NONE, 3, 3, if (editedNote.noteType != TYPEARCHIVED)"Archive" else "UnArchive",
+        createMenu.addMenuItem(Menu.NONE,3,3,"Speech to text",R.drawable.ic_baseline_keyboard_voice_24,
+            MenuItem.SHOW_AS_ACTION_ALWAYS,onclick = {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
+                try {
+                    startActivityForResult(intent,REQUEST_CODE_SPEECH_INPUT)
+                }
+                catch (e: Exception){
+                    Toast.makeText(requireContext(),e.message,Toast.LENGTH_LONG).show()
+                }
+            })
+        createMenu.addMenuItem(Menu.NONE, 4, 4, if (editedNote.noteType != TYPEARCHIVED)"Archive" else "UnArchive",
             if (editedNote.noteType != TYPEARCHIVED) R.drawable.ic_baseline_archive_24 else R.drawable.ic_baseline_unarchive_24,
-            MenuItem.SHOW_AS_ACTION_NEVER, onclick = {
+            MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
                 if (editedNote.noteType != TYPEARCHIVED) {
-                    createMenu.changeIcon(3, R.drawable.ic_baseline_unarchive_24)
+                    createMenu.changeIcon(4, R.drawable.ic_baseline_unarchive_24)
                     editedNote.noteType = TYPEARCHIVED
                     binding.textViewNoteType.visibility = View.VISIBLE
                 }
                 else{
-                    createMenu.changeIcon(3, R.drawable.ic_baseline_archive_24)
+                    createMenu.changeIcon(4, R.drawable.ic_baseline_archive_24)
                     editedNote.noteType = TYPENOTES
                     binding.textViewNoteType.visibility = View.GONE
                 }
             })
-        createMenu.addMenuItem(Menu.NONE, 4, 4, "Delete", R.drawable.ic_baseline_delete_24,
+        createMenu.addMenuItem(Menu.NONE, 5, 5, "Delete", R.drawable.ic_baseline_delete_24,
             MenuItem.SHOW_AS_ACTION_NEVER, onclick = {
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Delete Note - ${editedNote.noteTitle}?")
@@ -233,22 +247,16 @@ class DetailsFragment : Fragment() {
                 }
                 builder.show()
             })
-        createMenu.addMenuItem(Menu.NONE,5,5,"Share",R.drawable.ic_outline_share_24,
+        createMenu.addMenuItem(Menu.NONE,6,6,"Copy Note",R.drawable.ic_baseline_content_copy_24,
             MenuItem.SHOW_AS_ACTION_NEVER,onclick = {
-            shareText()
+                Toast.makeText(requireContext(),"Note Copied",Toast.LENGTH_SHORT).show()
+                val note = editedNote
+                note.noteId = 0
+                mUserViewModel.addNote(note)
             })
-        createMenu.addMenuItem(Menu.NONE,6,6,"Speech to text",R.drawable.ic_baseline_keyboard_voice_24,
-            MenuItem.SHOW_AS_ACTION_ALWAYS,onclick = {
-                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
-                try {
-                    startActivityForResult(intent,REQUEST_CODE_SPEECH_INPUT)
-                }
-                catch (e: Exception){
-                    Toast.makeText(requireContext(),e.message,Toast.LENGTH_LONG).show()
-                }
+        createMenu.addMenuItem(Menu.NONE,7,7,"Share",R.drawable.ic_outline_share_24,
+            MenuItem.SHOW_AS_ACTION_NEVER,onclick = {
+                shareText()
             })
         inflater.inflate(R.menu.main,menu)
         super.onCreateOptionsMenu(menu, inflater)
