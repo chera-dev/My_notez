@@ -82,18 +82,8 @@ class DetailsFragment : Fragment() {
             binding.textViewPinnedInDetails.visibility = View.VISIBLE
         if (editedNote.noteType == TYPEARCHIVED)
             binding.textViewNoteType.visibility = View.VISIBLE
-        binding.floatingActionButtonInDetails.setOnClickListener {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
-            try {
-                startActivityForResult(intent,REQUEST_CODE_SPEECH_INPUT)
-            }
-            catch (e: Exception){
-                Toast.makeText(requireContext(),e.message,Toast.LENGTH_LONG).show()
-            }
-        }
+        if (editedNote.noteTitle == "" && editedNote.noteDetails == "")
+            binding.textViewDateCreatedInDetails.visibility = View.GONE
         setHasOptionsMenu(true)
         return root
     }
@@ -161,8 +151,7 @@ class DetailsFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         val createMenu = CreateMenu(menu)
-        createMenu.addMenuItem(
-            Menu.NONE, 1, 1, if (editedNote.isPinned) "UnPin" else "Pin",
+        createMenu.addMenuItem(Menu.NONE, 1, 1, if (editedNote.isPinned) "UnPin" else "Pin",
             if (editedNote.isPinned) R.drawable.ic_baseline_push_unpin_24 else R.drawable.ic_outline_push_pin_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
                 if (editedNote.isPinned) {
@@ -176,8 +165,7 @@ class DetailsFragment : Fragment() {
                     binding.textViewPinnedInDetails.visibility = View.VISIBLE
                 }
             })
-        createMenu.addMenuItem(
-            Menu.NONE,2,2,"Add Label", R.drawable.ic_outline_label_24,
+        createMenu.addMenuItem(Menu.NONE,2,2,"Add Label", R.drawable.ic_outline_label_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
                 val listOfAllLabelAvailable:List<Label> = mUserViewModel.allLabels.value!!
                 val allLabelName = Array(size = listOfAllLabelAvailable.size){""}
@@ -199,12 +187,10 @@ class DetailsFragment : Fragment() {
                     builder.setPositiveButton("Done"){ _, _ ->
                         for (j in selectedLabelList.indices){
                             if (selectedLabelList[j]){
-                                //-if(noteId != null)
                                 mUserViewModel.addLabelWithNote(editedNote,listOfAllLabelAvailable[j])
                                 listOfLabels.add(listOfAllLabelAvailable[j].labelName)
                             }
                             else{
-                                //-if(noteId != null)
                                 mUserViewModel.removeLabelFromNote(editedNote,listOfAllLabelAvailable[j])
                                 listOfLabels.remove(listOfAllLabelAvailable[j].labelName)
                             }
@@ -220,9 +206,7 @@ class DetailsFragment : Fragment() {
                     builder.show()
                 }
             })
-        createMenu.addMenuItem(
-            Menu.NONE, 3, 3,
-            if (editedNote.noteType != TYPEARCHIVED)"Archive" else "UnArchive",
+        createMenu.addMenuItem(Menu.NONE, 3, 3, if (editedNote.noteType != TYPEARCHIVED)"Archive" else "UnArchive",
             if (editedNote.noteType != TYPEARCHIVED) R.drawable.ic_baseline_archive_24 else R.drawable.ic_baseline_unarchive_24,
             MenuItem.SHOW_AS_ACTION_NEVER, onclick = {
                 if (editedNote.noteType != TYPEARCHIVED) {
@@ -236,8 +220,7 @@ class DetailsFragment : Fragment() {
                     binding.textViewNoteType.visibility = View.GONE
                 }
             })
-        createMenu.addMenuItem(
-            Menu.NONE, 4, 4, "Delete", R.drawable.ic_baseline_delete_24,
+        createMenu.addMenuItem(Menu.NONE, 4, 4, "Delete", R.drawable.ic_baseline_delete_24,
             MenuItem.SHOW_AS_ACTION_NEVER, onclick = {
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Delete Note - ${editedNote.noteTitle}?")
@@ -249,11 +232,23 @@ class DetailsFragment : Fragment() {
                 builder.setNegativeButton("Cancel"){ _, _ ->
                 }
                 builder.show()
-
             })
         createMenu.addMenuItem(Menu.NONE,5,5,"Share",R.drawable.ic_outline_share_24,
-        MenuItem.SHOW_AS_ACTION_ALWAYS,onclick = {
+            MenuItem.SHOW_AS_ACTION_NEVER,onclick = {
             shareText()
+            })
+        createMenu.addMenuItem(Menu.NONE,6,6,"Speech to text",R.drawable.ic_baseline_keyboard_voice_24,
+            MenuItem.SHOW_AS_ACTION_ALWAYS,onclick = {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
+                try {
+                    startActivityForResult(intent,REQUEST_CODE_SPEECH_INPUT)
+                }
+                catch (e: Exception){
+                    Toast.makeText(requireContext(),e.message,Toast.LENGTH_LONG).show()
+                }
             })
         inflater.inflate(R.menu.main,menu)
         super.onCreateOptionsMenu(menu, inflater)
