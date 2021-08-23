@@ -2,16 +2,17 @@
     <!-- Base application theme. -->
     <style name="Theme.MyNotez" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#BF000000</item>
-        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorPrimary">@color/very_dark_blue</item>
+        <item name="colorPrimaryVariant">@color/very2_dark_blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondary">@color/very_dark_blue</item>
         <item name="colorSecondaryVariant">#BF000000</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:colorBackground">@color/very3_light_pale_dark_blue</item>
     </style>
 
     <style name="Theme.MyNotez.NoActionBar">
@@ -23,6 +24,23 @@
         <item name="android:fillColor">@color/black</item>
         <item name="android:tint">@color/black</item>
         <item name="android:backgroundTint">@color/black</item>
+    </style>
+
+    <style name="Theme.MyNotez.Card">
+        <item name="cardBackgroundColor">@color/very4_light_pale_dark_blue</item>
+    </style>
+
+    <style name="Theme.MyNotez.TextColor">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="Theme.MyNotez.NavDrawer">
+        <item name="android:background">@color/very3_light_pale_dark_blue</item>
+        <item name="colorNavigationItemSelected">@color/very_light_pale_dark_blue</item>
+    </style>
+
+    <style name="Theme.MyNotez.BottomSheet">
+        <item name="android:background">@color/very4_light_pale_dark_blue</item>
     </style>
 
     <style name="Theme.MyNotes.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

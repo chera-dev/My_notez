@@ -5,10 +5,10 @@
     xmlns:card_view = "http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="3dp"
-    app:cardCornerRadius="5dp"
+    card_view:cardCornerRadius="5dp"
     card_view:contentPadding="2dp"
     card_view:cardUseCompatPadding="true"
+    style="@style/Theme.MyNotez.Card"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,10 +41,9 @@
             android:layout_marginEnd="5dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="#A8000000"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:visibility="gone"
+            style="@style/Theme.MyNotez.TextColor"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toStartOf="@id/item_date"
             app:layout_constraintHorizontal_bias="0"
@@ -62,6 +61,7 @@
             android:paddingBottom="4dp"
             android:textSize="16sp"
             android:visibility="gone"
+            style="@style/Theme.MyNotez.TextColor"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/item_title" />
 
@@ -73,6 +73,7 @@
             android:layout_marginEnd="6dp"
             android:textAlignment="viewEnd"
             android:textSize="12sp"
+            style="@style/Theme.MyNotez.TextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/item_time"
             app:layout_constraintHorizontal_bias="1"
@@ -89,6 +90,7 @@
             android:layout_marginBottom="4dp"
             android:textAlignment="viewEnd"
             android:textSize="12sp"
+            style="@style/Theme.MyNotez.TextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
@@ -105,6 +107,7 @@
             android:paddingStart="3dp"
             android:text="Labels: "
             android:visibility="gone"
+            style="@style/Theme.MyNotez.TextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"

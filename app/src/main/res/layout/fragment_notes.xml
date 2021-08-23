@@ -32,8 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.976"
-        app:srcCompat="@drawable/ic_baseline_note_add_white"
-        tools:ignore="VectorDrawableCompat" />
+        app:srcCompat="@drawable/ic_baseline_note_add_white" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notes_recycler_view"
@@ -43,9 +42,9 @@
         android:paddingBottom="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_title_in_notes_fragment"/>
+        app:layout_constraintTop_toBottomOf="@id/textView_title_in_notes_fragment"
+        app:layout_constraintVertical_bias="0" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/no_notes_card_view"

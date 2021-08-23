@@ -11,16 +11,18 @@
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/drawable/ic_baseline_sticky_note_2_24.xml" value="0.19537037037037036" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/drawable/ic_outline_sticky_note_2_200.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/drawable/null_image.xml" value="0.2703125" />
-        <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/activity_main.xml" value="0.17119565217391305" />
+        <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/activity_main.xml" value="0.152" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/add_label.xml" value="0.16" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/app_bar_main.xml" value="0.264" />
-        <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/bottom_menu_text_view_item.xml" value="0.4" />
+        <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/bottom_menu_text_view_item.xml" value="0.2" />
+        <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/content_main.xml" value="0.2" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/fragment_details.xml" value="0.17251184834123223" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/fragment_notes.xml" value="0.264" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/fragment_search.xml" value="0.25862068965517243" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/label_in_note_card_view.xml" value="0.1" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/nav_header_main.xml" value="0.14175724637681159" />
-        <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/note_card_view.xml" value="0.4" />
+        <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/layout/note_card_view.xml" value="0.176" />
+        <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/menu/activity_main_drawer.xml" value="0.24615384615384617" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/menu/main.xml" value="0.25" />
         <entry key="..\:/Users/cheran-pt4067/AndroidStudioProjects/Mynotez/app/src/main/res/menu/search_menu.xml" value="0.25" />
       </map>
