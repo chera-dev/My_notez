@@ -88,19 +88,6 @@ class DetailsFragment : Fragment() {
         return root
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_SPEECH_INPUT){
-            if (resultCode == Activity.RESULT_OK && data != null){
-                val result:ArrayList<String> = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS) as ArrayList<String>
-                editedNote.noteDetails = binding.detailsTextViewInDetails.text.toString()
-                editedNote.noteDetails += ("\n" + result[0])
-                binding.detailsTextViewInDetails.setText(editedNote.noteDetails)
-                binding.detailsTextViewInDetails.setSelection(editedNote.noteDetails.length)
-            }
-        }
-    }
-
     private fun createEmptyNote(){
         editedNote = Notes("","",TYPENOTES)
         mUserViewModel.addNote(Notes("","",TYPENOTES))
@@ -267,6 +254,22 @@ class DetailsFragment : Fragment() {
         val intent = ShareCompat.IntentBuilder(requireActivity())
             .setType("text/plain").setText(shareMsg).intent
         startActivity(Intent.createChooser(intent, null))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_SPEECH_INPUT){
+            if (resultCode == Activity.RESULT_OK && data != null){
+                val result:ArrayList<String> = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS) as ArrayList<String>
+                editedNote.noteDetails = binding.detailsTextViewInDetails.text.toString()
+                if (editedNote.noteDetails != "")
+                    editedNote.noteDetails += ("\n" + result[0])
+                else
+                    editedNote.noteDetails = result[0]
+                binding.detailsTextViewInDetails.setText(editedNote.noteDetails)
+                binding.detailsTextViewInDetails.setSelection(editedNote.noteDetails.length)
+            }
+        }
     }
 
     override fun onDestroyView() {
