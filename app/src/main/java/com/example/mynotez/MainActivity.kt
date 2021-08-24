@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
         addItemToNavDrawer(navView)
 
-        navView.setNavigationItemSelectedListener {
+        /*navView.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.nav_notes_frag -> {
                     it.isCheckable = true
@@ -74,41 +74,25 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             true
-        }
+        }*/
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     }
 
     private fun addItemToNavDrawer(navView: NavigationView){
         menu = navView.menu
-        val subMenu: SubMenu = menu.addSubMenu("Label")
-        addLabelToDrawer(subMenu)
-        menu.add(R.id.group1,1,1,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
-            val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
-            if (navController.previousBackStackEntry != null)
-                navController.popBackStack()
-            it.isCheckable = true
-            menu.setGroupCheckable(R.id.group1,true,true)
-            navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
-            drawerLayout.close()
-            true
-        }
-    }
-
-    private fun addLabelToDrawer(subMenu: SubMenu){
         mUserViewModel.allLabels.observe(this, { allLabels ->
-            subMenu.clear()
-            for (i in allLabels) {
-                subMenu.add(R.id.labels, i.order, i.order, i.labelName)
-                    .setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
-                        it.isCheckable = true
-                        menu.setGroupCheckable(R.id.labels,true,true)
-                        toNotesFragment(it, i)
-                        true
-                    }
+            menu.clear()
+            var order = 0
+            menu.setGroupCheckable(R.id.group1,true,true)
+            menu.setGroupCheckable(R.id.labels,true,true)
+            menu.add(R.id.group1,R.id.nav_notes_frag,order++,"Notes").setIcon(R.drawable.ic_outline_note_24).setOnMenuItemClickListener {
+                it.isCheckable = true
+                navController.popBackStack()
+                drawerLayout.close()
+                true
             }
-
-            subMenu.add(R.id.labels,0,0,"Add Label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener {
+            menu.add(R.id.labels,order,order++,"Add Label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener {
                 val builder = AlertDialog.Builder(this,R.style.CustomAlertDialog)
                 builder.setTitle("Add new label")
                 val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
@@ -145,6 +129,23 @@ class MainActivity : AppCompatActivity() {
                         return false
                     }
                 })
+                true
+            }
+            for (i in allLabels) {
+                menu.add(R.id.labels, order, order++, i.labelName)
+                    .setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
+                        it.isCheckable = true
+                        toNotesFragment(it, i)
+                        true
+                    }
+            }
+            menu.add(R.id.group1,order,order,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
+                val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
+                if (navController.previousBackStackEntry != null)
+                    navController.popBackStack()
+                it.isCheckable = true
+                navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
+                drawerLayout.close()
                 true
             }
         })

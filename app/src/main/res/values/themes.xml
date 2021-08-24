@@ -73,15 +73,4 @@
         <item name="android:textColorSecondary">@color/very2_dark_blue</item>
     </style>
 
-    <style name="Widget.Custom.NavigationView" parent="Widget.Design.NavigationView">
-        <!-- Navigation Drawer -->
-        <!--<item name="colorNavigationItem">@color/menu_item_color_state</item>
-        <item name="colorNavigationItemSelected">@color/colorWhite</item>
-        <item name="drawableNavigationItemBackground">@drawable/menu_background_color_state</item>
-        -->
-        <item name="itemIconTint">?attr/colorNavigationItem</item>
-        <item name="itemTextColor">?attr/colorNavigationItem</item>
-        <item name="itemBackground">?attr/drawableNavigationItemBackground</item>
-    </style>
-
 </resources>

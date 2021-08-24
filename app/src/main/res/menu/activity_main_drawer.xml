@@ -11,15 +11,17 @@
             android:title="Notes"
             android:checked="true"
             android:icon="@drawable/ic_outline_note_24"/>
-    </group>
-
-    <group
-        android:id="@+id/labels"
-        android:checkableBehavior="single">
-    </group>
-
-    <group
-        android:id="@+id/group2"
-        android:checkableBehavior="single">
+        <item android:title="Labels">
+            <menu>
+                <group
+                    android:id="@+id/labels"
+                    android:checkableBehavior="single">
+                </group>
+            </menu>
+        </item>
+        <item
+            android:id="@+id/nav_archives"
+            android:title="Archives"
+            android:icon="@drawable/ic_outline_archive_24"/>
     </group>
 </menu>
