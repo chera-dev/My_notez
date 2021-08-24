@@ -13,6 +13,8 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="android:colorBackground">@color/very1_dark_blue</item>
+        <item name="android:itemBackground">@color/very_dark_blue</item>
+        <item name="android:textColor">@color/white</item>
 
 
     </style>
@@ -37,7 +39,21 @@
 
     <style name="Theme.MyNotez.NavDrawer">
         <item name="android:background">@color/new4_dark_blue</item>
-        <item name="colorNavigationItemSelected">@color/very_light_pale_dark_blue</item>
+        <item name="colorNavigationItemSelected">#FF1744</item>
+    </style>
+
+    <style name="Theme.MyNotez.EditText">
+        <item name="android:background">@color/very3_light_pale_dark_blue</item>
+        <item name="android:textColorHint">@color/very2_dark_blue</item>
+        <item name="android:textColor">@color/very2_dark_blue</item>
+    </style>
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">@color/very_dark_blue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:textColorAlertDialogListItem">@color/white</item>
+        <item name="android:textColorSecondary">@color/very3_light_pale_dark_blue</item>
     </style>
 
 </resources>

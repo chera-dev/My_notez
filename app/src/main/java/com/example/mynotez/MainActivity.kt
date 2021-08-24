@@ -10,7 +10,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -70,6 +69,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_notes_frag -> {
                     navController.popBackStack()
                     drawerLayout.close()
+                    it.isCheckable = true
+                    menu.setGroupCheckable(R.id.group1,true,true)
                 }
             }
             true
@@ -82,14 +83,14 @@ class MainActivity : AppCompatActivity() {
         menu = navView.menu
         val subMenu: SubMenu = menu.addSubMenu("Label")
         addLabelToDrawer(subMenu)
-        menu.add("Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
+        menu.add(R.id.group2,1,1,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
             val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
             if (navController.previousBackStackEntry != null)
                 navController.popBackStack()
             navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
             drawerLayout.close()
             it.isCheckable = true
-            it.isChecked = true
+            menu.setGroupCheckable(R.id.group2,true,true)
             true
         }
     }
@@ -111,13 +112,13 @@ class MainActivity : AppCompatActivity() {
             }
 
             subMenu.add(R.id.labels,0,0,"Add Label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener {
-                val builder = AlertDialog.Builder(this)
+                val builder = AlertDialog.Builder(this,R.style.CustomAlertDialog)
                 builder.setTitle("Add new label")
                 val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
                 val titleEditText = dialogLayout.findViewById<TextInputEditText>(R.id.label_title_edit_text)
                 titleEditText.requestFocus()
                 val imm:InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.SHOW_IMPLICIT)
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_NOT_ALWAYS)
                 builder.setView(dialogLayout)
                 builder.setPositiveButton("Add Label"){ _, _ ->
                     val labelName = titleEditText.text.toString()
@@ -125,8 +126,7 @@ class MainActivity : AppCompatActivity() {
                         if (allLabels.isNotEmpty()) {
                             for (i in allLabels) {
                                 if (labelName == i.labelName)
-                                    Toast.makeText(this, "Label Already exists", Toast.LENGTH_SHORT)
-                                        .show()
+                                    Toast.makeText(this, "Label Already exists", Toast.LENGTH_SHORT).show()
                                 else
                                     mUserViewModel.addLabel(labelName)
                             }

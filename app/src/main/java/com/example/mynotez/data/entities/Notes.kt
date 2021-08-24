@@ -2,7 +2,6 @@ package com.example.mynotez.data.entities
 
 import androidx.room.*
 import com.example.mynotez.enumclass.NoteType
-import com.google.gson.Gson
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -13,7 +12,7 @@ data class Notes(@ColumnInfo(name = "note_title") var noteTitle:String,
                  @ColumnInfo(name = "note_details") var noteDetails:String,
                  @ColumnInfo(name = "note_type") var noteType: NoteType,
                  @ColumnInfo(name = "labels") private val labels:MutableSet<String> = mutableSetOf()):
-    Serializable {
+    Serializable,Data(){
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "note_id")

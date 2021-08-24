@@ -16,5 +16,6 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="share_message">\"%s\"\n\n%s</string>
     <string name="to_convert_speech_to_text">to convert speech to text</string>
+    <string name="navigation_header">navigation header</string>
 
 </resources>

@@ -9,12 +9,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:boxStrokeColor="@color/black">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/label_title_edit_text"
+            style="@style/Theme.MyNotez.EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/enter_the_label_title_here"
-            android:singleLine="true"
-            android:maxLength="20"/>
+            android:maxLength="20"
+            android:singleLine="true" />
+
     </com.google.android.material.textfield.TextInputLayout>
+
 </LinearLayout>

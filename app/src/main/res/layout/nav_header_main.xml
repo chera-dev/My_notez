@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="210dp"
-    android:background="@color/black"
+    android:layout_height="170dp"
+    android:background="@color/very2_dark_blue"
     android:layout_marginBottom="20dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:orientation="vertical"
@@ -13,10 +13,10 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:contentDescription="header"
-        app:srcCompat="@drawable/ic_baseline_sticky_note_2_24"
-        tools:ignore="VectorDrawableCompat" />
+        android:layout_width="280dp"
+        android:layout_height="170dp"
+        android:contentDescription="@string/navigation_header"
+        android:layout_gravity="center_vertical"
+        app:srcCompat="@drawable/nav_drawer_header" />
 
 </LinearLayout>

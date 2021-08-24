@@ -1,4 +1,4 @@
-package com.example.mynotez.data
+package com.example.mynotez.data.database
 
 import android.content.Context
 import androidx.room.Database

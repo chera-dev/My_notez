@@ -166,7 +166,7 @@ class DetailsFragment : Fragment() {
                         if (listOfAllLabelAvailable[i].labelName in listOfLabels)
                             selectedLabelList[i] = true
                     }
-                    val builder = AlertDialog.Builder(requireContext())
+                    val builder = AlertDialog.Builder(requireContext(),R.style.CustomAlertDialog)
                     builder.setTitle("add label")
                     builder.setMultiChoiceItems(allLabelName, selectedLabelList){ _, which, isChecked ->
                         selectedLabelList[which] = isChecked
@@ -190,7 +190,7 @@ class DetailsFragment : Fragment() {
                             binding.chipGroupInDetails.visibility = View.GONE
                         }
                     }
-                    builder.show()
+                    val dialog = builder.show()
                 }
             })
         createMenu.addMenuItem(Menu.NONE,3,3,"Speech to text",R.drawable.ic_baseline_keyboard_voice_24,
@@ -231,9 +231,12 @@ class DetailsFragment : Fragment() {
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->
                 }
-                builder.show()
+                val dialog = builder.show()
+                dialog.window?.setBackgroundDrawableResource(R.color.very_dark_blue)
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.white,null))
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.white,null))
             })
-        createMenu.addMenuItem(Menu.NONE,6,6,"Copy Note",R.drawable.ic_baseline_content_copy_24,
+        createMenu.addMenuItem(Menu.NONE,6,6,"Make a Copy",R.drawable.ic_baseline_content_copy_24,
             MenuItem.SHOW_AS_ACTION_NEVER,onclick = {
                 Toast.makeText(requireContext(),"Note Copied",Toast.LENGTH_SHORT).show()
                 val note = editedNote

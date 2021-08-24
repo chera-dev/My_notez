@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -24,7 +25,9 @@ import com.example.mynotez.*
 import com.example.mynotez.data.Content
 import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.NoteViewModel
+import com.example.mynotez.data.entities.Data
 import com.example.mynotez.data.entities.Notes
+import com.example.mynotez.data.entities.Title
 import com.example.mynotez.databinding.FragmentNotesBinding
 import com.example.mynotez.enumclass.From
 import com.example.mynotez.enumclass.From.*
@@ -75,9 +78,22 @@ class NotesFragment : Fragment(), ItemListener {
 
         recyclerAdapter = NotesAdapter(this)
         notesList?.observe(viewLifecycleOwner, {
-            recyclerAdapter.changeData(it)
             myNotes = it
             if (myNotes?.isNotEmpty() == true) {
+                val dataForRecyclerView = mutableListOf<Data>()
+                var noteType = it[0].isPinned
+                if (noteType)
+                    dataForRecyclerView.add(Title("Pinned"))
+                for (i in it){
+                    if (i.isPinned == noteType)
+                        dataForRecyclerView.add(i)
+                    else {
+                        noteType = i.isPinned
+                        dataForRecyclerView.add(Title("Others"))
+                        dataForRecyclerView.add(i)
+                    }
+                }
+                recyclerAdapter.changeData(dataForRecyclerView)
                 setRecyclerView()
                 binding.noNotesCardView.visibility = View.GONE
             }
@@ -151,8 +167,7 @@ class NotesFragment : Fragment(), ItemListener {
                     if (labelInNotes.contains( labelList[i].labelName))
                         selectedLabelList[i] = true
                 }
-
-                val builder = AlertDialog.Builder(requireContext())
+                val builder = AlertDialog.Builder(requireContext(),R.style.CustomAlertDialog)
                 builder.setTitle("Add Label To This Note")
                 builder.setMultiChoiceItems(
                     allLabelName,
@@ -206,7 +221,10 @@ class NotesFragment : Fragment(), ItemListener {
             }
             builder.setNegativeButton("Cancel"){ _, _ ->
             }
-            builder.show()
+            val dialog = builder.show()
+            dialog.window?.setBackgroundDrawableResource(R.color.very_dark_blue)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.white,null))
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.white,null))
         })
         menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("share note",R.drawable.ic_outline_share_24){
             shareText(note)
@@ -224,7 +242,7 @@ class NotesFragment : Fragment(), ItemListener {
         inflater.inflate(R.menu.search_menu,menu)
         if (label != null){
             menu.add("Rename label").setOnMenuItemClickListener {
-                val builder = AlertDialog.Builder(requireContext())
+                val builder = AlertDialog.Builder(requireContext(),R.style.CustomAlertDialog)
                 builder.setTitle("Rename label")
                 val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
                 val titleEditText = dialogLayout.findViewById<EditText>(R.id.label_title_edit_text)
@@ -273,9 +291,7 @@ class NotesFragment : Fragment(), ItemListener {
                     val noteIds = label!!.getNoteIds()
                     if (noteIds.isNotEmpty()){
                         mUserViewModel.getNotesOfNoteIds(noteIds).observe(viewLifecycleOwner,{
-                            for (i in it){
-                                mUserViewModel.removeLabelFromNote(i, label!!)
-                            }
+                            mUserViewModel.deleteLabelFromNotes(it,label!!.labelName)
                         })
                     }
                     mUserViewModel.deleteLabel(label!!)
@@ -283,7 +299,10 @@ class NotesFragment : Fragment(), ItemListener {
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->
                 }
-                builder.show()
+                val dialog = builder.show()
+                dialog.window?.setBackgroundDrawableResource(R.color.very_dark_blue)
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.white,null))
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.white,null))
                 true
             }
         }
@@ -319,7 +338,6 @@ class NotesFragment : Fragment(), ItemListener {
         binding.fab.visibility = View.VISIBLE
     }
 
-    // & change it to access query in dao through view model
     private fun search(text:String?){
         val matchedNotes = mutableListOf<Notes>()
         if (text != null && text != ""){
@@ -332,7 +350,6 @@ class NotesFragment : Fragment(), ItemListener {
                     binding.noNotesCardView.visibility = View.VISIBLE
                 else
                     binding.noNotesCardView.visibility = View.GONE
-                    //Toast.makeText(requireContext(), "No Notes Matching", Toast.LENGTH_LONG).show()
                 recyclerAdapter.changeData(matchedNotes)
         }
         else {

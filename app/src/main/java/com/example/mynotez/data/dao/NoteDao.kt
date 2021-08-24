@@ -23,7 +23,7 @@ interface NoteDao {
     @Query("SELECT * FROM note_table WHERE note_type=:noteType ORDER BY note_is_pinned DESC, note_id DESC")
     fun getNotesOfType(noteType:NoteType):LiveData<List<Notes>>
 
-    @Query("SELECT * FROM note_table WHERE note_id IN (:noteIds)")
+    @Query("SELECT * FROM note_table WHERE note_id IN (:noteIds) ORDER BY note_is_pinned DESC, note_id DESC")
     fun getNotesOfNoteIds(noteIds: Set<Long>):LiveData<List<Notes>>
 
     @Query("UPDATE note_table SET note_is_pinned =:status WHERE note_id =:noteId")

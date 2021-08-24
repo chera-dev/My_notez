@@ -2,6 +2,7 @@ package com.example.mynotez.data
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.example.mynotez.data.database.NoteDatabase
 import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.entities.Notes
 import com.example.mynotez.data.repository.LabelRepository
@@ -68,6 +69,13 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         updateNote(note)
         label.removeNote(note.noteId)
         updateLabel(label)
+    }
+
+    fun deleteLabelFromNotes(notes: List<Notes>,labelName: String){
+        for (i in notes) {
+            i.removeLabel(labelName)
+            updateNote(i)
+        }
     }
 
     fun changeLabelInNote(note: Notes, newLabelName: String, oldLabelName: String){
