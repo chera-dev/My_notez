@@ -67,10 +67,10 @@ class MainActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.nav_notes_frag -> {
-                    navController.popBackStack()
-                    drawerLayout.close()
                     it.isCheckable = true
                     menu.setGroupCheckable(R.id.group1,true,true)
+                    navController.popBackStack()
+                    drawerLayout.close()
                 }
             }
             true
@@ -83,14 +83,14 @@ class MainActivity : AppCompatActivity() {
         menu = navView.menu
         val subMenu: SubMenu = menu.addSubMenu("Label")
         addLabelToDrawer(subMenu)
-        menu.add(R.id.group2,1,1,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
+        menu.add(R.id.group1,1,1,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
             val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
             if (navController.previousBackStackEntry != null)
                 navController.popBackStack()
+            it.isCheckable = true
+            menu.setGroupCheckable(R.id.group1,true,true)
             navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
             drawerLayout.close()
-            it.isCheckable = true
-            menu.setGroupCheckable(R.id.group2,true,true)
             true
         }
     }
@@ -98,17 +98,14 @@ class MainActivity : AppCompatActivity() {
     private fun addLabelToDrawer(subMenu: SubMenu){
         mUserViewModel.allLabels.observe(this, { allLabels ->
             subMenu.clear()
-            var labelOrder = 2
             for (i in allLabels) {
-                subMenu.add(R.id.labels, labelOrder, labelOrder, i.labelName)
+                subMenu.add(R.id.labels, i.order, i.order, i.labelName)
                     .setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
-                        toNotesFragment(it, i)
                         it.isCheckable = true
                         menu.setGroupCheckable(R.id.labels,true,true)
-                        //it.isChecked = true
+                        toNotesFragment(it, i)
                         true
                     }
-                labelOrder++
             }
 
             subMenu.add(R.id.labels,0,0,"Add Label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener {
