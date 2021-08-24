@@ -21,7 +21,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        style="@style/Theme.MyNotez.NavDrawer"
         app:headerLayout="@layout/nav_header_main"
+        style="@style/Theme.MyNotez.NavDrawer"
+        app:itemTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        app:itemIconSize="26sp"
+        app:itemBackground="@drawable/menu_background_color"
         app:menu="@menu/activity_main_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>

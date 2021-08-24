@@ -16,7 +16,6 @@
         <item name="android:itemBackground">@color/very_dark_blue</item>
         <item name="android:textColor">@color/white</item>
 
-
     </style>
 
     <style name="Theme.MyNotez.ImageInBottomDialog">
@@ -39,7 +38,8 @@
 
     <style name="Theme.MyNotez.NavDrawer">
         <item name="android:background">@color/new4_dark_blue</item>
-        <item name="colorNavigationItemSelected">#FF1744</item>
+        <item name="itemTextColor">@color/white</item>
+        <item name="itemIconTint">@color/white</item>
     </style>
 
     <style name="Theme.MyNotez.EditText">
@@ -55,5 +55,4 @@
         <item name="android:textColorAlertDialogListItem">@color/white</item>
         <item name="android:textColorSecondary">@color/very3_light_pale_dark_blue</item>
     </style>
-
 </resources>

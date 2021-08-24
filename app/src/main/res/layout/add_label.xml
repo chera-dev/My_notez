@@ -17,7 +17,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/enter_the_label_title_here"
             android:maxLength="20"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textSize="17sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

@@ -38,7 +38,8 @@
 
     <style name="Theme.MyNotez.NavDrawer">
         <item name="android:background">@color/very3_light_pale_dark_blue</item>
-        <item name="colorNavigationItemSelected">#E4002C</item>
+        <item name="itemTextColor">@color/black</item>
+        <item name="itemIconTint">@color/black</item>
     </style>
 
     <style name="Theme.MyNotez.BottomSheet">
