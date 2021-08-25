@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -74,33 +73,12 @@ class NotesFragment : Fragment(), ItemListener {
             view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
         }
         binding.textViewTitleInNotesFragment.text = title
-        getNotes()
 
         recyclerAdapter = NotesAdapter(this)
-        notesList?.observe(viewLifecycleOwner, {
-            myNotes = it
-            if (myNotes?.isNotEmpty() == true) {
-                val dataForRecyclerView = mutableListOf<Data>()
-                var noteType = it[0].isPinned
-                if (noteType)
-                    dataForRecyclerView.add(Title("Pinned"))
-                for (i in it){
-                    if (i.isPinned == noteType)
-                        dataForRecyclerView.add(i)
-                    else {
-                        noteType = i.isPinned
-                        dataForRecyclerView.add(Title("Others"))
-                        dataForRecyclerView.add(i)
-                    }
-                }
-                recyclerAdapter.changeData(dataForRecyclerView)
-                setRecyclerView()
-                binding.noNotesCardView.visibility = View.GONE
-            }
-            else {
-                binding.noNotesCardView.visibility = View.VISIBLE
-            }
-        })
+        getNotes()
+        setNotesToRecyclerView()
+        setRecyclerView()
+
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner,object :OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
                 if (menuSearchView?.isIconified == false){
@@ -115,6 +93,39 @@ class NotesFragment : Fragment(), ItemListener {
         })
         setHasOptionsMenu(true)
         return binding.root
+    }
+
+    private fun setNotesToRecyclerView(){
+        notesList?.observe(viewLifecycleOwner, {
+            myNotes = it
+            if (myNotes != null && myNotes!!.isNotEmpty()) {
+                recyclerAdapter.changeData(getNotesForRecyclerView(myNotes!!))
+                binding.noNotesCardView.visibility = View.GONE
+            }
+            else {
+                recyclerAdapter.changeData(emptyList())
+                binding.noNotesCardView.visibility = View.VISIBLE
+            }
+        })
+    }
+
+    private fun getNotesForRecyclerView(data:List<Notes>):List<Data>{
+        val dataForRecyclerView = mutableListOf<Data>()
+        var noteType = data[0].isPinned
+        if (noteType)
+            dataForRecyclerView.add(Title("Pinned"))
+        else
+            dataForRecyclerView.add(Title("Others"))
+        for (i in data){
+            if (i.isPinned == noteType)
+                dataForRecyclerView.add(i)
+            else {
+                noteType = i.isPinned
+                dataForRecyclerView.add(Title("Others"))
+                dataForRecyclerView.add(i)
+            }
+        }
+        return dataForRecyclerView
     }
 
     private fun setRecyclerView(){
@@ -132,8 +143,12 @@ class NotesFragment : Fragment(), ItemListener {
         }
         else if(noteFrom == LABEL){
             val noteIds = label?.getNoteIds()
-            if (noteIds!=null){
+            if (noteIds != null && noteIds.isNotEmpty()){
                 notesList = mUserViewModel.getNotesOfNoteIds(noteIds)
+                if (notesList == null){
+                    recyclerAdapter.changeData(emptyList())
+                    binding.noNotesCardView.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -178,18 +193,26 @@ class NotesFragment : Fragment(), ItemListener {
                 builder.setPositiveButton("Done") { _, _ ->
                     for (j in selectedLabelList.indices) {
                         if (selectedLabelList[j]) {
-                            note.addLabel(labelList[j].labelName)
-                            labelList[j].addNote(note.noteId)
-                            if (labelList[j].labelName == label?.labelName)
-                                label = labelList[j]
+                            if (labelList[j].labelName == label?.labelName) {
+                                label?.addNote(note.noteId)
+                            }
                             mUserViewModel.addLabelWithNote(note,labelList[j])
                         } else {
-                            note.removeLabel(labelList[j].labelName)
-                            labelList[j].removeNote(note.noteId)
-                            if (labelList[j].labelName == label?.labelName)
-                                label = labelList[j]
+                            if ( labelList[j].labelName == label?.labelName) {
+                                label?.removeNote(note.noteId)
+                            }
                             mUserViewModel.removeLabelFromNote(note,labelList[j])
                         }
+                    }
+                    if (label !=null && label?.getNoteIds()?.isEmpty() == true){
+                        notesList?.removeObservers(viewLifecycleOwner)
+                        recyclerAdapter.changeData(emptyList())
+                        binding.noNotesCardView.visibility = View.VISIBLE
+                    }
+                    else if(label != null){
+                        notesList?.removeObservers(viewLifecycleOwner)
+                        getNotes()
+                        setNotesToRecyclerView()
                     }
                 }
                 builder.setNegativeButton("Cancel"){ _,_ ->
@@ -333,7 +356,7 @@ class NotesFragment : Fragment(), ItemListener {
     }
 
     private fun onSearchClose(){
-        myNotes?.let { recyclerAdapter.changeData(it) }
+        myNotes?.let { recyclerAdapter.changeData(getNotesForRecyclerView(it)) }
         binding.noNotesCardView.visibility = View.GONE
         binding.fab.visibility = View.VISIBLE
     }
@@ -346,11 +369,14 @@ class NotesFragment : Fragment(), ItemListener {
                         matchedNotes.add(note)
                     }
                 }
-                if (matchedNotes.isEmpty())
+                if (matchedNotes.isEmpty()) {
                     binding.noNotesCardView.visibility = View.VISIBLE
-                else
+                    recyclerAdapter.changeData(emptyList())
+                }
+                else {
                     binding.noNotesCardView.visibility = View.GONE
-                recyclerAdapter.changeData(matchedNotes)
+                    recyclerAdapter.changeData(getNotesForRecyclerView(matchedNotes))
+                }
         }
         else {
             recyclerAdapter.changeData(emptyList())

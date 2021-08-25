@@ -239,6 +239,7 @@ class DetailsFragment : Fragment() {
         createMenu.addMenuItem(Menu.NONE,6,6,"Make a Copy",R.drawable.ic_baseline_content_copy_24,
             MenuItem.SHOW_AS_ACTION_NEVER,onclick = {
                 Toast.makeText(requireContext(),"Note Copied",Toast.LENGTH_SHORT).show()
+                saveNote()
                 val note = editedNote
                 note.noteId = 0
                 mUserViewModel.addNote(note)
