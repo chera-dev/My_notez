@@ -150,6 +150,10 @@ class NotesFragment : Fragment(), ItemListener {
                     binding.noNotesCardView.visibility = View.VISIBLE
                 }
             }
+            else{
+                recyclerAdapter.changeData(emptyList())
+                binding.noNotesCardView.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -311,12 +315,7 @@ class NotesFragment : Fragment(), ItemListener {
                 builder.setTitle("Delete label - ${label!!.labelName}?")
                 builder.setPositiveButton("Delete"){ _, _ ->
                     Toast.makeText(requireContext(), "Label Deleted", Toast.LENGTH_SHORT).show()
-                    val noteIds = label!!.getNoteIds()
-                    if (noteIds.isNotEmpty()){
-                        mUserViewModel.getNotesOfNoteIds(noteIds).observe(viewLifecycleOwner,{
-                            mUserViewModel.deleteLabelFromNotes(it,label!!.labelName)
-                        })
-                    }
+                    myNotes?.let { it1 -> mUserViewModel.deleteLabelFromNotes(it1, label!!) }
                     mUserViewModel.deleteLabel(label!!)
                     findNavController().popBackStack()
                 }

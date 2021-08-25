@@ -18,16 +18,16 @@
 
         <EditText
             android:id="@+id/titleTextViewInDetails"
+            style="@style/Theme.MyNotez.TextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
             android:hint="@string/title"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:singleLine="true"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            style="@style/Theme.MyNotez.TextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -49,75 +49,77 @@
 
         <EditText
             android:id="@+id/detailsTextViewInDetails"
+            style="@style/Theme.MyNotez.TextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="6dp"
             android:background="@null"
             android:hint="@string/type_your_note"
             android:paddingBottom="250dp"
             android:textSize="20sp"
-            style="@style/Theme.MyNotez.TextColor"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chip_group_in_details"
-            app:layout_constraintVertical_bias="0"/>
+            app:layout_constraintTop_toBottomOf="@id/chip_group_in_details" />
 
-        <TextView
-            android:id="@+id/textView_pinned_in_details"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:outlineAmbientShadowColor="@color/black"
-            android:outlineSpotShadowColor="@color/black"
-            android:paddingEnd="15dp"
-            android:text="@string/pinned"
-            android:textColor="#00B6B6"
-            android:visibility="gone"
+        <LinearLayout
+            android:id="@+id/linear_layout_in_details"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:padding="1dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titleTextViewInDetails" />
+            app:layout_constraintTop_toBottomOf="@id/titleTextViewInDetails">
 
-        <TextView
-            android:id="@+id/textView_date_created_in_details"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:visibility="gone"
-            style="@style/Theme.MyNotez.TextColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/textView_pinned_in_details"
-            app:layout_constraintTop_toBottomOf="@id/titleTextViewInDetails" />
+            <TextView
+                android:id="@+id/textView_pinned_in_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:outlineAmbientShadowColor="@color/black"
+                android:outlineSpotShadowColor="@color/black"
+                android:padding="2dp"
+                android:paddingEnd="4dp"
+                android:text="@string/pinned"
+                android:textColor="#00B6B6"
+                android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/text_view_note_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:paddingStart="15dp"
-            android:text="@string/archived"
-            android:textColor="#FF5252"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/textView_date_created_in_details"
-            app:layout_constraintTop_toBottomOf="@id/titleTextViewInDetails" />
+            <TextView
+                android:id="@+id/textView_date_created_in_details"
+                style="@style/Theme.MyNotez.TextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="1dp"
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/text_view_note_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:paddingStart="3dp"
+                android:text="@string/archived"
+                android:textColor="#FF5252"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/label_text_view_in_details"
+            style="@style/Theme.MyNotez.TextColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Labels:  "
             android:visibility="gone"
-            style="@style/Theme.MyNotez.TextColor"
             app:layout_constraintBottom_toTopOf="@id/detailsTextViewInDetails"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />
+            app:layout_constraintTop_toBottomOf="@id/linear_layout_in_details" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chip_group_in_details"
@@ -129,7 +131,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/label_text_view_in_details"
-            app:layout_constraintTop_toBottomOf="@id/textView_date_created_in_details" />
+            app:layout_constraintTop_toBottomOf="@id/linear_layout_in_details" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

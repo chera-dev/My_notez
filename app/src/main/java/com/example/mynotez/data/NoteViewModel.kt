@@ -71,10 +71,9 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         updateLabel(label)
     }
 
-    fun deleteLabelFromNotes(notes: List<Notes>,labelName: String){
+    fun deleteLabelFromNotes(notes: List<Notes>,label:Label){
         for (i in notes) {
-            i.removeLabel(labelName)
-            updateNote(i)
+            removeLabelFromNote(i,label)
         }
     }
 
