@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
+import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -64,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
         addItemToNavDrawer(navView)
 
-        /*navView.setNavigationItemSelectedListener {
+        navView.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.nav_notes_frag -> {
                     it.isCheckable = true
@@ -74,82 +75,95 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             true
-        }*/
+        }
+        onOptionsItemSelected(menu.getItem(0))
+        if (navController.previousBackStackEntry == null){
+            //navView.menu.getItem(0).isChecked = true
+            val checked = menu.findItem(R.id.nav_notes_frag).setChecked(true)
+            menu.setGroupCheckable(R.id.group1,true,true)
+            menu.setGroupCheckable(R.id.labels,true,true)
+            //onMenuItemSelected(R.id.nav_notes_frag,menu.getItem(0))
+            //menu.getItem(0).isChecked = true
+            //Toast.makeText(this,"${navView.checkedItem?.title}    ${navView.menu.getItem(0).title}  \n${checked.isChecked}    ${menu.getItem(0).title}",Toast.LENGTH_LONG).show()
+        }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
     }
 
     private fun addItemToNavDrawer(navView: NavigationView){
         menu = navView.menu
+        aaa(emptyList())
         mUserViewModel.allLabels.observe(this, { allLabels ->
-            menu.clear()
-            var order = 0
-            menu.setGroupCheckable(R.id.group1,true,true)
-            menu.setGroupCheckable(R.id.labels,true,true)
-            menu.add(R.id.group1,R.id.nav_notes_frag,order++,"Notes").setIcon(R.drawable.ic_outline_note_24).setOnMenuItemClickListener {
-                it.isCheckable = true
-                navController.popBackStack()
-                drawerLayout.close()
-                true
-            }
-            menu.add(R.id.labels,order,order++,"Add Label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener {
-                val builder = AlertDialog.Builder(this,R.style.CustomAlertDialog)
-                builder.setTitle("Add new label")
-                val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
-                val titleEditText = dialogLayout.findViewById<TextInputEditText>(R.id.label_title_edit_text)
-                titleEditText.requestFocus()
-                val imm:InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_NOT_ALWAYS)
-                builder.setView(dialogLayout)
-                builder.setPositiveButton("Add Label"){ _, _ ->
-                    val labelName = titleEditText.text.toString()
-                    if (labelName!= ""){
-                        if (allLabels.isNotEmpty()) {
-                            for (i in allLabels) {
-                                if (labelName == i.labelName)
-                                    Toast.makeText(this, "Label Already exists", Toast.LENGTH_SHORT).show()
-                                else
-                                    mUserViewModel.addLabel(labelName)
-                            }
-                        } else
-                            mUserViewModel.addLabel(labelName)
-                    }
-                    imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
-                }
-                builder.setNegativeButton("Cancel"){ _, _ ->
-                    imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
-                }
-                val alertDialog:AlertDialog = builder.show()
-                titleEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener{
-                    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                        if (actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE ) {
-                            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
-                            return true
-                        }
-                        return false
-                    }
-                })
-                true
-            }
-            for (i in allLabels) {
-                menu.add(R.id.labels, order, order++, i.labelName)
-                    .setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
-                        it.isCheckable = true
-                        toNotesFragment(it, i)
-                        true
-                    }
-            }
-            menu.add(R.id.group1,order,order,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
-                val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
-                if (navController.previousBackStackEntry != null)
-                    navController.popBackStack()
-                it.isCheckable = true
-                navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
-                drawerLayout.close()
-                true
-            }
+            aaa(allLabels)
         })
     }
+
+    private fun aaa(allLabels:List<Label>){
+        menu.clear()
+        var order = 0
+        menu.setGroupCheckable(R.id.group1,true,true)
+        menu.setGroupCheckable(R.id.labels,true,true)
+        menu.add(R.id.group1,R.id.nav_notes_frag,order++,"Notez").setIcon(R.drawable.ic_outline_note_24).setOnMenuItemClickListener {
+            it.isCheckable = true
+            navController.popBackStack()
+            drawerLayout.close()
+            true
+        }
+        menu.add(R.id.labels,order,order++,"Add Label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener {
+            val builder = AlertDialog.Builder(this,R.style.CustomAlertDialog)
+            builder.setTitle("Add new label")
+            val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
+            val titleEditText = dialogLayout.findViewById<TextInputEditText>(R.id.label_title_edit_text)
+            titleEditText.requestFocus()
+            val imm:InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_NOT_ALWAYS)
+            builder.setView(dialogLayout)
+            builder.setPositiveButton("Add Label"){ _, _ ->
+                val labelName = titleEditText.text.toString()
+                if (labelName!= ""){
+                    if (allLabels.isNotEmpty()) {
+                        for (i in allLabels) {
+                            if (labelName == i.labelName)
+                                Toast.makeText(this, "Label Already exists", Toast.LENGTH_SHORT).show()
+                            else
+                                mUserViewModel.addLabel(labelName)
+                        }
+                    } else
+                        mUserViewModel.addLabel(labelName)
+                }
+                imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
+            }
+            builder.setNegativeButton("Cancel"){ _, _ ->
+                imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
+            }
+            val alertDialog:AlertDialog = builder.show()
+            titleEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener{
+                override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                    if (actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE ) {
+                        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
+                        return true
+                    }
+                    return false
+                }
+            })
+            true
+        }
+        for (i in allLabels) {
+            menu.add(R.id.labels, order, order++, i.labelName)
+                .setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
+                    it.isCheckable = true
+                    toNotesFragment(it, i)
+                    true
+                }
+        }
+        menu.add(R.id.group1,order,order,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
+            val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
+            if (navController.previousBackStackEntry != null)
+                navController.popBackStack()
+            it.isCheckable = true
+            navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
+            drawerLayout.close()
+            true
+        }}
 
     private fun toNotesFragment(it:MenuItem, label: Label){
         val bundle = bundleOf("title" to it.title,"type" to  LABEL.name,"label" to label)
