@@ -49,6 +49,7 @@
     <style name="Theme.MyNotez.EditText">
         <item name="android:background">@color/very3_light_pale_dark_blue</item>
         <item name="android:textColorHint">@color/very2_dark_blue</item>
+        <item name="android:textColor">@color/very2_dark_blue</item>
     </style>
 
     <style name="Theme.MyNotes.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

@@ -7,7 +7,6 @@
 
     <fragment
         android:id="@+id/nav_notes_frag"
-        android:label="My Notez"
         android:name="com.example.mynotez.fragment.note.NotesFragment"
         tools:layout="@layout/fragment_notes" >
         <action

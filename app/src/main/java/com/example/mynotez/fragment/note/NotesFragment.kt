@@ -72,7 +72,7 @@ class NotesFragment : Fragment(), ItemListener {
                 bundle.putSerializable("label",label)
             view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
         }
-        binding.textViewTitleInNotesFragment.text = title
+        //binding.textViewTitleInNotesFragment.text = title
 
         recyclerAdapter = NotesAdapter(this)
         getNotes()
@@ -161,8 +161,8 @@ class NotesFragment : Fragment(), ItemListener {
         val bundle = Bundle()
         bundle.putSerializable("noteToDetails",note)
         view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
-        val imm:InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.textViewTitleInNotesFragment.windowToken,0)
+        //val imm:InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        //imm.hideSoftInputFromWindow(binding.textViewTitleInNotesFragment.windowToken,0)
     }
 
     override fun onLongClick(note: Notes) {
@@ -292,7 +292,9 @@ class NotesFragment : Fragment(), ItemListener {
                         }
                         mUserViewModel.renameLabel(label!!.labelName, newLabelName)
                     }
-                    binding.textViewTitleInNotesFragment.text = newLabelName
+                    // & change the title in tool bar after label renaming
+                    //supportActionBar?.title = it.title
+                    //binding.textViewTitleInNotesFragment.text = newLabelName
                     imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->

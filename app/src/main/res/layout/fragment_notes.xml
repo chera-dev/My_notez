@@ -6,21 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".fragment.note.NotesFragment">
 
-    <TextView
-        android:id="@+id/textView_title_in_notes_fragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="3dp"
-        android:padding="5dp"
-        android:textAllCaps="true"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        style="@style/Theme.MyNotez.TextColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -44,7 +29,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_title_in_notes_fragment"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0" />
 
     <androidx.cardview.widget.CardView

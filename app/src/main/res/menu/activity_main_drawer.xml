@@ -9,7 +9,6 @@
         <item
             android:id="@+id/nav_notes_frag"
             android:title="Notes"
-            android:checked="true"
             android:icon="@drawable/ic_outline_note_24"/>
         <item android:title="Labels">
             <menu>

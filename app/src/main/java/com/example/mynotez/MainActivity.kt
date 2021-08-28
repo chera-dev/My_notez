@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController :NavController
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var menu: Menu
+    private lateinit var navView:NavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolBar)
         drawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
+        navView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_main)
 
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_notes_frag), drawerLayout)
@@ -66,17 +67,20 @@ class MainActivity : AppCompatActivity() {
         addItemToNavDrawer(navView)
 
         navView.setNavigationItemSelectedListener {
-            when(it.itemId){
+            /*when(it.itemId){
                 R.id.nav_notes_frag -> {
-                    it.isCheckable = true
+                    //it.isCheckable = true
+                    //not
+                    //Toast.makeText(this,"ZzZZz",Toast.LENGTH_SHORT).show()
                     menu.setGroupCheckable(R.id.group1,true,true)
+                    menu.findItem(R.id.nav_notes_frag).isChecked = true
                     navController.popBackStack()
                     drawerLayout.close()
                 }
-            }
+            }*/
             true
         }
-        onOptionsItemSelected(menu.getItem(0))
+        //onOptionsItemSelected(menu.getItem(0))
         if (navController.previousBackStackEntry == null){
             //navView.menu.getItem(0).isChecked = true
             val checked = menu.findItem(R.id.nav_notes_frag).setChecked(true)
@@ -86,6 +90,7 @@ class MainActivity : AppCompatActivity() {
             //menu.getItem(0).isChecked = true
             //Toast.makeText(this,"${navView.checkedItem?.title}    ${navView.menu.getItem(0).title}  \n${checked.isChecked}    ${menu.getItem(0).title}",Toast.LENGTH_LONG).show()
         }
+        supportActionBar?.title = navView.checkedItem?.title
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -103,8 +108,11 @@ class MainActivity : AppCompatActivity() {
         menu.setGroupCheckable(R.id.group1,true,true)
         menu.setGroupCheckable(R.id.labels,true,true)
         menu.add(R.id.group1,R.id.nav_notes_frag,order++,"Notez").setIcon(R.drawable.ic_outline_note_24).setOnMenuItemClickListener {
+            Toast.makeText(this,"XXxxxxX",Toast.LENGTH_SHORT).show()
             it.isCheckable = true
+            menu.setGroupCheckable(R.id.group1,true,true)
             navController.popBackStack()
+            supportActionBar?.title = it.title
             drawerLayout.close()
             true
         }
@@ -151,6 +159,7 @@ class MainActivity : AppCompatActivity() {
             menu.add(R.id.labels, order, order++, i.labelName)
                 .setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
                     it.isCheckable = true
+                    menu.setGroupCheckable(R.id.labels,true,true)
                     toNotesFragment(it, i)
                     true
                 }
@@ -159,7 +168,9 @@ class MainActivity : AppCompatActivity() {
             val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
             if (navController.previousBackStackEntry != null)
                 navController.popBackStack()
+            supportActionBar?.title = it.title
             it.isCheckable = true
+            menu.setGroupCheckable(R.id.group1,true,true)
             navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
             drawerLayout.close()
             true
@@ -169,6 +180,7 @@ class MainActivity : AppCompatActivity() {
         val bundle = bundleOf("title" to it.title,"type" to  LABEL.name,"label" to label)
         if (navController.previousBackStackEntry != null)
             navController.popBackStack()
+        supportActionBar?.title = it.title
         navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
         drawerLayout.close()
     }
@@ -192,5 +204,9 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
         else
             super.onBackPressed()
+        if (navController.previousBackStackEntry == null)
+            supportActionBar?.title = menu[0].title
+        else
+            supportActionBar?.title = navView.checkedItem?.title
     }
 }
