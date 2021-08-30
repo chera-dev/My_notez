@@ -8,7 +8,8 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:boxStrokeColor="@color/black">
+        app:boxStrokeColor="@color/black"
+        android:paddingTop="10dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/label_title_edit_text"
@@ -18,7 +19,8 @@
             android:hint="@string/enter_the_label_title_here"
             android:maxLength="20"
             android:singleLine="true"
-            android:textSize="17sp" />
+            android:textSize="20sp"
+            android:paddingStart="25dp"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
