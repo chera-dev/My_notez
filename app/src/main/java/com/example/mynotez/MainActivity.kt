@@ -184,6 +184,7 @@ class MainActivity : AppCompatActivity() {
             val checkedItem = navView.checkedItem
             val menuItem = checkedItem?.let { menu.findItem(it.itemId) }
             if (menuItem != null && mCheckedItem != null) {
+                mCheckedItem = menuItem
                 menu.findItem(mCheckedItem!!.itemId).isCheckable = true
                 navView.setCheckedItem(mCheckedItem!!)
                 supportActionBar?.title = mCheckedItem!!.title

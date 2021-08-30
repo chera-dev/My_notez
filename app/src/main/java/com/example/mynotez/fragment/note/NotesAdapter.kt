@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotez.*
 import com.example.mynotez.data.entities.Data

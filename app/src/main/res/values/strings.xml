@@ -17,5 +17,9 @@
     <string name="share_message">\"%s\"\n\n%s</string>
     <string name="to_convert_speech_to_text">to convert speech to text</string>
     <string name="navigation_header">navigation header</string>
+    <string name="labels_tag">Labels:</string>
+    <string name="no_notes_here_yet">No Notes Here Yet</string>
+    <string name="labels">Labels:</string>
+    <string name="item_icon">item icon</string>
 
 </resources>
