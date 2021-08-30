@@ -18,9 +18,10 @@
             android:layout_height="wrap_content"
             android:hint="@string/enter_the_label_title_here"
             android:maxLength="20"
+            android:paddingStart="25dp"
             android:singleLine="true"
-            android:textSize="20sp"
-            android:paddingStart="25dp"/>
+            android:textColorHighlight="@color/pale2_dark_blue"
+            android:textSize="20sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
