@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotez.*
 import com.example.mynotez.data.entities.Data
@@ -25,6 +27,7 @@ class NotesAdapter ( private val itemListener: ItemListener?)
         val itemTime: TextView = view.findViewById(R.id.item_time)
         val chipGroup:ChipGroup = view.findViewById(R.id.chip_group)
         val labelTag: TextView = view.findViewById(R.id.label_tag)
+        val constraintLayout:ConstraintLayout = view.findViewById(R.id.constraint_layout_in_note_card_view)
 
         init {
             view.setOnLongClickListener {
@@ -88,6 +91,8 @@ class NotesAdapter ( private val itemListener: ItemListener?)
                 else{
                     holder.labelTag.visibility = View.GONE
                     holder.chipGroup.visibility = View.GONE
+                    if (data.noteDetails == "")
+                        holder.constraintLayout.setPadding(0,15,0,15)
                 }}
             is Title ->{
                 holder as TitleCardViewHolder

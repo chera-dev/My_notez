@@ -40,7 +40,6 @@ class DetailsFragment : Fragment() {
 
     private lateinit var titleEditText: EditText
     private lateinit var detailsEditText: EditText
-    private val REQUEST_CODE_SPEECH_INPUT = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,29 +52,34 @@ class DetailsFragment : Fragment() {
         titleEditText = binding.titleTextViewInDetails
         detailsEditText = binding.detailsTextViewInDetails
 
-        if(arguments != null) {
-            val gotNote: Notes? = requireArguments().getSerializable("noteToDetails") as Notes?
-            if (gotNote != null){
-                editedNote = gotNote
-                noteId = editedNote.noteId
-
-                titleEditText.setText(editedNote.noteTitle)
-                detailsEditText.setText(editedNote.noteDetails)
-
-                listOfLabels.addAll(editedNote.getLabels())
-            }
-            else
-                createEmptyNote()
-            val gotLabel = requireArguments().getSerializable("label")
-            if (gotLabel != null) {
-                labelFromNotesFragment = gotLabel as Label
-                labelFromNotesFragment?.labelName?.let { listOfLabels.add(it) }
-            }
-            if (listOfLabels.isNotEmpty())
-                showLabels()
+        if (savedInstanceState != null){
+            val savedNote = savedInstanceState.getSerializable("myNote") as Notes?
+            if (savedNote != null)
+                editedNote = savedNote
         }
-        else
-            createEmptyNote()
+        else {
+            if (arguments != null) {
+                val gotNote: Notes? = requireArguments().getSerializable("noteToDetails") as Notes?
+                if (gotNote != null) {
+                    editedNote = gotNote
+                    noteId = editedNote.noteId
+
+                    titleEditText.setText(editedNote.noteTitle)
+                    detailsEditText.setText(editedNote.noteDetails)
+
+                    listOfLabels.addAll(editedNote.getLabels())
+                } else
+                    createEmptyNote()
+                val gotLabel = requireArguments().getSerializable("label")
+                if (gotLabel != null) {
+                    labelFromNotesFragment = gotLabel as Label
+                    labelFromNotesFragment?.labelName?.let { listOfLabels.add(it) }
+                }
+                if (listOfLabels.isNotEmpty())
+                    showLabels()
+            } else
+                createEmptyNote()
+        }
         binding.textViewDateCreatedInDetails.visibility = View.VISIBLE
         binding.textViewDateCreatedInDetails.text = editedNote.dateCreated
         if (editedNote.isPinned)
@@ -86,6 +90,12 @@ class DetailsFragment : Fragment() {
             binding.textViewDateCreatedInDetails.visibility = View.GONE
         setHasOptionsMenu(true)
         return root
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        saveNote()
+        outState.putSerializable("myNote",editedNote)
+        super.onSaveInstanceState(outState)
     }
 
     private fun createEmptyNote(){
@@ -99,6 +109,8 @@ class DetailsFragment : Fragment() {
                     noteId = recentNote.noteId
                     if (labelFromNotesFragment != null)
                         mUserViewModel.addLabelWithNote(editedNote, labelFromNotesFragment!!)
+                    mUserViewModel.allLabels.removeObservers(viewLifecycleOwner)
+                    arguments = null
                 }
             }
         })
@@ -190,7 +202,7 @@ class DetailsFragment : Fragment() {
                             binding.chipGroupInDetails.visibility = View.GONE
                         }
                     }
-                    val dialog = builder.show()
+                    builder.show()
                 }
             })
         createMenu.addMenuItem(Menu.NONE,3,3,"Speech to text",R.drawable.ic_baseline_keyboard_voice_24,
@@ -280,4 +292,7 @@ class DetailsFragment : Fragment() {
         saveNote()
         super.onDestroyView()
     }
+
+    companion object{
+        const val REQUEST_CODE_SPEECH_INPUT = 1}
 }

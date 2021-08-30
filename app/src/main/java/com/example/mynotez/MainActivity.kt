@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -57,39 +56,39 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_notes_frag), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        addItemToNavDrawer(navView)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         navController.addOnDestinationChangedListener{ nc: NavController, nd: NavDestination, _:Bundle? ->
             if(nd.id == nc.graph.startDestination) {
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 if (mCheckedItem != null) {
-                    navView.setCheckedItem(mCheckedItem!!)
-                    supportActionBar?.title = navView.checkedItem?.title
-                    Log.e("tag","${mCheckedItem?.title}     ${navView.checkedItem?.title} 1")
+                    menu.findItem(mCheckedItem!!.itemId).isCheckable = true
+                    mCheckedItem!!.isChecked = true
+                    supportActionBar?.title = mCheckedItem?.title
                 }
             }
             else {
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 supportActionBar?.title = ""
-                Log.e("tag","${mCheckedItem?.title}     ${navView.checkedItem?.title} 2")
             }
         }
-        addItemToNavDrawer(navView)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        if (savedInstanceState != null){
-            val itemId = savedInstanceState.getInt("checkedItemId")
-            mCheckedItem = menu.findItem(itemId)
-            if (mCheckedItem != null) {
-                navView.setCheckedItem(mCheckedItem!!)
-                supportActionBar?.title = mCheckedItem!!.title
-                Log.e("tag","${mCheckedItem?.title}     ${navView.checkedItem?.title} 3")
-            }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        val itemId = savedInstanceState.getInt("checkedItemId")
+        mCheckedItem = menu.findItem(itemId)
+        if (mCheckedItem != null) {
+            menu.findItem(mCheckedItem!!.itemId).isCheckable = true
+            navView.setCheckedItem(mCheckedItem!!)
+            supportActionBar?.title = mCheckedItem!!.title
         }
+        super.onRestoreInstanceState(savedInstanceState)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         if (mCheckedItem != null) {
             outState.putInt("checkedItemId", mCheckedItem!!.itemId)
-            Log.e("tag","${mCheckedItem?.title}     ${navView.checkedItem?.title} ")
         }
         super.onSaveInstanceState(outState)
     }
@@ -168,8 +167,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
         for (i in allLabels) {
-            menu.add(R.id.labels, order, order++, i.labelName)
-                .setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
+            menu.add(R.id.labels, order, order++, i.labelName).setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
                     toNotesFragment(it, i)
                     true
                 }
@@ -182,12 +180,14 @@ class MainActivity : AppCompatActivity() {
             menu.setGroupCheckable(R.id.labels,true,true)
             supportActionBar?.title = menuItem.title
         }
-        else {
+        else if (supportActionBar?.title != ""){
             val checkedItem = navView.checkedItem
             val menuItem = checkedItem?.let { menu.findItem(it.itemId) }
-            menuItem?.isCheckable = true
-            menuItem?.isChecked = true
-            supportActionBar?.title = menuItem?.title
+            if (menuItem != null && mCheckedItem != null) {
+                menu.findItem(mCheckedItem!!.itemId).isCheckable = true
+                navView.setCheckedItem(mCheckedItem!!)
+                supportActionBar?.title = mCheckedItem!!.title
+            }
         }
     }
 
@@ -195,7 +195,6 @@ class MainActivity : AppCompatActivity() {
         val bundle = bundleOf("title" to it.title,"type" to  LABEL.name,"label" to label)
         it.isCheckable = true
         menu.setGroupCheckable(R.id.labels,true,true)
-        supportActionBar?.title = it.title
         mCheckedItem = it
         if (navController.previousBackStackEntry != null)
             navController.popBackStack()
@@ -214,6 +213,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+        if (mCheckedItem != null)
+            navView.setCheckedItem(mCheckedItem!!)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
