@@ -19,8 +19,6 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
     val allNotes: LiveData<List<Notes>>
     val allLabels: LiveData<List<Label>>
 
-    private var nextLabelOrder = 1
-
     private val noteDao = NoteDatabase.getDatabase(application).noteDao()
     private val labelDao = NoteDatabase.getDatabase(application).labelDao()
 
@@ -97,7 +95,6 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
 
     fun addLabel(labelName:String){
         val label = Label(labelName)
-        label.order = nextLabelOrder++
         viewModelScope.launch(Dispatchers.IO) {
             labelRepository.addLabel(label)
         }

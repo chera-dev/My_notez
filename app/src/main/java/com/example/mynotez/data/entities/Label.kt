@@ -10,8 +10,6 @@ data class Label(@PrimaryKey @ColumnInfo(name = "label_name") var labelName:Stri
                  @ColumnInfo(name = "notes") private val noteIds: MutableSet<Long> = mutableSetOf())
     :Serializable{
 
-    @ColumnInfo(name = "order") var order:Int = 0
-
     fun addNote(noteId:Long){
         noteIds.add(noteId)
     }

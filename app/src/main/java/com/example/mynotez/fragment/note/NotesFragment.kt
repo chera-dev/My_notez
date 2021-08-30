@@ -281,20 +281,7 @@ class NotesFragment : Fragment(), ItemListener {
                 builder.setView(dialogLayout)
                 builder.setPositiveButton("Rename Label"){ _, _ ->
                     val newLabelName = titleEditText.text.toString()
-                    if (newLabelName != "" && label!!.labelName!=newLabelName) {
-                        val noteIds = label!!.getNoteIds()
-                        if (noteIds.isNotEmpty()){
-                            mUserViewModel.getNotesOfNoteIds(noteIds).observe(viewLifecycleOwner,{
-                                for (i in it){
-                                    mUserViewModel.changeLabelInNote(i,newLabelName,label!!.labelName)
-                                }
-                            })
-                        }
-                        mUserViewModel.renameLabel(label!!.labelName, newLabelName)
-                    }
-                    // & change the title in tool bar after label renaming
-                    //supportActionBar?.title = it.title
-                    //binding.textViewTitleInNotesFragment.text = newLabelName
+                    renameLabel(newLabelName)
                     imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
                 }
                 builder.setNegativeButton("Cancel"){ _, _ ->
@@ -355,6 +342,24 @@ class NotesFragment : Fragment(), ItemListener {
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
+
+    private fun renameLabel(newLabelName:String){
+        for (mLabel in mUserViewModel.allLabels.value!!){
+            if (mLabel.labelName == newLabelName) {
+                Toast.makeText(requireContext(),"Label name already exists",Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
+        if (newLabelName != "" && label!!.labelName != newLabelName) {
+            val noteIds = label!!.getNoteIds()
+            if (noteIds.isNotEmpty()){
+                for (i in myNotes!!){
+                    mUserViewModel.changeLabelInNote(i,newLabelName,label!!.labelName)
+                }
+            }
+            mUserViewModel.renameLabel(label!!.labelName, newLabelName)
+            label!!.labelName = newLabelName
+        }}
 
     private fun onSearchClose(){
         myNotes?.let { recyclerAdapter.changeData(getNotesForRecyclerView(it)) }

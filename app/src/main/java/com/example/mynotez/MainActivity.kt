@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -40,12 +41,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var menu: Menu
     private lateinit var navView:NavigationView
+    private var mCheckedItem:MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         mUserViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
 
         setSupportActionBar(binding.appBarMain.toolBar)
@@ -58,65 +59,76 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener{ nc: NavController, nd: NavDestination, _:Bundle? ->
-            if(nd.id == nc.graph.startDestination)
+            if(nd.id == nc.graph.startDestination) {
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-            else
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        }
-
-        addItemToNavDrawer(navView)
-
-        navView.setNavigationItemSelectedListener {
-            /*when(it.itemId){
-                R.id.nav_notes_frag -> {
-                    //it.isCheckable = true
-                    //not
-                    //Toast.makeText(this,"ZzZZz",Toast.LENGTH_SHORT).show()
-                    menu.setGroupCheckable(R.id.group1,true,true)
-                    menu.findItem(R.id.nav_notes_frag).isChecked = true
-                    navController.popBackStack()
-                    drawerLayout.close()
+                if (mCheckedItem != null) {
+                    navView.setCheckedItem(mCheckedItem!!)
+                    supportActionBar?.title = navView.checkedItem?.title
+                    Log.e("tag","${mCheckedItem?.title}     ${navView.checkedItem?.title} 1")
                 }
-            }*/
-            true
+            }
+            else {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                supportActionBar?.title = ""
+                Log.e("tag","${mCheckedItem?.title}     ${navView.checkedItem?.title} 2")
+            }
         }
-        //onOptionsItemSelected(menu.getItem(0))
-        if (navController.previousBackStackEntry == null){
-            //navView.menu.getItem(0).isChecked = true
-            val checked = menu.findItem(R.id.nav_notes_frag).setChecked(true)
-            menu.setGroupCheckable(R.id.group1,true,true)
-            menu.setGroupCheckable(R.id.labels,true,true)
-            //onMenuItemSelected(R.id.nav_notes_frag,menu.getItem(0))
-            //menu.getItem(0).isChecked = true
-            //Toast.makeText(this,"${navView.checkedItem?.title}    ${navView.menu.getItem(0).title}  \n${checked.isChecked}    ${menu.getItem(0).title}",Toast.LENGTH_LONG).show()
-        }
-        supportActionBar?.title = navView.checkedItem?.title
+        addItemToNavDrawer(navView)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        if (savedInstanceState != null){
+            val itemId = savedInstanceState.getInt("checkedItemId")
+            mCheckedItem = menu.findItem(itemId)
+            if (mCheckedItem != null) {
+                navView.setCheckedItem(mCheckedItem!!)
+                supportActionBar?.title = mCheckedItem!!.title
+                Log.e("tag","${mCheckedItem?.title}     ${navView.checkedItem?.title} 3")
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        if (mCheckedItem != null) {
+            outState.putInt("checkedItemId", mCheckedItem!!.itemId)
+            Log.e("tag","${mCheckedItem?.title}     ${navView.checkedItem?.title} ")
+        }
+        super.onSaveInstanceState(outState)
     }
 
     private fun addItemToNavDrawer(navView: NavigationView){
         menu = navView.menu
-        aaa(emptyList())
+        addMenuItems(emptyList())
         mUserViewModel.allLabels.observe(this, { allLabels ->
-            aaa(allLabels)
+            addMenuItems(allLabels)
         })
     }
 
-    private fun aaa(allLabels:List<Label>){
+    private fun addMenuItems(allLabels:List<Label>){
         menu.clear()
         var order = 0
         menu.setGroupCheckable(R.id.group1,true,true)
         menu.setGroupCheckable(R.id.labels,true,true)
-        menu.add(R.id.group1,R.id.nav_notes_frag,order++,"Notez").setIcon(R.drawable.ic_outline_note_24).setOnMenuItemClickListener {
-            Toast.makeText(this,"XXxxxxX",Toast.LENGTH_SHORT).show()
+        menu.add(R.id.group1,R.id.nav_notes_frag,order++,"Notes").setIcon(R.drawable.ic_outline_note_24).setOnMenuItemClickListener {
+            it.isCheckable = true
+            mCheckedItem = it
+            menu.setGroupCheckable(R.id.group1,true,true)
+            if (navController.previousBackStackEntry != null)
+                navController.popBackStack()
+            drawerLayout.close()
+            true
+        }
+        menu.add(R.id.group1,order,order,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
+            val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
             it.isCheckable = true
             menu.setGroupCheckable(R.id.group1,true,true)
-            navController.popBackStack()
-            supportActionBar?.title = it.title
+            mCheckedItem = it
+            if (navController.previousBackStackEntry != null)
+                navController.popBackStack()
+            navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
             drawerLayout.close()
             true
         }
         menu.add(R.id.labels,order,order++,"Add Label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener {
+            it.isCheckable = false
             val builder = AlertDialog.Builder(this,R.style.CustomAlertDialog)
             builder.setTitle("Add new label")
             val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
@@ -158,29 +170,35 @@ class MainActivity : AppCompatActivity() {
         for (i in allLabels) {
             menu.add(R.id.labels, order, order++, i.labelName)
                 .setIcon(R.drawable.ic_outline_label_24).setOnMenuItemClickListener {
-                    it.isCheckable = true
-                    menu.setGroupCheckable(R.id.labels,true,true)
                     toNotesFragment(it, i)
                     true
                 }
         }
-        menu.add(R.id.group1,order,order,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
-            val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
-            if (navController.previousBackStackEntry != null)
-                navController.popBackStack()
-            supportActionBar?.title = it.title
-            it.isCheckable = true
+        if (navController.previousBackStackEntry == null){
+            val menuItem = menu.findItem(R.id.nav_notes_frag).setCheckable(true)
+            menuItem.isChecked = true
+            mCheckedItem = menuItem
             menu.setGroupCheckable(R.id.group1,true,true)
-            navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
-            drawerLayout.close()
-            true
-        }}
+            menu.setGroupCheckable(R.id.labels,true,true)
+            supportActionBar?.title = menuItem.title
+        }
+        else {
+            val checkedItem = navView.checkedItem
+            val menuItem = checkedItem?.let { menu.findItem(it.itemId) }
+            menuItem?.isCheckable = true
+            menuItem?.isChecked = true
+            supportActionBar?.title = menuItem?.title
+        }
+    }
 
     private fun toNotesFragment(it:MenuItem, label: Label){
         val bundle = bundleOf("title" to it.title,"type" to  LABEL.name,"label" to label)
+        it.isCheckable = true
+        menu.setGroupCheckable(R.id.labels,true,true)
+        supportActionBar?.title = it.title
+        mCheckedItem = it
         if (navController.previousBackStackEntry != null)
             navController.popBackStack()
-        supportActionBar?.title = it.title
         navController.navigate(R.id.nav_notes_frag,bundle,getNavBuilderAnimation().build())
         drawerLayout.close()
     }
@@ -204,9 +222,11 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
         else
             super.onBackPressed()
-        if (navController.previousBackStackEntry == null)
+        if (navController.previousBackStackEntry == null) {
             supportActionBar?.title = menu[0].title
-        else
-            supportActionBar?.title = navView.checkedItem?.title
+            val checked = menu.findItem(R.id.nav_notes_frag).setCheckable(true)
+            checked.isChecked = true
+            mCheckedItem = checked
+        }
     }
 }
