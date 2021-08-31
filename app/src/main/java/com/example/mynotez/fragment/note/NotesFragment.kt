@@ -1,13 +1,11 @@
 package com.example.mynotez.fragment.note
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.SearchView
 import android.widget.TextView
@@ -298,20 +296,20 @@ class NotesFragment : Fragment(), ItemListener {
         val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
         val titleEditText = dialogLayout.findViewById<EditText>(R.id.label_title_edit_text)
         titleEditText.setText(label!!.labelName)
-        titleEditText.setSelectAllOnFocus(true)
-        titleEditText.requestFocus()
-        val imm: InputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
         builder.setView(dialogLayout)
         builder.setPositiveButton("Rename Label"){ _, _ ->
             val newLabelName = titleEditText.text.toString()
             renameLabel(newLabelName)
-            imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
         }
         builder.setNegativeButton("Cancel"){ _, _ ->
-            imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
         }
         val alertDialog = builder.show()
+        titleEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus)
+                alertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        }
+        titleEditText.setSelectAllOnFocus(true)
+        titleEditText.requestFocus()
         titleEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener{
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE ) {

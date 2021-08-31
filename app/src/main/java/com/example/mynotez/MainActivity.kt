@@ -1,13 +1,11 @@
 package com.example.mynotez
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
@@ -140,9 +138,6 @@ class MainActivity : AppCompatActivity() {
             builder.setTitle("Add new label")
             val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
             val titleEditText = dialogLayout.findViewById<TextInputEditText>(R.id.label_title_edit_text)
-            titleEditText.requestFocus()
-            val imm:InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_NOT_ALWAYS)
             builder.setView(dialogLayout)
             builder.setPositiveButton("Add Label"){ _, _ ->
                 val labelName = titleEditText.text.toString()
@@ -157,12 +152,15 @@ class MainActivity : AppCompatActivity() {
                     } else
                         mUserViewModel.addLabel(labelName)
                 }
-                imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
             }
             builder.setNegativeButton("Cancel"){ _, _ ->
-                imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
             }
             val alertDialog:AlertDialog = builder.show()
+            titleEditText.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus)
+                    alertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+            }
+            titleEditText.requestFocus()
             titleEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener{
                 override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                     if (actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE ) {
