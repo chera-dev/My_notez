@@ -56,6 +56,7 @@
                 android:contentDescription="@string/no_notes_here_yet" />
 
             <TextView
+                style="@style/Theme.MyNotez.TextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center"
