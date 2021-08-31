@@ -118,6 +118,15 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         }
     }
 
+    companion object{
+        const val KEY_MY_NOTE = "myNote"
+        const val KEY_NOTE_TO_DETAILS = "noteToDetails"
+        const val KEY_LABEL = "label"
+        const val KEY_TITLE = "title"
+        const val KEY_TYPE = "type"
+        const val KEY_CHECKED_ITEM_ID = "checkedItemId"
+    }
+
 }
 
 class Content<T>(liveData: LiveData<List<T>>) : LiveData<List<T>>() {

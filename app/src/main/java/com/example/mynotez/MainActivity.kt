@@ -27,6 +27,10 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.NoteViewModel
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_CHECKED_ITEM_ID
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_LABEL
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_TITLE
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_TYPE
 import com.example.mynotez.enumclass.From.LABEL
 import com.example.mynotez.enumclass.From.ARCHIVED
 import com.google.android.material.textfield.TextInputEditText
@@ -76,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        val itemId = savedInstanceState.getInt("checkedItemId")
+        val itemId = savedInstanceState.getInt(KEY_CHECKED_ITEM_ID)
         mCheckedItem = menu.findItem(itemId)
         if (mCheckedItem != null) {
             menu.findItem(mCheckedItem!!.itemId).isCheckable = true
@@ -88,7 +92,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         if (mCheckedItem != null) {
-            outState.putInt("checkedItemId", mCheckedItem!!.itemId)
+            outState.putInt(KEY_CHECKED_ITEM_ID, mCheckedItem!!.itemId)
         }
         super.onSaveInstanceState(outState)
     }
@@ -116,7 +120,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
         menu.add(R.id.group1,order,order,"Archive").setIcon(R.drawable.ic_outline_archive_24).setOnMenuItemClickListener {
-            val bundle = bundleOf("title" to it.title,"type" to ARCHIVED.name)
+            val bundle = bundleOf(KEY_TITLE to it.title, KEY_TYPE to ARCHIVED.name)
             it.isCheckable = true
             menu.setGroupCheckable(R.id.group1,true,true)
             mCheckedItem = it
@@ -193,7 +197,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun toNotesFragment(it:MenuItem, label: Label){
-        val bundle = bundleOf("title" to it.title,"type" to  LABEL.name,"label" to label)
+        val bundle = bundleOf(KEY_TITLE to it.title, KEY_TYPE to  LABEL.name, KEY_LABEL to label)
         it.isCheckable = true
         menu.setGroupCheckable(R.id.labels,true,true)
         mCheckedItem = it

@@ -17,6 +17,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.mynotez.*
 import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.NoteViewModel
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_LABEL
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_MY_NOTE
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_NOTE_TO_DETAILS
 import com.example.mynotez.data.entities.Notes
 import com.example.mynotez.enumclass.NoteType.TYPENOTES
 import com.example.mynotez.enumclass.NoteType.TYPEARCHIVED
@@ -53,13 +56,13 @@ class DetailsFragment : Fragment() {
         detailsEditText = binding.detailsTextViewInDetails
 
         if (savedInstanceState != null){
-            val savedNote = savedInstanceState.getSerializable("myNote") as Notes?
+            val savedNote = savedInstanceState.getSerializable(KEY_MY_NOTE) as Notes?
             if (savedNote != null)
                 editedNote = savedNote
         }
         else {
             if (arguments != null) {
-                val gotNote: Notes? = requireArguments().getSerializable("noteToDetails") as Notes?
+                val gotNote: Notes? = requireArguments().getSerializable(KEY_NOTE_TO_DETAILS) as Notes?
                 if (gotNote != null) {
                     editedNote = gotNote
                     noteId = editedNote.noteId
@@ -70,7 +73,7 @@ class DetailsFragment : Fragment() {
                     listOfLabels.addAll(editedNote.getLabels())
                 } else
                     createEmptyNote()
-                val gotLabel = requireArguments().getSerializable("label")
+                val gotLabel = requireArguments().getSerializable(KEY_LABEL)
                 if (gotLabel != null) {
                     labelFromNotesFragment = gotLabel as Label
                     labelFromNotesFragment?.labelName?.let { listOfLabels.add(it) }
@@ -94,7 +97,7 @@ class DetailsFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         saveNote()
-        outState.putSerializable("myNote",editedNote)
+        outState.putSerializable(KEY_MY_NOTE,editedNote)
         super.onSaveInstanceState(outState)
     }
 
@@ -294,5 +297,6 @@ class DetailsFragment : Fragment() {
     }
 
     companion object{
-        const val REQUEST_CODE_SPEECH_INPUT = 1}
+        const val REQUEST_CODE_SPEECH_INPUT = 1
+    }
 }

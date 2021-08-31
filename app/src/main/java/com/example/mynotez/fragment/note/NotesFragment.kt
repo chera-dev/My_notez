@@ -24,6 +24,10 @@ import com.example.mynotez.*
 import com.example.mynotez.data.Content
 import com.example.mynotez.data.entities.Label
 import com.example.mynotez.data.NoteViewModel
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_LABEL
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_NOTE_TO_DETAILS
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_TITLE
+import com.example.mynotez.data.NoteViewModel.Companion.KEY_TYPE
 import com.example.mynotez.data.entities.Data
 import com.example.mynotez.data.entities.Notes
 import com.example.mynotez.data.entities.Title
@@ -49,19 +53,18 @@ class NotesFragment : Fragment(), ItemListener {
     private var label: Label? = null
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?): View {
+
         binding = FragmentNotesBinding.inflate(inflater,container,false)
         mUserViewModel = ViewModelProvider(requireActivity()).get(NoteViewModel::class.java)
 
         if (arguments!=null) {
-            title = requireArguments().getString("title").toString()
-            val gotNoteFrom = requireArguments().getString("type")
+            title = requireArguments().getString(KEY_TITLE).toString()
+            val gotNoteFrom = requireArguments().getString(KEY_TYPE)
             if(gotNoteFrom != null)
                 noteFrom = From.valueOf(gotNoteFrom)
-            val gotLabel = requireArguments().getSerializable("label")
+            val gotLabel = requireArguments().getSerializable(KEY_LABEL)
             if (gotLabel != null) {
                 label = gotLabel as Label
             }
@@ -69,10 +72,9 @@ class NotesFragment : Fragment(), ItemListener {
         binding.fab.setOnClickListener { view ->
             val bundle = Bundle()
             if (label != null)
-                bundle.putSerializable("label",label)
+                bundle.putSerializable(KEY_LABEL,label)
             view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
         }
-        //binding.textViewTitleInNotesFragment.text = title
 
         recyclerAdapter = NotesAdapter(this)
         getNotes()
@@ -159,10 +161,8 @@ class NotesFragment : Fragment(), ItemListener {
 
     override fun onClick(note: Notes) {
         val bundle = Bundle()
-        bundle.putSerializable("noteToDetails",note)
+        bundle.putSerializable(KEY_NOTE_TO_DETAILS,note)
         view?.findNavController()?.navigate(R.id.action_nav_notes_frag_to_detailsFragment,bundle)
-        //val imm:InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        //imm.hideSoftInputFromWindow(binding.textViewTitleInNotesFragment.windowToken,0)
     }
 
     override fun onLongClick(note: Notes) {
