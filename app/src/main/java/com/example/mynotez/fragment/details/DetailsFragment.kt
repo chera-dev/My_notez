@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
@@ -96,7 +97,7 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        saveNote()
+        saveNote(false)
         outState.putSerializable(KEY_MY_NOTE,editedNote)
         super.onSaveInstanceState(outState)
     }
@@ -123,7 +124,7 @@ class DetailsFragment : Fragment() {
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    private fun saveNote(){
+    private fun saveNote(temp:Boolean){
         editedNote.noteTitle = titleEditText.text.toString()
         editedNote.noteDetails = detailsEditText.text.toString()
         editedNote.addAllLabels(listOfLabels)
@@ -131,8 +132,10 @@ class DetailsFragment : Fragment() {
             mUserViewModel.updateNote(editedNote)
         }
         else{
-            Toast.makeText(requireContext(),"Empty Note Discarded",Toast.LENGTH_SHORT).show()
-            mUserViewModel.deleteNote(editedNote)
+            if (temp) {
+                Toast.makeText(requireContext(), "Empty Note Discarded", Toast.LENGTH_SHORT).show()
+                mUserViewModel.deleteNote(editedNote)
+            }
         }
     }
 
@@ -253,11 +256,16 @@ class DetailsFragment : Fragment() {
             })
         createMenu.addMenuItem(Menu.NONE,6,6,"Make a Copy",R.drawable.ic_baseline_content_copy_24,
             MenuItem.SHOW_AS_ACTION_NEVER,onclick = {
-                Toast.makeText(requireContext(),"Note Copied",Toast.LENGTH_SHORT).show()
-                saveNote()
-                val note = editedNote
-                note.noteId = 0
-                mUserViewModel.addNote(note)
+                saveNote(false)
+                if (editedNote.noteTitle != "" || editedNote.noteDetails != "") {
+                    val note = editedNote.copy()
+                    note.noteId = 0
+                    Toast.makeText(requireContext(), "Note Copied", Toast.LENGTH_SHORT).show()
+                    Log.e("tag", "\n$editedNote  @${editedNote.noteId}\n   $note  @${note.noteId}")
+                    mUserViewModel.addNote(note)
+                }
+                else
+                    Toast.makeText(requireContext(), "Empty Note can't be Copied", Toast.LENGTH_SHORT).show()
             })
         createMenu.addMenuItem(Menu.NONE,7,7,"Share",R.drawable.ic_outline_share_24,
             MenuItem.SHOW_AS_ACTION_NEVER,onclick = {
@@ -268,11 +276,15 @@ class DetailsFragment : Fragment() {
     }
 
     private fun shareText() = with(binding) {
-        saveNote()
-        val shareMsg = getString(R.string.share_message, editedNote.noteTitle, editedNote.noteDetails)
-        val intent = ShareCompat.IntentBuilder(requireActivity())
-            .setType("text/plain").setText(shareMsg).intent
-        startActivity(Intent.createChooser(intent, null))
+        saveNote(false)
+        if (editedNote.noteTitle != "" || editedNote.noteDetails != "") {
+            val shareMsg = getString(R.string.share_message, editedNote.noteTitle, editedNote.noteDetails)
+            val intent = ShareCompat.IntentBuilder(requireActivity())
+                .setType("text/plain").setText(shareMsg).intent
+            startActivity(Intent.createChooser(intent, null))
+        }
+        else
+            Toast.makeText(requireContext(), "Empty Note can't be Shared", Toast.LENGTH_SHORT).show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -292,7 +304,7 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        saveNote()
+        saveNote(true)
         super.onDestroyView()
     }
 
