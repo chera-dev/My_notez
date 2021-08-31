@@ -44,6 +44,7 @@ class DetailsFragment : Fragment() {
 
     private lateinit var titleEditText: EditText
     private lateinit var detailsEditText: EditText
+    private var saved = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -97,6 +98,7 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        saved = true
         saveNote(false)
         outState.putSerializable(KEY_MY_NOTE,editedNote)
         super.onSaveInstanceState(outState)
@@ -304,7 +306,8 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        saveNote(true)
+        if (!saved)
+            saveNote(true)
         super.onDestroyView()
     }
 
