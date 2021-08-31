@@ -21,5 +21,10 @@
     <string name="no_notes_here_yet">No Notes Here Yet</string>
     <string name="labels">Labels:</string>
     <string name="item_icon">item icon</string>
+    <string name="add_label">Add Label</string>
+    <string name="speech_to_text">Speech To Text</string>
+    <string name="delete_note">Delete Note</string>
+    <string name="make_a_copy">Make a Copy</string>
+    <string name="share_note">Share Note</string>
 
 </resources>

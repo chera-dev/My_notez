@@ -69,6 +69,7 @@ class NotesFragment : Fragment(), ItemListener {
                 label = gotLabel as Label
             }
         }
+
         binding.fab.setOnClickListener { view ->
             val bundle = Bundle()
             if (label != null)
@@ -173,7 +174,8 @@ class NotesFragment : Fragment(), ItemListener {
                 mUserViewModel.changePinStatus(true,note.noteId)
             else
                 mUserViewModel.changePinStatus(false,note.noteId)
-        }).addTextViewItem(MenuBottomDialog.Operation("Add Labels",R.drawable.ic_outline_label_24) {
+        })
+        menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("Add Labels",R.drawable.ic_outline_label_24) {
             val labelList: List<Label> = mUserViewModel.allLabels.value!!
             val allLabelName = Array(size = labelList.size) { "" }
             val selectedLabelList = BooleanArray(labelList.size)
@@ -188,10 +190,7 @@ class NotesFragment : Fragment(), ItemListener {
                 }
                 val builder = AlertDialog.Builder(requireContext(),R.style.CustomAlertDialog)
                 builder.setTitle("Add Label To This Note")
-                builder.setMultiChoiceItems(
-                    allLabelName,
-                    selectedLabelList
-                ) { _, which, isChecked ->
+                builder.setMultiChoiceItems(allLabelName, selectedLabelList) { _, which, isChecked ->
                     selectedLabelList[which] = isChecked
                 }
                 builder.setPositiveButton("Done") { _, _ ->
@@ -201,7 +200,8 @@ class NotesFragment : Fragment(), ItemListener {
                                 label?.addNote(note.noteId)
                             }
                             mUserViewModel.addLabelWithNote(note,labelList[j])
-                        } else {
+                        }
+                        else {
                             if ( labelList[j].labelName == label?.labelName) {
                                 label?.removeNote(note.noteId)
                             }
@@ -236,26 +236,37 @@ class NotesFragment : Fragment(), ItemListener {
             })
         }
         menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("Make a Copy",R.drawable.ic_baseline_content_copy_24) {
-            note.noteId = 0
-            mUserViewModel.addNote(note)
+            makeACopy(note)
         })
         menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("Delete",R.drawable.ic_baseline_delete_24) {
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setTitle("Delete Note - ${note.noteTitle}?")
-            builder.setPositiveButton("Delete"){ _, _ ->
-                Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
-                mUserViewModel.deleteNote(note)
-            }
-            builder.setNegativeButton("Cancel"){ _, _ ->
-            }
-            val dialog = builder.show()
-            dialog.window?.setBackgroundDrawableResource(R.color.very_dark_blue)
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.white,null))
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.white,null))
+            deleteNote(note)
         })
         menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("share note",R.drawable.ic_outline_share_24){
             shareText(note)
         }).show()
+    }
+
+    private fun makeACopy(note: Notes){
+        Toast.makeText(requireContext(), "Note Copied", Toast.LENGTH_SHORT).show()
+        val noteCopy = note.copy()
+        if (note.isPinned)
+            noteCopy.isPinned = true
+        mUserViewModel.addNote(noteCopy)
+    }
+
+    private fun deleteNote(note: Notes){
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Delete Note - ${note.noteTitle}?")
+        builder.setPositiveButton("Delete"){ _, _ ->
+            Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
+            mUserViewModel.deleteNote(note)
+        }
+        builder.setNegativeButton("Cancel"){ _, _ ->
+        }
+        val dialog = builder.show()
+        dialog.window?.setBackgroundDrawableResource(R.color.very_dark_blue)
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.white,null))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.white,null))
     }
 
     private fun shareText(note: Notes) = with(binding) {
@@ -269,78 +280,64 @@ class NotesFragment : Fragment(), ItemListener {
         inflater.inflate(R.menu.search_menu,menu)
         if (label != null){
             menu.add("Rename label").setOnMenuItemClickListener {
-                val builder = AlertDialog.Builder(requireContext(),R.style.CustomAlertDialog)
-                builder.setTitle("Rename label")
-                val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
-                val titleEditText = dialogLayout.findViewById<EditText>(R.id.label_title_edit_text)
-                titleEditText.setText(label!!.labelName)
-                titleEditText.setSelectAllOnFocus(true)
-                titleEditText.requestFocus()
-                val imm: InputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
-                builder.setView(dialogLayout)
-                builder.setPositiveButton("Rename Label"){ _, _ ->
-                    val newLabelName = titleEditText.text.toString()
-                    renameLabel(newLabelName)
-                    imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
-                }
-                builder.setNegativeButton("Cancel"){ _, _ ->
-                    imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
-                }
-                val alertDialog = builder.show()
-                titleEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener{
-                    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                        if (actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE ) {
-                            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
-                            return true
-                        }
-                        return false
-                    }
-                })
+                onRenameMenuItemClicked()
                 true
             }
             menu.add("delete label").setOnMenuItemClickListener {
-                val builder = AlertDialog.Builder(requireContext())
-                builder.setTitle("Delete label - ${label!!.labelName}?")
-                builder.setPositiveButton("Delete"){ _, _ ->
-                    Toast.makeText(requireContext(), "Label Deleted", Toast.LENGTH_SHORT).show()
-                    myNotes?.let { it1 -> mUserViewModel.deleteLabelFromNotes(it1, label!!) }
-                    mUserViewModel.deleteLabel(label!!)
-                    findNavController().popBackStack()
-                }
-                builder.setNegativeButton("Cancel"){ _, _ ->
-                }
-                val dialog = builder.show()
-                dialog.window?.setBackgroundDrawableResource(R.color.very_dark_blue)
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.white,null))
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.white,null))
+                onDeleteMenuItemClicked()
                 true
             }
         }
-        val searchItem = menu.findItem(R.id.search_item)
-        val searchView = searchItem.actionView as SearchView
-        menuSearchView = searchView
-        searchView.queryHint = "Search Notes"
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                search(query)
-                return true
-            }
-            override fun onQueryTextChange(newText: String?): Boolean {
-                search(newText)
-                return true
+        setSearchView(menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun onRenameMenuItemClicked(){
+        val builder = AlertDialog.Builder(requireContext(),R.style.CustomAlertDialog)
+        builder.setTitle("Rename label")
+        val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
+        val titleEditText = dialogLayout.findViewById<EditText>(R.id.label_title_edit_text)
+        titleEditText.setText(label!!.labelName)
+        titleEditText.setSelectAllOnFocus(true)
+        titleEditText.requestFocus()
+        val imm: InputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
+        builder.setView(dialogLayout)
+        builder.setPositiveButton("Rename Label"){ _, _ ->
+            val newLabelName = titleEditText.text.toString()
+            renameLabel(newLabelName)
+            imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
+        }
+        builder.setNegativeButton("Cancel"){ _, _ ->
+            imm.hideSoftInputFromWindow(titleEditText.windowToken,0)
+        }
+        val alertDialog = builder.show()
+        titleEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener{
+            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                if (actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE ) {
+                    alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
+                    return true
+                }
+                return false
             }
         })
-        searchView.setOnSearchClickListener {
-            recyclerAdapter.changeData(emptyList())
-            binding.noNotesCardView.visibility = View.GONE
-            binding.fab.visibility = View.GONE
+    }
+
+    private fun onDeleteMenuItemClicked(){
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Delete label - ${label!!.labelName}?")
+        builder.setPositiveButton("Delete"){ _, _ ->
+            Toast.makeText(requireContext(), "Label Deleted", Toast.LENGTH_SHORT).show()
+            myNotes?.let { it1 -> mUserViewModel.deleteLabelFromNotes(it1, label!!) }
+            mUserViewModel.deleteLabel(label!!)
+            findNavController().popBackStack()
         }
-        searchView.setOnCloseListener {
-            onSearchClose()
-            false
+        builder.setNegativeButton("Cancel"){ _, _ ->
         }
-        super.onCreateOptionsMenu(menu, inflater)
+        val dialog = builder.show()
+        dialog.window?.setBackgroundDrawableResource(R.color.very_dark_blue)
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.white,null))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.white,null))
     }
 
     private fun renameLabel(newLabelName:String){
@@ -359,9 +356,41 @@ class NotesFragment : Fragment(), ItemListener {
             }
             mUserViewModel.renameLabel(label!!.labelName, newLabelName)
             label!!.labelName = newLabelName
-        }}
+        }
+    }
+
+    private fun setSearchView(menu: Menu){
+        val searchItem = menu.findItem(R.id.search_item)
+        val searchView = searchItem.actionView as SearchView
+        menuSearchView = searchView
+        searchView.queryHint = "Search Notes"
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                search(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                search(newText)
+                return true
+            }
+        })
+        searchView.setOnSearchClickListener {
+            val activity:MainActivity = activity as MainActivity
+            activity.mSupportActionBar.setDisplayHomeAsUpEnabled(false)
+            searchView.maxWidth = Int.MAX_VALUE
+            recyclerAdapter.changeData(emptyList())
+            binding.noNotesCardView.visibility = View.GONE
+            binding.fab.visibility = View.GONE
+        }
+        searchView.setOnCloseListener {
+            onSearchClose()
+            false
+        }
+    }
 
     private fun onSearchClose(){
+        val activity:MainActivity = activity as MainActivity
+        activity.mSupportActionBar.setDisplayHomeAsUpEnabled(true)
         myNotes?.let { recyclerAdapter.changeData(getNotesForRecyclerView(it)) }
         binding.noNotesCardView.visibility = View.GONE
         binding.fab.visibility = View.VISIBLE

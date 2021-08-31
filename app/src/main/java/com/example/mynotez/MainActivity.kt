@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.get
@@ -46,6 +47,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navView:NavigationView
     private var mCheckedItem:MenuItem? = null
 
+    lateinit var mSupportActionBar: ActionBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -77,6 +80,7 @@ class MainActivity : AppCompatActivity() {
                 supportActionBar?.title = ""
             }
         }
+        mSupportActionBar = supportActionBar!!
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {

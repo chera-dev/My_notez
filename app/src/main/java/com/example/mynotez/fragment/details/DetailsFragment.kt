@@ -172,7 +172,7 @@ class DetailsFragment : Fragment() {
                     binding.textViewPinnedInDetails.visibility = View.VISIBLE
                 }
             })
-        createMenu.addMenuItem(Menu.NONE,2,2,"Add Label", R.drawable.ic_outline_label_24,
+        /*createMenu.addMenuItem(Menu.NONE,2,2,"Add Label", R.drawable.ic_outline_label_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
                 val listOfAllLabelAvailable:List<Label> = mUserViewModel.allLabels.value!!
                 val allLabelName = Array(size = listOfAllLabelAvailable.size){""}
@@ -225,7 +225,7 @@ class DetailsFragment : Fragment() {
                 catch (e: Exception){
                     Toast.makeText(requireContext(),e.message,Toast.LENGTH_LONG).show()
                 }
-            })
+            })*/
         createMenu.addMenuItem(Menu.NONE, 4, 4, if (editedNote.noteType != TYPEARCHIVED)"Archive" else "UnArchive",
             if (editedNote.noteType != TYPEARCHIVED) R.drawable.ic_baseline_archive_24 else R.drawable.ic_baseline_unarchive_24,
             MenuItem.SHOW_AS_ACTION_ALWAYS, onclick = {
@@ -240,7 +240,7 @@ class DetailsFragment : Fragment() {
                     binding.textViewNoteType.visibility = View.GONE
                 }
             })
-        createMenu.addMenuItem(Menu.NONE, 5, 5, "Delete", R.drawable.ic_baseline_delete_24,
+        /*createMenu.addMenuItem(Menu.NONE, 5, 5, "Delete", R.drawable.ic_baseline_delete_24,
             MenuItem.SHOW_AS_ACTION_NEVER, onclick = {
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Delete Note - ${editedNote.noteTitle}?")
@@ -272,9 +272,118 @@ class DetailsFragment : Fragment() {
         createMenu.addMenuItem(Menu.NONE,7,7,"Share",R.drawable.ic_outline_share_24,
             MenuItem.SHOW_AS_ACTION_NEVER,onclick = {
                 shareText()
-            })
+            })*/
         inflater.inflate(R.menu.main,menu)
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.menu_item_add_label ->{
+                addLabelToNote()
+                true
+            }
+            R.id.menu_item_speech_to_text ->{
+                fromSpeechToText()
+                true
+            }
+            R.id.menu_item_delete_note ->{
+                deleteNote()
+                true
+            }
+            R.id.menu_item_make_a_copy ->{
+                makeACopy()
+                true
+            }
+            R.id.menu_item_share_note ->{
+                shareText()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun addLabelToNote(){
+        val listOfAllLabelAvailable:List<Label> = mUserViewModel.allLabels.value!!
+        val allLabelName = Array(size = listOfAllLabelAvailable.size){""}
+        val selectedLabelList = BooleanArray(listOfAllLabelAvailable.size)
+
+        if (listOfAllLabelAvailable.isEmpty())
+            Toast.makeText(requireContext(),"No Labels", Toast.LENGTH_LONG).show()
+        else {
+            for (i in listOfAllLabelAvailable.indices) {
+                allLabelName[i] = listOfAllLabelAvailable[i].labelName
+                if (listOfAllLabelAvailable[i].labelName in listOfLabels)
+                    selectedLabelList[i] = true
+            }
+            val builder = AlertDialog.Builder(requireContext(),R.style.CustomAlertDialog)
+            builder.setTitle("add label")
+            builder.setMultiChoiceItems(allLabelName, selectedLabelList){ _, which, isChecked ->
+                selectedLabelList[which] = isChecked
+            }
+            builder.setPositiveButton("Done"){ _, _ ->
+                for (j in selectedLabelList.indices){
+                    if (selectedLabelList[j]){
+                        mUserViewModel.addLabelWithNote(editedNote,listOfAllLabelAvailable[j])
+                        listOfLabels.add(listOfAllLabelAvailable[j].labelName)
+                    }
+                    else{
+                        mUserViewModel.removeLabelFromNote(editedNote,listOfAllLabelAvailable[j])
+                        listOfLabels.remove(listOfAllLabelAvailable[j].labelName)
+                    }
+                }
+                if (listOfLabels.isNotEmpty()) {
+                    showLabels()
+                }
+                else {
+                    binding.labelTextViewInDetails.visibility = View.GONE
+                    binding.chipGroupInDetails.visibility = View.GONE
+                }
+            }
+            builder.show()
+        }
+    }
+
+    private fun fromSpeechToText(){
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text")
+        try {
+            startActivityForResult(intent,REQUEST_CODE_SPEECH_INPUT)
+        }
+        catch (e: Exception){
+            Toast.makeText(requireContext(),e.message,Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun deleteNote(){
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Delete Note - ${editedNote.noteTitle}?")
+        builder.setPositiveButton("Delete"){ _, _ ->
+            Toast.makeText(requireContext(), "Note Deleted", Toast.LENGTH_SHORT).show()
+            mUserViewModel.deleteNote(editedNote)
+            findNavController().popBackStack()
+        }
+        builder.setNegativeButton("Cancel"){ _, _ ->
+        }
+        val dialog = builder.show()
+        dialog.window?.setBackgroundDrawableResource(R.color.very_dark_blue)
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.white,null))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.white,null))
+    }
+
+    private fun makeACopy(){
+        saveNote(false)
+        if (editedNote.noteTitle != "" || editedNote.noteDetails != "") {
+            val note = editedNote.copy()
+            if (editedNote.isPinned)
+                note.isPinned = true
+            Toast.makeText(requireContext(), "Note Copied", Toast.LENGTH_SHORT).show()
+            mUserViewModel.addNote(note)
+        }
+        else
+            Toast.makeText(requireContext(), "Empty Note can't be Copied", Toast.LENGTH_SHORT).show()
     }
 
     private fun shareText() = with(binding) {

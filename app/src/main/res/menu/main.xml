@@ -3,4 +3,34 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:title="@string/add_label"
+        android:icon="@drawable/ic_outline_label_24"
+        android:id="@+id/menu_item_add_label"
+        app:showAsAction="always"
+        android:orderInCategory="2"/>
+
+    <item android:title="@string/speech_to_text"
+        android:icon="@drawable/ic_baseline_keyboard_voice_24"
+        android:id="@+id/menu_item_speech_to_text"
+        app:showAsAction="always"
+        android:orderInCategory="3"/>
+
+    <item android:title="@string/delete_note"
+        android:icon="@drawable/ic_baseline_delete_24"
+        android:id="@+id/menu_item_delete_note"
+        app:showAsAction="never"
+        android:orderInCategory="5"/>
+
+    <item android:title="@string/make_a_copy"
+        android:icon="@drawable/ic_baseline_delete_24"
+        android:id="@+id/menu_item_make_a_copy"
+        app:showAsAction="never"
+        android:orderInCategory="6"/>
+
+    <item android:title="@string/share_note"
+        android:icon="@drawable/ic_baseline_delete_24"
+        android:id="@+id/menu_item_share_note"
+        app:showAsAction="never"
+        android:orderInCategory="7"/>
+
 </menu>
