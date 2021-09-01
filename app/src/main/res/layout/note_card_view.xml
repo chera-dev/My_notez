@@ -6,6 +6,8 @@
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="5dp"
     card_view:contentPadding="2dp"
+    android:layout_marginStart="2dp"
+    android:layout_marginEnd="2dp"
     card_view:cardUseCompatPadding="true"
     style="@style/Theme.MyNotez.Card"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -20,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="28dp"
             android:layout_marginStart="4dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="5dp"
             android:ellipsize="end"
             android:maxLines="1"
@@ -35,16 +37,17 @@
 
         <TextView
             android:id="@+id/item_details"
+            style="@style/Theme.MyNotez.TextColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
+            android:paddingEnd="10dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:paddingBottom="4dp"
             android:textSize="16sp"
             android:visibility="gone"
-            style="@style/Theme.MyNotez.TextColor"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/item_title" />
 

@@ -16,12 +16,11 @@ import com.example.mynotez.enumclass.NoteType.TYPENOTES
 class NoteViewModel (application: Application) : AndroidViewModel(application) {
     private val noteRepository: NoteRepository
     private val labelRepository: LabelRepository
-    val allNotes: LiveData<List<Notes>>
-    val allLabels: LiveData<List<Label>>
-
     private val noteDao = NoteDatabase.getDatabase(application).noteDao()
     private val labelDao = NoteDatabase.getDatabase(application).labelDao()
 
+    val allNotes: LiveData<List<Notes>>
+    val allLabels: LiveData<List<Label>>
     val baseNotes = Content(noteDao.getNotesOfType(TYPENOTES))
     val archivedNotes = Content(noteDao.getNotesOfType(TYPEARCHIVED))
 
@@ -81,7 +80,7 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
         updateNote(note)
     }
 
-    fun changeNoteType(note: Notes, newNoteType:NoteType){
+    fun updateNoteType(note: Notes, newNoteType:NoteType){
         viewModelScope.launch(Dispatchers.IO) {
             noteRepository.updateNoteType(note.noteId,newNoteType)
         }
@@ -89,7 +88,7 @@ class NoteViewModel (application: Application) : AndroidViewModel(application) {
 
     fun changePinStatus(status:Boolean,noteId:Long){
         viewModelScope.launch(Dispatchers.IO) {
-            noteRepository.updatePin(noteId,status)
+            noteRepository.changePinStatus(noteId,status)
         }
     }
 

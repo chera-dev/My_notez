@@ -222,12 +222,12 @@ class NotesFragment : Fragment(), ItemListener {
         if (noteFrom == ARCHIVED){
             menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("UnArchive",R.drawable.ic_baseline_unarchive_24) {
                 Toast.makeText(requireContext(), "Note Unarchived", Toast.LENGTH_SHORT).show()
-                mUserViewModel.changeNoteType(note,NoteType.TYPENOTES)
+                mUserViewModel.updateNoteType(note,NoteType.TYPENOTES)
             })}
         else {
             menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("Archive",R.drawable.ic_baseline_archive_24) {
                 Toast.makeText(requireContext(), "Note Archived", Toast.LENGTH_SHORT).show()
-                mUserViewModel.changeNoteType(note,NoteType.TYPEARCHIVED)
+                mUserViewModel.updateNoteType(note,NoteType.TYPEARCHIVED)
             })
         }
         menuBottomDialog.addTextViewItem(MenuBottomDialog.Operation("Make a Copy",R.drawable.ic_baseline_content_copy_24) {
@@ -295,23 +295,6 @@ class NotesFragment : Fragment(), ItemListener {
         }
     }
 
-    private fun onDeleteMenuItemClicked(){
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Delete label - ${label!!.labelName}?")
-        builder.setPositiveButton("Delete"){ _, _ ->
-            Toast.makeText(requireContext(), "Label Deleted", Toast.LENGTH_SHORT).show()
-            myNotes?.let { it1 -> mUserViewModel.deleteLabelFromNotes(it1, label!!) }
-            mUserViewModel.deleteLabel(label!!)
-            findNavController().popBackStack()
-        }
-        builder.setNegativeButton("Cancel"){ _, _ ->
-        }
-        val dialog = builder.show()
-        dialog.window?.setBackgroundDrawableResource(R.color.very_dark_blue)
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.white,null))
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.white,null))
-    }
-
     private fun renameLabel(newLabelName:String){
         for (mLabel in mUserViewModel.allLabels.value!!){
             if (mLabel.labelName == newLabelName) {
@@ -329,6 +312,23 @@ class NotesFragment : Fragment(), ItemListener {
             mUserViewModel.renameLabel(label!!.labelName, newLabelName)
             label!!.labelName = newLabelName
         }
+    }
+
+    private fun onDeleteMenuItemClicked(){
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Delete label - ${label!!.labelName}?")
+        builder.setPositiveButton("Delete"){ _, _ ->
+            Toast.makeText(requireContext(), "Label Deleted", Toast.LENGTH_SHORT).show()
+            myNotes?.let { it1 -> mUserViewModel.deleteLabelFromNotes(it1, label!!) }
+            mUserViewModel.deleteLabel(label!!)
+            findNavController().popBackStack()
+        }
+        builder.setNegativeButton("Cancel"){ _, _ ->
+        }
+        val dialog = builder.show()
+        dialog.window?.setBackgroundDrawableResource(R.color.very_dark_blue)
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.white,null))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.white,null))
     }
 
     private fun setSearchView(menu: Menu){

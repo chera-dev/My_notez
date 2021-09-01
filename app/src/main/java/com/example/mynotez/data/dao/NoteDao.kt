@@ -30,6 +30,6 @@ interface NoteDao {
     suspend fun changePinStatus(noteId:Long, status:Boolean)
 
     @Query("UPDATE note_table SET note_type =:noteType WHERE note_id =:noteId")
-    suspend fun updateNoteStatus(noteId: Long,noteType: NoteType)
+    suspend fun updateNoteType(noteId: Long, noteType: NoteType)
 
 }

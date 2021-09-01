@@ -17,7 +17,7 @@ import com.google.android.material.chip.ChipGroup
 class NotesAdapter ( private val itemListener: ItemListener?)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var notesList:List<Data> = listOf()
+    private var notesList:List<Data> = listOf()
 
     inner class NoteCardViewHolder(view: View): RecyclerView.ViewHolder(view){
         val itemTitle: TextView = view.findViewById(R.id.item_title)

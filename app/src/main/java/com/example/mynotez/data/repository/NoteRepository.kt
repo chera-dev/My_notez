@@ -21,12 +21,12 @@ class NoteRepository(private val noteDao: NoteDao) {
         noteDao.deleteNote(note)
     }
 
-    suspend fun updatePin(noteId:Long, status:Boolean){
+    suspend fun changePinStatus(noteId:Long, status:Boolean){
         noteDao.changePinStatus(noteId,status)
     }
 
     suspend fun updateNoteType(noteId: Long,noteType:NoteType){
-        noteDao.updateNoteStatus(noteId, noteType)
+        noteDao.updateNoteType(noteId, noteType)
     }
 
 }
