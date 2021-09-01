@@ -1,14 +1,10 @@
 package com.example.mynotez.fragment.note
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.EditorInfo
-import android.widget.EditText
 import android.widget.SearchView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -33,6 +29,7 @@ import com.example.mynotez.databinding.FragmentNotesBinding
 import com.example.mynotez.enumclass.From
 import com.example.mynotez.enumclass.From.*
 import com.example.mynotez.enumclass.NoteType
+import com.example.mynotez.menu.EditTextAlertDialog
 import com.example.mynotez.menu.MenuBottomDialog
 
 class NotesFragment : Fragment(), ItemListener {
@@ -291,34 +288,11 @@ class NotesFragment : Fragment(), ItemListener {
     }
 
     private fun onRenameMenuItemClicked(){
-        val builder = AlertDialog.Builder(requireContext(),R.style.CustomAlertDialog)
-        builder.setTitle("Rename label")
-        val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
-        val titleEditText = dialogLayout.findViewById<EditText>(R.id.label_title_edit_text)
-        titleEditText.setText(label!!.labelName)
-        builder.setView(dialogLayout)
-        builder.setPositiveButton("Rename Label"){ _, _ ->
-            val newLabelName = titleEditText.text.toString()
+        EditTextAlertDialog().createAlertDialog(requireContext(),layoutInflater,"Rename label"
+            ,label!!.labelName,"Rename Label"
+        ) { newLabelName ->
             renameLabel(newLabelName)
         }
-        builder.setNegativeButton("Cancel"){ _, _ ->
-        }
-        val alertDialog = builder.show()
-        titleEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus)
-                alertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        }
-        titleEditText.setSelectAllOnFocus(true)
-        titleEditText.requestFocus()
-        titleEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener{
-            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                if (actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE ) {
-                    alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
-                    return true
-                }
-                return false
-            }
-        })
     }
 
     private fun onDeleteMenuItemClicked(){

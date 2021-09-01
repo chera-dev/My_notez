@@ -1,12 +1,8 @@
 package com.example.mynotez
 
-import android.app.AlertDialog
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.core.os.bundleOf
@@ -32,7 +28,7 @@ import com.example.mynotez.data.NoteViewModel.Companion.KEY_TITLE
 import com.example.mynotez.data.NoteViewModel.Companion.KEY_TYPE
 import com.example.mynotez.enumclass.From.LABEL
 import com.example.mynotez.enumclass.From.ARCHIVED
-import com.google.android.material.textfield.TextInputEditText
+import com.example.mynotez.menu.EditTextAlertDialog
 
 class MainActivity : AppCompatActivity() {
 
@@ -44,7 +40,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var menu: Menu
     private lateinit var navView:NavigationView
     private var mCheckedItem:MenuItem? = null
-
     lateinit var mSupportActionBar: ActionBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,14 +129,10 @@ class MainActivity : AppCompatActivity() {
         }
         menu.add(R.id.labels,order,order++,"Add Label").setIcon(R.drawable.ic_baseline_add_24).setOnMenuItemClickListener {
             it.isCheckable = false
-            val builder = AlertDialog.Builder(this,R.style.CustomAlertDialog)
-            builder.setTitle("Add new label")
-            val dialogLayout = layoutInflater.inflate(R.layout.add_label,null)
-            val titleEditText = dialogLayout.findViewById<TextInputEditText>(R.id.label_title_edit_text)
-            builder.setView(dialogLayout)
-            builder.setPositiveButton("Add Label"){ _, _ ->
-                val labelName = titleEditText.text.toString()
-                if (labelName!= ""){
+            EditTextAlertDialog().createAlertDialog(this,layoutInflater,"Add new label"
+                ,null,"Add Label"
+            ) { labelName ->
+                if (labelName != "") {
                     if (allLabels.isNotEmpty()) {
                         for (i in allLabels) {
                             if (labelName == i.labelName)
@@ -153,23 +144,6 @@ class MainActivity : AppCompatActivity() {
                         mUserViewModel.addLabel(labelName)
                 }
             }
-            builder.setNegativeButton("Cancel"){ _, _ ->
-            }
-            val alertDialog:AlertDialog = builder.show()
-            titleEditText.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus)
-                    alertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-            }
-            titleEditText.requestFocus()
-            titleEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener{
-                override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                    if (actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE ) {
-                        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick()
-                        return true
-                    }
-                    return false
-                }
-            })
             true
         }
         for (i in allLabels) {
